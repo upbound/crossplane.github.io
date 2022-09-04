@@ -1,0 +1,23 @@
+{{ partialCached "head/base.html" . }}
+  <body>
+    {{ partial "header.html" . }}
+    <div class="page">
+      <div class="docs-menu">
+        <ul id="docs-ul"></ul>
+    </div>
+
+    <div class="docs-content">
+      {{ partial "docs/versions.html" . }}
+      <h1>{{.Title }}</h1>
+      {{- partial "docs/version-alert.html" . -}}
+      {{ .Content }}
+    </div>
+    </div>
+
+    {{ partial "docs/js-footer.html" . }}
+    {{ partial "footer.html" .}}
+    {{ partialCached "google-analytics.html" . }}
+    {{ partialCached "hubspot.html" . }}
+
+  </body>
+</html>

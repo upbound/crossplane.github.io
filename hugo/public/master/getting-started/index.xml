@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Crossplane</title>
+    <link>/master/getting-started/</link>
+    <description>Recent content on Crossplane</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language><atom:link href="/master/getting-started/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Install &amp; Configure</title>
+      <link>/master/getting-started/install-configure/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/master/getting-started/install-configure/</guid>
+      <description>Choosing Your Crossplane Distribution Users looking to use Crossplane for the first time have two options available to them today. The first way is to use the version of Crossplane which is maintained and released by the community and found on the Crossplane GitHub.
+The second option is to use a vendor supported Crossplane distribution. These distributions are certified by the CNCF to be conformant with Crossplane, but may include additional features or tooling around it that makes it easier to use in production environments.</description>
+    </item>
+    
+    <item>
+      <title>Provision Infrastructure</title>
+      <link>/master/getting-started/provision-infrastructure/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/master/getting-started/provision-infrastructure/</guid>
+      <description>Provision Infrastructure Composite resources (XRs) are always cluster scoped - they exist outside of any namespace. This allows an XR to represent infrastructure that might be consumed from several different namespaces. This is often true for VPC networks - an infrastructure operator may wish to define a VPC network XR and an SQL instance XR, only the latter of which may be managed by application operators. The application operators are restricted to their team&amp;rsquo;s namespace, but their SQL instances should all be attached to the VPC network that the infrastructure operator manages.</description>
+    </item>
+    
+    <item>
+      <title>Create a Configuration</title>
+      <link>/master/getting-started/create-configuration/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/master/getting-started/create-configuration/</guid>
+      <description>Create a Configuration In the previous section we were able to create a PostgreSQL database because we had installed a configuration package that defined the PostgreSQLInstance type and a Composition of managed resources that mapped to it. Crossplane allows you to define your own composite resources (XRs) and compositions, then package them up to be easily distributed as OCI images. This allows you to construct a reproducible platform that exposes infrastructure APIs at your desired level of abstraction, and can be installed into any Crossplane cluster.</description>
+    </item>
+    
+  </channel>
+</rss>

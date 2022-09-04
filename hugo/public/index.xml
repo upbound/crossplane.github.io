@@ -1,0 +1,1532 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Crossplane</title>
+    <link>/</link>
+    <description>Recent content on Crossplane</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language><atom:link href="/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Install &amp; Configure</title>
+      <link>/master/getting-started/install-configure/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/master/getting-started/install-configure/</guid>
+      <description>Choosing Your Crossplane Distribution Users looking to use Crossplane for the first time have two options available to them today. The first way is to use the version of Crossplane which is maintained and released by the community and found on the Crossplane GitHub.
+The second option is to use a vendor supported Crossplane distribution. These distributions are certified by the CNCF to be conformant with Crossplane, but may include additional features or tooling around it that makes it easier to use in production environments.</description>
+    </item>
+    
+    <item>
+      <title>Install &amp; Configure</title>
+      <link>/v1.7/getting-started/install-configure/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v1.7/getting-started/install-configure/</guid>
+      <description>Choosing Your Crossplane Distribution Users looking to use Crossplane for the first time have two options available to them today. The first way is to use the version of Crossplane which is maintained and released by the community and found on the Crossplane GitHub.
+The second option is to use a vendor supported Crossplane distribution. These distributions are certified by the CNCF to be conformant with Crossplane, but may include additional features or tooling around it that makes it easier to use in production environments.</description>
+    </item>
+    
+    <item>
+      <title>Install &amp; Configure</title>
+      <link>/v1.8/getting-started/install-configure/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v1.8/getting-started/install-configure/</guid>
+      <description>Choosing Your Crossplane Distribution Users looking to use Crossplane for the first time have two options available to them today. The first way is to use the version of Crossplane which is maintained and released by the community and found on the Crossplane GitHub.
+The second option is to use a vendor supported Crossplane distribution. These distributions are certified by the CNCF to be conformant with Crossplane, but may include additional features or tooling around it that makes it easier to use in production environments.</description>
+    </item>
+    
+    <item>
+      <title>Install &amp; Configure</title>
+      <link>/v1.9/getting-started/install-configure/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v1.9/getting-started/install-configure/</guid>
+      <description>Choosing Your Crossplane Distribution Users looking to use Crossplane for the first time have two options available to them today. The first way is to use the version of Crossplane which is maintained and released by the community and found on the Crossplane GitHub.
+The second option is to use a vendor supported Crossplane distribution. These distributions are certified by the CNCF to be conformant with Crossplane, but may include additional features or tooling around it that makes it easier to use in production environments.</description>
+    </item>
+    
+    <item>
+      <title>Provision Infrastructure</title>
+      <link>/master/getting-started/provision-infrastructure/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/master/getting-started/provision-infrastructure/</guid>
+      <description>Provision Infrastructure Composite resources (XRs) are always cluster scoped - they exist outside of any namespace. This allows an XR to represent infrastructure that might be consumed from several different namespaces. This is often true for VPC networks - an infrastructure operator may wish to define a VPC network XR and an SQL instance XR, only the latter of which may be managed by application operators. The application operators are restricted to their team&amp;rsquo;s namespace, but their SQL instances should all be attached to the VPC network that the infrastructure operator manages.</description>
+    </item>
+    
+    <item>
+      <title>Provision Infrastructure</title>
+      <link>/v1.7/getting-started/provision-infrastructure/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v1.7/getting-started/provision-infrastructure/</guid>
+      <description>Provision Infrastructure Composite resources (XRs) are always cluster scoped - they exist outside of any namespace. This allows an XR to represent infrastructure that might be consumed from several different namespaces. This is often true for VPC networks - an infrastructure operator may wish to define a VPC network XR and an SQL instance XR, only the latter of which may be managed by application operators. The application operators are restricted to their team&amp;rsquo;s namespace, but their SQL instances should all be attached to the VPC network that the infrastructure operator manages.</description>
+    </item>
+    
+    <item>
+      <title>Provision Infrastructure</title>
+      <link>/v1.8/getting-started/provision-infrastructure/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v1.8/getting-started/provision-infrastructure/</guid>
+      <description>Provision Infrastructure Composite resources (XRs) are always cluster scoped - they exist outside of any namespace. This allows an XR to represent infrastructure that might be consumed from several different namespaces. This is often true for VPC networks - an infrastructure operator may wish to define a VPC network XR and an SQL instance XR, only the latter of which may be managed by application operators. The application operators are restricted to their team&amp;rsquo;s namespace, but their SQL instances should all be attached to the VPC network that the infrastructure operator manages.</description>
+    </item>
+    
+    <item>
+      <title>Provision Infrastructure</title>
+      <link>/v1.9/getting-started/provision-infrastructure/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v1.9/getting-started/provision-infrastructure/</guid>
+      <description>Provision Infrastructure Composite resources (XRs) are always cluster scoped - they exist outside of any namespace. This allows an XR to represent infrastructure that might be consumed from several different namespaces. This is often true for VPC networks - an infrastructure operator may wish to define a VPC network XR and an SQL instance XR, only the latter of which may be managed by application operators. The application operators are restricted to their team&amp;rsquo;s namespace, but their SQL instances should all be attached to the VPC network that the infrastructure operator manages.</description>
+    </item>
+    
+    <item>
+      <title>Create a Configuration</title>
+      <link>/master/getting-started/create-configuration/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/master/getting-started/create-configuration/</guid>
+      <description>Create a Configuration In the previous section we were able to create a PostgreSQL database because we had installed a configuration package that defined the PostgreSQLInstance type and a Composition of managed resources that mapped to it. Crossplane allows you to define your own composite resources (XRs) and compositions, then package them up to be easily distributed as OCI images. This allows you to construct a reproducible platform that exposes infrastructure APIs at your desired level of abstraction, and can be installed into any Crossplane cluster.</description>
+    </item>
+    
+    <item>
+      <title>Create a Configuration</title>
+      <link>/v1.7/getting-started/create-configuration/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v1.7/getting-started/create-configuration/</guid>
+      <description>Create a Configuration In the previous section we were able to create a PostgreSQL database because we had installed a configuration package that defined the PostgreSQLInstance type and a Composition of managed resources that mapped to it. Crossplane allows you to define your own composite resources (XRs) and compositions, then package them up to be easily distributed as OCI images. This allows you to construct a reproducible platform that exposes infrastructure APIs at your desired level of abstraction, and can be installed into any Crossplane cluster.</description>
+    </item>
+    
+    <item>
+      <title>Create a Configuration</title>
+      <link>/v1.8/getting-started/create-configuration/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v1.8/getting-started/create-configuration/</guid>
+      <description>Create a Configuration In the previous section we were able to create a PostgreSQL database because we had installed a configuration package that defined the PostgreSQLInstance type and a Composition of managed resources that mapped to it. Crossplane allows you to define your own composite resources (XRs) and compositions, then package them up to be easily distributed as OCI images. This allows you to construct a reproducible platform that exposes infrastructure APIs at your desired level of abstraction, and can be installed into any Crossplane cluster.</description>
+    </item>
+    
+    <item>
+      <title>Create a Configuration</title>
+      <link>/v1.9/getting-started/create-configuration/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v1.9/getting-started/create-configuration/</guid>
+      <description>Create a Configuration In the previous section we were able to create a PostgreSQL database because we had installed a configuration package that defined the PostgreSQLInstance type and a Composition of managed resources that mapped to it. Crossplane allows you to define your own composite resources (XRs) and compositions, then package them up to be easily distributed as OCI images. This allows you to construct a reproducible platform that exposes infrastructure APIs at your desired level of abstraction, and can be installed into any Crossplane cluster.</description>
+    </item>
+    
+    <item>
+      <title>Providers</title>
+      <link>/master/concepts/providers/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/master/concepts/providers/</guid>
+      <description>Providers Providers are Crossplane packages that bundle a set of Managed Resources and their respective controllers to allow Crossplane to provision the respective infrastructure resource.
+Here is the list of prominent providers:
+Provider AWS GitHub Repo API Reference Amazon Web Services (AWS) IAM User Provider Jet AWS GitHub Repo API Reference Provider GCP GitHub Repo API Reference Google Cloud Platform (GCP) Service Account Provider Jet GCP GitHub Repo API Reference Provider Azure GitHub Repo API Reference Microsoft Azure Service Principal Provider Jet Azure GitHub Repo API Reference Provider Alibaba GitHub Repo API Reference Provider Rook GitHub Repo API Reference Provider Helm GitHub Repo API Reference Provider Terraform GitHub Repo API Reference Provider Kubernetes GitHub Repo API Reference Provider SQL GitHub Repo API Reference Provider Gitlab GitHub Repo API Reference Provider Equinix Metal GitHub Repo API Reference Provider Digital Ocean GitHub Repo API Reference Provider Civo GitHub Repo API Reference Provider IBM Cloud GitHub Repo API Reference Provider Argocd GitHub Repo API Reference Provider Styra GitHub Repo API Reference Provider Cloudflare GitHub Repo API Reference Installing Providers The core Crossplane controller can install provider controllers and CRDs for you through its own provider packaging mechanism, which is triggered by the application of a Provider resource.</description>
+    </item>
+    
+    <item>
+      <title>Providers</title>
+      <link>/v1.7/concepts/providers/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v1.7/concepts/providers/</guid>
+      <description>Providers Providers are Crossplane packages that bundle a set of Managed Resources and their respective controllers to allow Crossplane to provision the respective infrastructure resource.
+Here is the list of prominent providers:
+Provider AWS GitHub Repo API Reference Amazon Web Services (AWS) IAM User Provider Jet AWS GitHub Repo API Reference Provider GCP GitHub Repo API Reference Google Cloud Platform (GCP) Service Account Provider Jet GCP GitHub Repo API Reference Provider Azure GitHub Repo API Reference Microsoft Azure Service Principal Provider Jet Azure GitHub Repo API Reference Provider Alibaba GitHub Repo API Reference Provider Rook GitHub Repo API Reference Provider Helm GitHub Repo API Reference Provider Terraform GitHub Repo API Reference Provider Kubernetes GitHub Repo API Reference Provider SQL GitHub Repo API Reference Provider Gitlab GitHub Repo API Reference Provider Equinix Metal GitHub Repo API Reference Provider Digital Ocean GitHub Repo API Reference Provider Civo GitHub Repo API Reference Provider IBM Cloud GitHub Repo API Reference Provider Argocd GitHub Repo API Reference Provider Styra GitHub Repo API Reference Provider Cloudflare GitHub Repo API Reference Installing Providers The core Crossplane controller can install provider controllers and CRDs for you through its own provider packaging mechanism, which is triggered by the application of a Provider resource.</description>
+    </item>
+    
+    <item>
+      <title>Providers</title>
+      <link>/v1.8/concepts/providers/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v1.8/concepts/providers/</guid>
+      <description>Providers Providers are Crossplane packages that bundle a set of Managed Resources and their respective controllers to allow Crossplane to provision the respective infrastructure resource.
+Here is the list of prominent providers:
+Provider AWS GitHub Repo API Reference Amazon Web Services (AWS) IAM User Provider Jet AWS GitHub Repo API Reference Provider GCP GitHub Repo API Reference Google Cloud Platform (GCP) Service Account Provider Jet GCP GitHub Repo API Reference Provider Azure GitHub Repo API Reference Microsoft Azure Service Principal Provider Jet Azure GitHub Repo API Reference Provider Alibaba GitHub Repo API Reference Provider Rook GitHub Repo API Reference Provider Helm GitHub Repo API Reference Provider Terraform GitHub Repo API Reference Provider Kubernetes GitHub Repo API Reference Provider SQL GitHub Repo API Reference Provider Gitlab GitHub Repo API Reference Provider Equinix Metal GitHub Repo API Reference Provider Digital Ocean GitHub Repo API Reference Provider Civo GitHub Repo API Reference Provider IBM Cloud GitHub Repo API Reference Provider Argocd GitHub Repo API Reference Provider Styra GitHub Repo API Reference Provider Cloudflare GitHub Repo API Reference Installing Providers The core Crossplane controller can install provider controllers and CRDs for you through its own provider packaging mechanism, which is triggered by the application of a Provider resource.</description>
+    </item>
+    
+    <item>
+      <title>Providers</title>
+      <link>/v1.9/concepts/providers/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v1.9/concepts/providers/</guid>
+      <description>Providers Providers are Crossplane packages that bundle a set of Managed Resources and their respective controllers to allow Crossplane to provision the respective infrastructure resource.
+Here is the list of prominent providers:
+Provider AWS GitHub Repo API Reference Amazon Web Services (AWS) IAM User Provider Jet AWS GitHub Repo API Reference Provider GCP GitHub Repo API Reference Google Cloud Platform (GCP) Service Account Provider Jet GCP GitHub Repo API Reference Provider Azure GitHub Repo API Reference Microsoft Azure Service Principal Provider Jet Azure GitHub Repo API Reference Provider Alibaba GitHub Repo API Reference Provider Rook GitHub Repo API Reference Provider Helm GitHub Repo API Reference Provider Terraform GitHub Repo API Reference Provider Kubernetes GitHub Repo API Reference Provider SQL GitHub Repo API Reference Provider Gitlab GitHub Repo API Reference Provider Equinix Metal GitHub Repo API Reference Provider Digital Ocean GitHub Repo API Reference Provider Civo GitHub Repo API Reference Provider IBM Cloud GitHub Repo API Reference Provider Argocd GitHub Repo API Reference Provider Styra GitHub Repo API Reference Provider Cloudflare GitHub Repo API Reference Installing Providers The core Crossplane controller can install provider controllers and CRDs for you through its own provider packaging mechanism, which is triggered by the application of a Provider resource.</description>
+    </item>
+    
+    <item>
+      <title>Managed Resources</title>
+      <link>/master/concepts/managed-resources/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/master/concepts/managed-resources/</guid>
+      <description>Managed Resources Overview A Managed Resource (MR) is Crossplane&amp;rsquo;s representation of a resource in an external system - most commonly a cloud provider. Managed Resources are opinionated, Crossplane Resource Model (XRM) compliant Kubernetes Custom Resources that are installed by a Crossplane provider.
+For example, RDSInstance in the AWS Provider corresponds to an actual RDS Instance in AWS. There is a one-to-one relationship and the changes on managed resources are reflected directly on the corresponding resource in the provider.</description>
+    </item>
+    
+    <item>
+      <title>Managed Resources</title>
+      <link>/v1.7/concepts/managed-resources/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v1.7/concepts/managed-resources/</guid>
+      <description>Managed Resources Overview A Managed Resource (MR) is Crossplane&amp;rsquo;s representation of a resource in an external system - most commonly a cloud provider. Managed Resources are opinionated, Crossplane Resource Model (XRM) compliant Kubernetes Custom Resources that are installed by a Crossplane provider.
+For example, RDSInstance in the AWS Provider corresponds to an actual RDS Instance in AWS. There is a one-to-one relationship and the changes on managed resources are reflected directly on the corresponding resource in the provider.</description>
+    </item>
+    
+    <item>
+      <title>Managed Resources</title>
+      <link>/v1.8/concepts/managed-resources/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v1.8/concepts/managed-resources/</guid>
+      <description>Managed Resources Overview A Managed Resource (MR) is Crossplane&amp;rsquo;s representation of a resource in an external system - most commonly a cloud provider. Managed Resources are opinionated, Crossplane Resource Model (XRM) compliant Kubernetes Custom Resources that are installed by a Crossplane provider.
+For example, RDSInstance in the AWS Provider corresponds to an actual RDS Instance in AWS. There is a one-to-one relationship and the changes on managed resources are reflected directly on the corresponding resource in the provider.</description>
+    </item>
+    
+    <item>
+      <title>Managed Resources</title>
+      <link>/v1.9/concepts/managed-resources/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v1.9/concepts/managed-resources/</guid>
+      <description>Managed Resources Overview A Managed Resource (MR) is Crossplane&amp;rsquo;s representation of a resource in an external system - most commonly a cloud provider. Managed Resources are opinionated, Crossplane Resource Model (XRM) compliant Kubernetes Custom Resources that are installed by a Crossplane provider.
+For example, RDSInstance in the AWS Provider corresponds to an actual RDS Instance in AWS. There is a one-to-one relationship and the changes on managed resources are reflected directly on the corresponding resource in the provider.</description>
+    </item>
+    
+    <item>
+      <title>Composite Resources</title>
+      <link>/master/concepts/composition/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/master/concepts/composition/</guid>
+      <description>Composite Resources Overview Crossplane Composite Resources are opinionated Kubernetes Custom Resources that are composed of Managed Resources. We often call them XRs for short.
+Composite Resources are designed to let you build your own platform with your own opinionated concepts and APIs without needing to write a Kubernetes controller from scratch. Instead, you define the schema of your XR and teach Crossplane which Managed Resources it should compose (i.e. create) when someone creates the XR you defined.</description>
+    </item>
+    
+    <item>
+      <title>Composite Resources</title>
+      <link>/v1.7/concepts/composition/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v1.7/concepts/composition/</guid>
+      <description>Composite Resources Overview Crossplane Composite Resources are opinionated Kubernetes Custom Resources that are composed of Managed Resources. We often call them XRs for short.
+Composite Resources are designed to let you build your own platform with your own opinionated concepts and APIs without needing to write a Kubernetes controller from scratch. Instead, you define the schema of your XR and teach Crossplane which Managed Resources it should compose (i.e. create) when someone creates the XR you defined.</description>
+    </item>
+    
+    <item>
+      <title>Composite Resources</title>
+      <link>/v1.8/concepts/composition/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v1.8/concepts/composition/</guid>
+      <description>Composite Resources Overview Crossplane Composite Resources are opinionated Kubernetes Custom Resources that are composed of Managed Resources. We often call them XRs for short.
+Composite Resources are designed to let you build your own platform with your own opinionated concepts and APIs without needing to write a Kubernetes controller from scratch. Instead, you define the schema of your XR and teach Crossplane which Managed Resources it should compose (i.e. create) when someone creates the XR you defined.</description>
+    </item>
+    
+    <item>
+      <title>Composite Resources</title>
+      <link>/v1.9/concepts/composition/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v1.9/concepts/composition/</guid>
+      <description>Composite Resources Overview Crossplane Composite Resources are opinionated Kubernetes Custom Resources that are composed of Managed Resources. We often call them XRs for short.
+Composite Resources are designed to let you build your own platform with your own opinionated concepts and APIs without needing to write a Kubernetes controller from scratch. Instead, you define the schema of your XR and teach Crossplane which Managed Resources it should compose (i.e. create) when someone creates the XR you defined.</description>
+    </item>
+    
+    <item>
+      <title>Packages</title>
+      <link>/master/concepts/packages/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/master/concepts/packages/</guid>
+      <description>Crossplane Packages Crossplane packages are opinionated OCI images that contain a stream of YAML that can be parsed by the Crossplane package manager. Crossplane packages come in two varieties: Providers and Configurations. Ultimately, the primary purposes of Crossplane packages are as follows:
+Convenient Distribution: Crossplane packages can be pushed to or installed from any OCI-compatible registry. Version Upgrade: Crossplane can update packages in-place, meaning that you can pick up support for new resource types or controller bug-fixes without modifying your existing infrastructure.</description>
+    </item>
+    
+    <item>
+      <title>Packages</title>
+      <link>/v1.7/concepts/packages/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v1.7/concepts/packages/</guid>
+      <description>Crossplane Packages Crossplane packages are opinionated OCI images that contain a stream of YAML that can be parsed by the Crossplane package manager. Crossplane packages come in two varieties: Providers and Configurations. Ultimately, the primary purposes of Crossplane packages are as follows:
+Convenient Distribution: Crossplane packages can be pushed to or installed from any OCI-compatible registry. Version Upgrade: Crossplane can update packages in-place, meaning that you can pick up support for new resource types or controller bug-fixes without modifying your existing infrastructure.</description>
+    </item>
+    
+    <item>
+      <title>Packages</title>
+      <link>/v1.8/concepts/packages/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v1.8/concepts/packages/</guid>
+      <description>Crossplane Packages Crossplane packages are opinionated OCI images that contain a stream of YAML that can be parsed by the Crossplane package manager. Crossplane packages come in two varieties: Providers and Configurations. Ultimately, the primary purposes of Crossplane packages are as follows:
+Convenient Distribution: Crossplane packages can be pushed to or installed from any OCI-compatible registry. Version Upgrade: Crossplane can update packages in-place, meaning that you can pick up support for new resource types or controller bug-fixes without modifying your existing infrastructure.</description>
+    </item>
+    
+    <item>
+      <title>Packages</title>
+      <link>/v1.9/concepts/packages/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v1.9/concepts/packages/</guid>
+      <description>Crossplane Packages Crossplane packages are opinionated OCI images that contain a stream of YAML that can be parsed by the Crossplane package manager. Crossplane packages come in two varieties: Providers and Configurations. Ultimately, the primary purposes of Crossplane packages are as follows:
+Convenient Distribution: Crossplane packages can be pushed to or installed from any OCI-compatible registry. Version Upgrade: Crossplane can update packages in-place, meaning that you can pick up support for new resource types or controller bug-fixes without modifying your existing infrastructure.</description>
+    </item>
+    
+    <item>
+      <title>Terminology</title>
+      <link>/master/concepts/terminology/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/master/concepts/terminology/</guid>
+      <description>Terminology A Note on Style Each type of Kubernetes resource has a ‘Pascal case’ name - i.e. a title case name with no spaces between each word. Examples include ‘DaemonSet’ and ‘PersistentVolumeClaim’. Often these names are written using fixed width fonts to draw attention to the fact that they’re a concrete type of resource within the API - e.g. PersistentVolumeClaim.
+Crossplane follows this convention. We often use names like RDSInstance or CompositeResourceDefinition when discussing Crossplane types.</description>
+    </item>
+    
+    <item>
+      <title>Terminology</title>
+      <link>/v1.7/concepts/terminology/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v1.7/concepts/terminology/</guid>
+      <description>Terminology A Note on Style Each type of Kubernetes resource has a ‘Pascal case’ name - i.e. a title case name with no spaces between each word. Examples include ‘DaemonSet’ and ‘PersistentVolumeClaim’. Often these names are written using fixed width fonts to draw attention to the fact that they’re a concrete type of resource within the API - e.g. PersistentVolumeClaim.
+Crossplane follows this convention. We often use names like RDSInstance or CompositeResourceDefinition when discussing Crossplane types.</description>
+    </item>
+    
+    <item>
+      <title>Terminology</title>
+      <link>/v1.8/concepts/terminology/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v1.8/concepts/terminology/</guid>
+      <description>Terminology A Note on Style Each type of Kubernetes resource has a ‘Pascal case’ name - i.e. a title case name with no spaces between each word. Examples include ‘DaemonSet’ and ‘PersistentVolumeClaim’. Often these names are written using fixed width fonts to draw attention to the fact that they’re a concrete type of resource within the API - e.g. PersistentVolumeClaim.
+Crossplane follows this convention. We often use names like RDSInstance or CompositeResourceDefinition when discussing Crossplane types.</description>
+    </item>
+    
+    <item>
+      <title>Terminology</title>
+      <link>/v1.9/concepts/terminology/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v1.9/concepts/terminology/</guid>
+      <description>Terminology A Note on Style Each type of Kubernetes resource has a ‘Pascal case’ name - i.e. a title case name with no spaces between each word. Examples include ‘DaemonSet’ and ‘PersistentVolumeClaim’. Often these names are written using fixed width fonts to draw attention to the fact that they’re a concrete type of resource within the API - e.g. PersistentVolumeClaim.
+Crossplane follows this convention. We often use names like RDSInstance or CompositeResourceDefinition when discussing Crossplane types.</description>
+    </item>
+    
+    <item>
+      <title>Upgrading to v0.14</title>
+      <link>/master/guides/upgrading-to-v0.14/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/master/guides/upgrading-to-v0.14/</guid>
+      <description>Upgrading to v0.14 Crossplane made a small handful of breaking changes in v0.14. The most broadly impactful change was updating the CompositeResourceDefinition (XRD) schema to support defining multiple versions of a composite resource (XR) at once. This guide covers how to upgrade from v0.13 of Crossplane to v0.14.
+Updating CompositeResourceDefinitions Updating Packages Updating CompositeResourceDefinitions In v0.14 the schema of XRD was updated to support defining multiple versions of an XR. This update requires manual update steps.</description>
+    </item>
+    
+    <item>
+      <title>Upgrading to v0.14</title>
+      <link>/v1.7/guides/upgrading-to-v0.14/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v1.7/guides/upgrading-to-v0.14/</guid>
+      <description>Upgrading to v0.14 Crossplane made a small handful of breaking changes in v0.14. The most broadly impactful change was updating the CompositeResourceDefinition (XRD) schema to support defining multiple versions of a composite resource (XR) at once. This guide covers how to upgrade from v0.13 of Crossplane to v0.14.
+Updating CompositeResourceDefinitions Updating Packages Updating CompositeResourceDefinitions In v0.14 the schema of XRD was updated to support defining multiple versions of an XR. This update requires manual update steps.</description>
+    </item>
+    
+    <item>
+      <title>Upgrading to v0.14</title>
+      <link>/v1.8/guides/upgrading-to-v0.14/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v1.8/guides/upgrading-to-v0.14/</guid>
+      <description>Upgrading to v0.14 Crossplane made a small handful of breaking changes in v0.14. The most broadly impactful change was updating the CompositeResourceDefinition (XRD) schema to support defining multiple versions of a composite resource (XR) at once. This guide covers how to upgrade from v0.13 of Crossplane to v0.14.
+Updating CompositeResourceDefinitions Updating Packages Updating CompositeResourceDefinitions In v0.14 the schema of XRD was updated to support defining multiple versions of an XR. This update requires manual update steps.</description>
+    </item>
+    
+    <item>
+      <title>Upgrading to v0.14</title>
+      <link>/v1.9/guides/upgrading-to-v0.14/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v1.9/guides/upgrading-to-v0.14/</guid>
+      <description>Upgrading to v0.14 Crossplane made a small handful of breaking changes in v0.14. The most broadly impactful change was updating the CompositeResourceDefinition (XRD) schema to support defining multiple versions of a composite resource (XR) at once. This guide covers how to upgrade from v0.13 of Crossplane to v0.14.
+Updating CompositeResourceDefinitions Updating Packages Updating CompositeResourceDefinitions In v0.14 the schema of XRD was updated to support defining multiple versions of an XR. This update requires manual update steps.</description>
+    </item>
+    
+    <item>
+      <title>Upgrading to v1.x</title>
+      <link>/master/guides/upgrading-to-v1.x/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/master/guides/upgrading-to-v1.x/</guid>
+      <description>Upgrading to v1.x Crossplane versions post v1.0 do not introduce any breaking changes, but may make some backward compatible changes to the core Crossplane CRDs. Helm does not currently touch CRDs when a chart is upgraded, so Crossplane has moved to managing its own CRDs as of v1.2.0. However, for versions prior to v1.2.0, you must manually apply the appropriate CRDs before upgrading.
+Upgrading to v1.0.x or v1.1.x To upgrade from the currently installed version, run:</description>
+    </item>
+    
+    <item>
+      <title>Upgrading to v1.x</title>
+      <link>/v1.7/guides/upgrading-to-v1.x/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v1.7/guides/upgrading-to-v1.x/</guid>
+      <description>Upgrading to v1.x Crossplane versions post v1.0 do not introduce any breaking changes, but may make some backward compatible changes to the core Crossplane CRDs. Helm does not currently touch CRDs when a chart is upgraded, so Crossplane has moved to managing its own CRDs as of v1.2.0. However, for versions prior to v1.2.0, you must manually apply the appropriate CRDs before upgrading.
+Upgrading to v1.0.x or v1.1.x To upgrade from the currently installed version, run:</description>
+    </item>
+    
+    <item>
+      <title>Upgrading to v1.x</title>
+      <link>/v1.8/guides/upgrading-to-v1.x/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v1.8/guides/upgrading-to-v1.x/</guid>
+      <description>Upgrading to v1.x Crossplane versions post v1.0 do not introduce any breaking changes, but may make some backward compatible changes to the core Crossplane CRDs. Helm does not currently touch CRDs when a chart is upgraded, so Crossplane has moved to managing its own CRDs as of v1.2.0. However, for versions prior to v1.2.0, you must manually apply the appropriate CRDs before upgrading.
+Upgrading to v1.0.x or v1.1.x To upgrade from the currently installed version, run:</description>
+    </item>
+    
+    <item>
+      <title>Upgrading to v1.x</title>
+      <link>/v1.9/guides/upgrading-to-v1.x/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v1.9/guides/upgrading-to-v1.x/</guid>
+      <description>Upgrading to v1.x Crossplane versions post v1.0 do not introduce any breaking changes, but may make some backward compatible changes to the core Crossplane CRDs. Helm does not currently touch CRDs when a chart is upgraded, so Crossplane has moved to managing its own CRDs as of v1.2.0. However, for versions prior to v1.2.0, you must manually apply the appropriate CRDs before upgrading.
+Upgrading to v1.0.x or v1.1.x To upgrade from the currently installed version, run:</description>
+    </item>
+    
+    <item>
+      <title>Vault as an External Secret Store</title>
+      <link>/master/guides/vault-as-secret-store/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/master/guides/vault-as-secret-store/</guid>
+      <description>Using Vault as an External Secret Store This guide walks through the steps required to configure Crossplane and its Providers to use Vault as an External Secret Store. For the sake of completeness, we will also include steps for Vault installation and setup, however, you can skip those and use your existing Vault.
+External Secret Stores are an alpha feature. They are not yet recommended for production use, and are disabled by default.</description>
+    </item>
+    
+    <item>
+      <title>Vault as an External Secret Store</title>
+      <link>/v1.7/guides/vault-as-secret-store/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v1.7/guides/vault-as-secret-store/</guid>
+      <description>Using Vault as an External Secret Store This guide walks through the steps required to configure Crossplane and its Providers to use Vault as an External Secret Store. For the sake of completeness, we will also include steps for Vault installation and setup, however, you can skip those and use your existing Vault.
+External Secret Stores are an alpha feature. They are not yet recommended for production use, and are disabled by default.</description>
+    </item>
+    
+    <item>
+      <title>Vault as an External Secret Store</title>
+      <link>/v1.8/guides/vault-as-secret-store/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v1.8/guides/vault-as-secret-store/</guid>
+      <description>Using Vault as an External Secret Store This guide walks through the steps required to configure Crossplane and its Providers to use Vault as an External Secret Store. For the sake of completeness, we will also include steps for Vault installation and setup, however, you can skip those and use your existing Vault.
+External Secret Stores are an alpha feature. They are not yet recommended for production use, and are disabled by default.</description>
+    </item>
+    
+    <item>
+      <title>Vault as an External Secret Store</title>
+      <link>/v1.9/guides/vault-as-secret-store/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v1.9/guides/vault-as-secret-store/</guid>
+      <description>Using Vault as an External Secret Store This guide walks through the steps required to configure Crossplane and its Providers to use Vault as an External Secret Store. For the sake of completeness, we will also include steps for Vault installation and setup, however, you can skip those and use your existing Vault.
+External Secret Stores are an alpha feature. They are not yet recommended for production use, and are disabled by default.</description>
+    </item>
+    
+    <item>
+      <title>Vault Credential Injection</title>
+      <link>/master/guides/vault-injection/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/master/guides/vault-injection/</guid>
+      <description>Using Vault for Provider Credentials This guide is adapted from the Vault on Minikube and Vault Kubernetes Sidecar guides.
+Most Crossplane providers support supplying credentials from at least the following sources:
+Kubernetes Secret Environment Variable Filesystem A provider may optionally support additional credentials sources, but the common sources cover a wide variety of use cases. One specific use case that is popular among organizations that use Vault for secrets management is using a sidecar to inject credentials into the filesystem.</description>
+    </item>
+    
+    <item>
+      <title>Vault Credential Injection</title>
+      <link>/v1.7/guides/vault-injection/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v1.7/guides/vault-injection/</guid>
+      <description>Using Vault for Provider Credentials This guide is adapted from the Vault on Minikube and Vault Kubernetes Sidecar guides.
+Most Crossplane providers support supplying credentials from at least the following sources:
+Kubernetes Secret Environment Variable Filesystem A provider may optionally support additional credentials sources, but the common sources cover a wide variety of use cases. One specific use case that is popular among organizations that use Vault for secrets management is using a sidecar to inject credentials into the filesystem.</description>
+    </item>
+    
+    <item>
+      <title>Vault Credential Injection</title>
+      <link>/v1.8/guides/vault-injection/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v1.8/guides/vault-injection/</guid>
+      <description>Using Vault for Provider Credentials This guide is adapted from the Vault on Minikube and Vault Kubernetes Sidecar guides.
+Most Crossplane providers support supplying credentials from at least the following sources:
+Kubernetes Secret Environment Variable Filesystem A provider may optionally support additional credentials sources, but the common sources cover a wide variety of use cases. One specific use case that is popular among organizations that use Vault for secrets management is using a sidecar to inject credentials into the filesystem.</description>
+    </item>
+    
+    <item>
+      <title>Vault Credential Injection</title>
+      <link>/v1.9/guides/vault-injection/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v1.9/guides/vault-injection/</guid>
+      <description>Using Vault for Provider Credentials This guide is adapted from the Vault on Minikube and Vault Kubernetes Sidecar guides.
+Most Crossplane providers support supplying credentials from at least the following sources:
+Kubernetes Secret Environment Variable Filesystem A provider may optionally support additional credentials sources, but the common sources cover a wide variety of use cases. One specific use case that is popular among organizations that use Vault for secrets management is using a sidecar to inject credentials into the filesystem.</description>
+    </item>
+    
+    <item>
+      <title>Multi-Tenant Crossplane</title>
+      <link>/master/guides/multi-tenant/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/master/guides/multi-tenant/</guid>
+      <description>Multi-Tenant Crossplane This guide describes how to use Crossplane effectively in multi-tenant environments by utilizing Kubernetes primitives and compatible policy enforcement projects in the cloud-native ecosystem.
+TL;DR Infrastructure operators in multi-tenant Crossplane environments typically utilize composition and Kubernetes RBAC to define lightweight, standardized policies that dictate what level of self-service developers are given when requesting infrastructure. This is primarily achieved through exposing abstract resource types at the namespace scope, defining Roles for teams and individuals within that namespace, and patching the spec.</description>
+    </item>
+    
+    <item>
+      <title>Multi-Tenant Crossplane</title>
+      <link>/v1.7/guides/multi-tenant/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v1.7/guides/multi-tenant/</guid>
+      <description>Multi-Tenant Crossplane This guide describes how to use Crossplane effectively in multi-tenant environments by utilizing Kubernetes primitives and compatible policy enforcement projects in the cloud-native ecosystem.
+TL;DR Infrastructure operators in multi-tenant Crossplane environments typically utilize composition and Kubernetes RBAC to define lightweight, standardized policies that dictate what level of self-service developers are given when requesting infrastructure. This is primarily achieved through exposing abstract resource types at the namespace scope, defining Roles for teams and individuals within that namespace, and patching the spec.</description>
+    </item>
+    
+    <item>
+      <title>Multi-Tenant Crossplane</title>
+      <link>/v1.8/guides/multi-tenant/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v1.8/guides/multi-tenant/</guid>
+      <description>Multi-Tenant Crossplane This guide describes how to use Crossplane effectively in multi-tenant environments by utilizing Kubernetes primitives and compatible policy enforcement projects in the cloud-native ecosystem.
+TL;DR Infrastructure operators in multi-tenant Crossplane environments typically utilize composition and Kubernetes RBAC to define lightweight, standardized policies that dictate what level of self-service developers are given when requesting infrastructure. This is primarily achieved through exposing abstract resource types at the namespace scope, defining Roles for teams and individuals within that namespace, and patching the spec.</description>
+    </item>
+    
+    <item>
+      <title>Multi-Tenant Crossplane</title>
+      <link>/v1.9/guides/multi-tenant/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v1.9/guides/multi-tenant/</guid>
+      <description>Multi-Tenant Crossplane This guide describes how to use Crossplane effectively in multi-tenant environments by utilizing Kubernetes primitives and compatible policy enforcement projects in the cloud-native ecosystem.
+TL;DR Infrastructure operators in multi-tenant Crossplane environments typically utilize composition and Kubernetes RBAC to define lightweight, standardized policies that dictate what level of self-service developers are given when requesting infrastructure. This is primarily achieved through exposing abstract resource types at the namespace scope, defining Roles for teams and individuals within that namespace, and patching the spec.</description>
+    </item>
+    
+    <item>
+      <title>Composition Revisions</title>
+      <link>/master/guides/composition-revisions/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/master/guides/composition-revisions/</guid>
+      <description>Composition Revisions This guide discusses the use of &amp;ldquo;Composition Revisions&amp;rdquo; to safely make and roll back changes to a Crossplane Composition. It assumes familiarity with Crossplane, and particularly with Composition.
+Composition Revisions are an alpha feature. They are not yet recommended for production use, and are disabled by default.
+A Composition configures how Crossplane should reconcile a Composite Resource (XR). Put otherwise, when you create an XR the selected Composition determines what managed resources Crossplane will create in response.</description>
+    </item>
+    
+    <item>
+      <title>Composition Revisions</title>
+      <link>/v1.7/guides/composition-revisions/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v1.7/guides/composition-revisions/</guid>
+      <description>Composition Revisions This guide discusses the use of &amp;ldquo;Composition Revisions&amp;rdquo; to safely make and roll back changes to a Crossplane Composition. It assumes familiarity with Crossplane, and particularly with Composition.
+Composition Revisions are an alpha feature. They are not yet recommended for production use, and are disabled by default.
+A Composition configures how Crossplane should reconcile a Composite Resource (XR). Put otherwise, when you create an XR the selected Composition determines what managed resources Crossplane will create in response.</description>
+    </item>
+    
+    <item>
+      <title>Composition Revisions</title>
+      <link>/v1.8/guides/composition-revisions/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v1.8/guides/composition-revisions/</guid>
+      <description>Composition Revisions This guide discusses the use of &amp;ldquo;Composition Revisions&amp;rdquo; to safely make and roll back changes to a Crossplane Composition. It assumes familiarity with Crossplane, and particularly with Composition.
+Composition Revisions are an alpha feature. They are not yet recommended for production use, and are disabled by default.
+A Composition configures how Crossplane should reconcile a Composite Resource (XR). Put otherwise, when you create an XR the selected Composition determines what managed resources Crossplane will create in response.</description>
+    </item>
+    
+    <item>
+      <title>Composition Revisions</title>
+      <link>/v1.9/guides/composition-revisions/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v1.9/guides/composition-revisions/</guid>
+      <description>Composition Revisions This guide discusses the use of &amp;ldquo;Composition Revisions&amp;rdquo; to safely make and roll back changes to a Crossplane Composition. It assumes familiarity with Crossplane, and particularly with Composition.
+Composition Revisions are an alpha feature. They are not yet recommended for production use, and are disabled by default.
+A Composition configures how Crossplane should reconcile a Composite Resource (XR). Put otherwise, when you create an XR the selected Composition determines what managed resources Crossplane will create in response.</description>
+    </item>
+    
+    <item>
+      <title>Self-Signed CA Certs</title>
+      <link>/master/guides/self-signed-ca-certs/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/master/guides/self-signed-ca-certs/</guid>
+      <description>Overview of Crossplane for Registry with Self-Signed CA Certificate ! Using self-signed certificates is not advised in production, it is recommended to only use self-signed certificates for testing.
+When Crossplane loads Configuration and Provider Packages from private registries, it must be configured to trust the CA and Intermediate certs.
+Crossplane needs to be installed via the Helm chart with the registryCaBundleConfig.name and registryCaBundleConfig.key parameters defined. See Install Crossplane.
+Configure Create a CA Bundle (A file containing your Root and Intermediate certificates in a specific order).</description>
+    </item>
+    
+    <item>
+      <title>Self-Signed CA Certs</title>
+      <link>/v1.7/guides/self-signed-ca-certs/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v1.7/guides/self-signed-ca-certs/</guid>
+      <description>Overview of Crossplane for Registry with Self-Signed CA Certificate ! Using self-signed certificates is not advised in production, it is recommended to only use self-signed certificates for testing.
+When Crossplane loads Configuration and Provider Packages from private registries, it must be configured to trust the CA and Intermediate certs.
+Crossplane needs to be installed via the Helm chart with the registryCaBundleConfig.name and registryCaBundleConfig.key parameters defined. See Install Crossplane.
+Configure Create a CA Bundle (A file containing your Root and Intermediate certificates in a specific order).</description>
+    </item>
+    
+    <item>
+      <title>Self-Signed CA Certs</title>
+      <link>/v1.8/guides/self-signed-ca-certs/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v1.8/guides/self-signed-ca-certs/</guid>
+      <description>Overview of Crossplane for Registry with Self-Signed CA Certificate ! Using self-signed certificates is not advised in production, it is recommended to only use self-signed certificates for testing.
+When Crossplane loads Configuration and Provider Packages from private registries, it must be configured to trust the CA and Intermediate certs.
+Crossplane needs to be installed via the Helm chart with the registryCaBundleConfig.name and registryCaBundleConfig.key parameters defined. See Install Crossplane.
+Configure Create a CA Bundle (A file containing your Root and Intermediate certificates in a specific order).</description>
+    </item>
+    
+    <item>
+      <title>Self-Signed CA Certs</title>
+      <link>/v1.9/guides/self-signed-ca-certs/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v1.9/guides/self-signed-ca-certs/</guid>
+      <description>Overview of Crossplane for Registry with Self-Signed CA Certificate ! Using self-signed certificates is not advised in production, it is recommended to only use self-signed certificates for testing.
+When Crossplane loads Configuration and Provider Packages from private registries, it must be configured to trust the CA and Intermediate certs.
+Crossplane needs to be installed via the Helm chart with the registryCaBundleConfig.name and registryCaBundleConfig.key parameters defined. See Install Crossplane.
+Configure Create a CA Bundle (A file containing your Root and Intermediate certificates in a specific order).</description>
+    </item>
+    
+    <item>
+      <title>Install</title>
+      <link>/master/reference/install/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/master/reference/install/</guid>
+      <description>Install Crossplane Crossplane can be easily installed into any existing Kubernetes cluster using the regularly published Helm chart. The Helm chart contains all the custom resources and controllers needed to deploy and configure Crossplane.
+Pre-requisites Kubernetes cluster, minimum version v1.16.0+ Helm, minimum version v3.0.0+. Installation Helm charts for Crossplane are currently published to the stable and master channels.
+Stable The stable channel is the most recent release of Crossplane that is considered ready for the community.</description>
+    </item>
+    
+    <item>
+      <title>Install</title>
+      <link>/v1.7/reference/install/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v1.7/reference/install/</guid>
+      <description>Install Crossplane Crossplane can be easily installed into any existing Kubernetes cluster using the regularly published Helm chart. The Helm chart contains all the custom resources and controllers needed to deploy and configure Crossplane.
+Pre-requisites Kubernetes cluster, minimum version v1.16.0+ Helm, minimum version v3.0.0+. Installation Helm charts for Crossplane are currently published to the stable and master channels.
+Stable The stable channel is the most recent release of Crossplane that is considered ready for the community.</description>
+    </item>
+    
+    <item>
+      <title>Install</title>
+      <link>/v1.8/reference/install/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v1.8/reference/install/</guid>
+      <description>Install Crossplane Crossplane can be easily installed into any existing Kubernetes cluster using the regularly published Helm chart. The Helm chart contains all the custom resources and controllers needed to deploy and configure Crossplane.
+Pre-requisites Kubernetes cluster, minimum version v1.16.0+ Helm, minimum version v3.0.0+. Installation Helm charts for Crossplane are currently published to the stable and master channels.
+Stable The stable channel is the most recent release of Crossplane that is considered ready for the community.</description>
+    </item>
+    
+    <item>
+      <title>Install</title>
+      <link>/v1.9/reference/install/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v1.9/reference/install/</guid>
+      <description>Install Crossplane Crossplane can be easily installed into any existing Kubernetes cluster using the regularly published Helm chart. The Helm chart contains all the custom resources and controllers needed to deploy and configure Crossplane.
+Pre-requisites Kubernetes cluster, minimum version v1.16.0+ Helm, minimum version v3.0.0+. Installation Helm charts for Crossplane are currently published to the stable and master channels.
+Stable The stable channel is the most recent release of Crossplane that is considered ready for the community.</description>
+    </item>
+    
+    <item>
+      <title>Configure</title>
+      <link>/master/reference/configure/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/master/reference/configure/</guid>
+      <description>Configure Your Cloud Provider Account In order for Crossplane to be able to manage resources in a specific cloud provider, you will need to create an account for Crossplane to use. Use the links below for cloud-specific instructions to create an account that can be used throughout the guides:
+Google Cloud Platform (GCP) Service Account Microsoft Azure Service Principal Amazon Web Services (AWS) IAM User Once you have configured your cloud provider account, you can get started provisioning resources!</description>
+    </item>
+    
+    <item>
+      <title>Configure</title>
+      <link>/v1.7/reference/configure/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v1.7/reference/configure/</guid>
+      <description>Configure Your Cloud Provider Account In order for Crossplane to be able to manage resources in a specific cloud provider, you will need to create an account for Crossplane to use. Use the links below for cloud-specific instructions to create an account that can be used throughout the guides:
+Google Cloud Platform (GCP) Service Account Microsoft Azure Service Principal Amazon Web Services (AWS) IAM User Once you have configured your cloud provider account, you can get started provisioning resources!</description>
+    </item>
+    
+    <item>
+      <title>Configure</title>
+      <link>/v1.8/reference/configure/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v1.8/reference/configure/</guid>
+      <description>Configure Your Cloud Provider Account In order for Crossplane to be able to manage resources in a specific cloud provider, you will need to create an account for Crossplane to use. Use the links below for cloud-specific instructions to create an account that can be used throughout the guides:
+Google Cloud Platform (GCP) Service Account Microsoft Azure Service Principal Amazon Web Services (AWS) IAM User Once you have configured your cloud provider account, you can get started provisioning resources!</description>
+    </item>
+    
+    <item>
+      <title>Configure</title>
+      <link>/v1.9/reference/configure/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v1.9/reference/configure/</guid>
+      <description>Configure Your Cloud Provider Account In order for Crossplane to be able to manage resources in a specific cloud provider, you will need to create an account for Crossplane to use. Use the links below for cloud-specific instructions to create an account that can be used throughout the guides:
+Google Cloud Platform (GCP) Service Account Microsoft Azure Service Principal Amazon Web Services (AWS) IAM User Once you have configured your cloud provider account, you can get started provisioning resources!</description>
+    </item>
+    
+    <item>
+      <title>Uninstall</title>
+      <link>/master/reference/uninstall/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/master/reference/uninstall/</guid>
+      <description>Uninstalling Crossplane has a number of components that must be cleaned up in order to guarantee proper removal from the cluster. When deleting objects, it is best to consider parent-child relationships and clean up the children first to ensure the proper action is taken externally. For instance, cleaning up provider-aws before deleting an RDSInstance will result in the RDS instance remaining provisioned on AWS as the controller responsible for cleaning it up will have already been deleted.</description>
+    </item>
+    
+    <item>
+      <title>Uninstall</title>
+      <link>/v1.7/reference/uninstall/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v1.7/reference/uninstall/</guid>
+      <description>Uninstalling Crossplane has a number of components that must be cleaned up in order to guarantee proper removal from the cluster. When deleting objects, it is best to consider parent-child relationships and clean up the children first to ensure the proper action is taken externally. For instance, cleaning up provider-aws before deleting an RDSInstance will result in the RDS instance remaining provisioned on AWS as the controller responsible for cleaning it up will have already been deleted.</description>
+    </item>
+    
+    <item>
+      <title>Uninstall</title>
+      <link>/v1.8/reference/uninstall/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v1.8/reference/uninstall/</guid>
+      <description>Uninstalling Crossplane has a number of components that must be cleaned up in order to guarantee proper removal from the cluster. When deleting objects, it is best to consider parent-child relationships and clean up the children first to ensure the proper action is taken externally. For instance, cleaning up provider-aws before deleting an RDSInstance will result in the RDS instance remaining provisioned on AWS as the controller responsible for cleaning it up will have already been deleted.</description>
+    </item>
+    
+    <item>
+      <title>Uninstall</title>
+      <link>/v1.9/reference/uninstall/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v1.9/reference/uninstall/</guid>
+      <description>Uninstalling Crossplane has a number of components that must be cleaned up in order to guarantee proper removal from the cluster. When deleting objects, it is best to consider parent-child relationships and clean up the children first to ensure the proper action is taken externally. For instance, cleaning up provider-aws before deleting an RDSInstance will result in the RDS instance remaining provisioned on AWS as the controller responsible for cleaning it up will have already been deleted.</description>
+    </item>
+    
+    <item>
+      <title>Composition</title>
+      <link>/master/reference/composition/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/master/reference/composition/</guid>
+      <description>Overview This reference provides detailed examples of defining, configuring, and using Composite Resources in Crossplane. You can also refer to Crossplane&amp;rsquo;s API documentation for more details. If you&amp;rsquo;re looking for a more general overview of Composite Resources and Composition in Crossplane, try the Composite Resources page under Concepts.
+Composite Resources and Claims The type and most of the schema of Composite Resources and claims are largely of your own choosing, but there is some common &amp;lsquo;machinery&amp;rsquo; injected into them.</description>
+    </item>
+    
+    <item>
+      <title>Composition</title>
+      <link>/v1.7/reference/composition/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v1.7/reference/composition/</guid>
+      <description>Overview This reference provides detailed examples of defining, configuring, and using Composite Resources in Crossplane. You can also refer to Crossplane&amp;rsquo;s API documentation for more details. If you&amp;rsquo;re looking for a more general overview of Composite Resources and Composition in Crossplane, try the Composite Resources page under Concepts.
+Composite Resources and Claims The type and most of the schema of Composite Resources and claims are largely of your own choosing, but there is some common &amp;lsquo;machinery&amp;rsquo; injected into them.</description>
+    </item>
+    
+    <item>
+      <title>Composition</title>
+      <link>/v1.8/reference/composition/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v1.8/reference/composition/</guid>
+      <description>Overview This reference provides detailed examples of defining, configuring, and using Composite Resources in Crossplane. You can also refer to Crossplane&amp;rsquo;s API documentation for more details. If you&amp;rsquo;re looking for a more general overview of Composite Resources and Composition in Crossplane, try the Composite Resources page under Concepts.
+Composite Resources and Claims The type and most of the schema of Composite Resources and claims are largely of your own choosing, but there is some common &amp;lsquo;machinery&amp;rsquo; injected into them.</description>
+    </item>
+    
+    <item>
+      <title>Composition</title>
+      <link>/v1.9/reference/composition/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v1.9/reference/composition/</guid>
+      <description>Overview This reference provides detailed examples of defining, configuring, and using Composite Resources in Crossplane. You can also refer to Crossplane&amp;rsquo;s API documentation for more details. If you&amp;rsquo;re looking for a more general overview of Composite Resources and Composition in Crossplane, try the Composite Resources page under Concepts.
+Composite Resources and Claims The type and most of the schema of Composite Resources and claims are largely of your own choosing, but there is some common &amp;lsquo;machinery&amp;rsquo; injected into them.</description>
+    </item>
+    
+    <item>
+      <title>xpkg Specification</title>
+      <link>/master/reference/xpkg/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/master/reference/xpkg/</guid>
+      <description>Overview Crossplane supports two types of packages: Providers and Configurations. These packages are distributed as generic OCI images, which contain YAML content informing the Crossplane package manager how to alter the state of a cluster by installing objects that configure new resource types, and starting controllers to reconcile them. An OCI image that contains valid Crossplane package content is commonly referred to as an xpkg (&amp;ldquo;ex-package&amp;rdquo;). This document provides the specification for a valid xpkg, which can be considered a superset of the requirements detailed in the OCI image specification.</description>
+    </item>
+    
+    <item>
+      <title>xpkg Specification</title>
+      <link>/v1.7/reference/xpkg/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v1.7/reference/xpkg/</guid>
+      <description>Overview Crossplane supports two types of packages: Providers and Configurations. These packages are distributed as generic OCI images, which contain YAML content informing the Crossplane package manager how to alter the state of a cluster by installing objects that configure new resource types, and starting controllers to reconcile them. An OCI image that contains valid Crossplane package content is commonly referred to as an xpkg (&amp;ldquo;ex-package&amp;rdquo;). This document provides the specification for a valid xpkg, which can be considered a superset of the requirements detailed in the OCI image specification.</description>
+    </item>
+    
+    <item>
+      <title>xpkg Specification</title>
+      <link>/v1.8/reference/xpkg/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v1.8/reference/xpkg/</guid>
+      <description>Overview Crossplane supports two types of packages: Providers and Configurations. These packages are distributed as generic OCI images, which contain YAML content informing the Crossplane package manager how to alter the state of a cluster by installing objects that configure new resource types, and starting controllers to reconcile them. An OCI image that contains valid Crossplane package content is commonly referred to as an xpkg (&amp;ldquo;ex-package&amp;rdquo;). This document provides the specification for a valid xpkg, which can be considered a superset of the requirements detailed in the OCI image specification.</description>
+    </item>
+    
+    <item>
+      <title>xpkg Specification</title>
+      <link>/v1.9/reference/xpkg/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v1.9/reference/xpkg/</guid>
+      <description>Overview Crossplane supports two types of packages: Providers and Configurations. These packages are distributed as generic OCI images, which contain YAML content informing the Crossplane package manager how to alter the state of a cluster by installing objects that configure new resource types, and starting controllers to reconcile them. An OCI image that contains valid Crossplane package content is commonly referred to as an xpkg (&amp;ldquo;ex-package&amp;rdquo;). This document provides the specification for a valid xpkg, which can be considered a superset of the requirements detailed in the OCI image specification.</description>
+    </item>
+    
+    <item>
+      <title>Troubleshoot</title>
+      <link>/master/reference/troubleshoot/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/master/reference/troubleshoot/</guid>
+      <description>Troubleshooting Requested Resource Not Found Resource Status and Conditions Resource Events Crossplane Logs Provider Logs Pausing Crossplane Pausing Providers Deleting When a Resource Hangs Installing Crossplane Package Handling Crossplane Package Dependency Requested Resource Not Found If you use the kubectl Crossplane plugin to install a Provider or Configuration (e.g. kubectl crossplane install provider crossplane/provider-aws:master) and get the server could not find the requested resource error, more often than not, that is an indicator that the kubectl Crossplane you&amp;rsquo;re using is outdated.</description>
+    </item>
+    
+    <item>
+      <title>Troubleshoot</title>
+      <link>/v1.7/reference/troubleshoot/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v1.7/reference/troubleshoot/</guid>
+      <description>Troubleshooting Requested Resource Not Found Resource Status and Conditions Resource Events Crossplane Logs Provider Logs Pausing Crossplane Pausing Providers Deleting When a Resource Hangs Installing Crossplane Package Handling Crossplane Package Dependency Requested Resource Not Found If you use the kubectl Crossplane plugin to install a Provider or Configuration (e.g. kubectl crossplane install provider crossplane/provider-aws:master) and get the server could not find the requested resource error, more often than not, that is an indicator that the kubectl Crossplane you&amp;rsquo;re using is outdated.</description>
+    </item>
+    
+    <item>
+      <title>Troubleshoot</title>
+      <link>/v1.8/reference/troubleshoot/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v1.8/reference/troubleshoot/</guid>
+      <description>Troubleshooting Requested Resource Not Found Resource Status and Conditions Resource Events Crossplane Logs Provider Logs Pausing Crossplane Pausing Providers Deleting When a Resource Hangs Installing Crossplane Package Handling Crossplane Package Dependency Requested Resource Not Found If you use the kubectl Crossplane plugin to install a Provider or Configuration (e.g. kubectl crossplane install provider crossplane/provider-aws:master) and get the server could not find the requested resource error, more often than not, that is an indicator that the kubectl Crossplane you&amp;rsquo;re using is outdated.</description>
+    </item>
+    
+    <item>
+      <title>Troubleshoot</title>
+      <link>/v1.9/reference/troubleshoot/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v1.9/reference/troubleshoot/</guid>
+      <description>Troubleshooting Requested Resource Not Found Resource Status and Conditions Resource Events Crossplane Logs Provider Logs Pausing Crossplane Pausing Providers Deleting When a Resource Hangs Installing Crossplane Package Handling Crossplane Package Dependency Requested Resource Not Found If you use the kubectl Crossplane plugin to install a Provider or Configuration (e.g. kubectl crossplane install provider crossplane/provider-aws:master) and get the server could not find the requested resource error, more often than not, that is an indicator that the kubectl Crossplane you&amp;rsquo;re using is outdated.</description>
+    </item>
+    
+    <item>
+      <title>Learn More</title>
+      <link>/master/reference/learn_more/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/master/reference/learn_more/</guid>
+      <description>Learn More If you have any questions, please drop us a note on Crossplane Slack or contact us!
+Learn more about using Crossplane
+Latest Design Docs Roadmap Crossplane Architecture GitLab deploys into multiple clouds from kubectl using Crossplane CNCF Talks &amp;amp; Community Presentations Software Engineering Daily - Intro Podcast Writing Kubernetes controllers to extend Crossplane
+Keep the Space Shuttle Flying: Writing Robust Operators Best practices for building Kubernetes Operators Programming Kubernetes Book Contributor Guide Join the growing Crossplane community and get involved!</description>
+    </item>
+    
+    <item>
+      <title>Learn More</title>
+      <link>/v1.7/reference/learn_more/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v1.7/reference/learn_more/</guid>
+      <description>Learn More If you have any questions, please drop us a note on Crossplane Slack or contact us!
+Learn more about using Crossplane
+Latest Design Docs Roadmap Crossplane Architecture GitLab deploys into multiple clouds from kubectl using Crossplane CNCF Talks &amp;amp; Community Presentations Software Engineering Daily - Intro Podcast Writing Kubernetes controllers to extend Crossplane
+Keep the Space Shuttle Flying: Writing Robust Operators Best practices for building Kubernetes Operators Programming Kubernetes Book Contributor Guide Join the growing Crossplane community and get involved!</description>
+    </item>
+    
+    <item>
+      <title>Learn More</title>
+      <link>/v1.8/reference/learn_more/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v1.8/reference/learn_more/</guid>
+      <description>Learn More If you have any questions, please drop us a note on Crossplane Slack or contact us!
+Learn more about using Crossplane
+Latest Design Docs Roadmap Crossplane Architecture GitLab deploys into multiple clouds from kubectl using Crossplane CNCF Talks &amp;amp; Community Presentations Software Engineering Daily - Intro Podcast Writing Kubernetes controllers to extend Crossplane
+Keep the Space Shuttle Flying: Writing Robust Operators Best practices for building Kubernetes Operators Programming Kubernetes Book Contributor Guide Join the growing Crossplane community and get involved!</description>
+    </item>
+    
+    <item>
+      <title>Learn More</title>
+      <link>/v1.9/reference/learn_more/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v1.9/reference/learn_more/</guid>
+      <description>Learn More If you have any questions, please drop us a note on Crossplane Slack or contact us!
+Learn more about using Crossplane
+Latest Design Docs Roadmap Crossplane Architecture GitLab deploys into multiple clouds from kubectl using Crossplane CNCF Talks &amp;amp; Community Presentations Software Engineering Daily - Intro Podcast Writing Kubernetes controllers to extend Crossplane
+Keep the Space Shuttle Flying: Writing Robust Operators Best practices for building Kubernetes Operators Programming Kubernetes Book Contributor Guide Join the growing Crossplane community and get involved!</description>
+    </item>
+    
+    <item>
+      <title>Release Cycle</title>
+      <link>/master/reference/release-cycle/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/master/reference/release-cycle/</guid>
+      <description>Release Cycle Starting with the v1.0.0 release, Crossplane is released on an eight week cadence. A cycle is comprised of three general stages:
+Weeks 1-6: Active Development Week 7: Feature Freeze Week 8: Code Freeze This results in six releases per year, with the most recent three releases being maintained at any given time. When a new release is cut, the fourth most recent release reaches end of life (EOL). Users can expect any given release to be maintained for six months.</description>
+    </item>
+    
+    <item>
+      <title>Release Cycle</title>
+      <link>/v1.7/reference/release-cycle/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v1.7/reference/release-cycle/</guid>
+      <description>Release Cycle Starting with the v1.0.0 release, Crossplane is released on an eight week cadence. A cycle is comprised of three general stages:
+Weeks 1-6: Active Development Week 7: Feature Freeze Week 8: Code Freeze This results in six releases per year, with the most recent three releases being maintained at any given time. When a new release is cut, the fourth most recent release reaches end of life (EOL). Users can expect any given release to be maintained for six months.</description>
+    </item>
+    
+    <item>
+      <title>Release Cycle</title>
+      <link>/v1.8/reference/release-cycle/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v1.8/reference/release-cycle/</guid>
+      <description>Release Cycle Starting with the v1.0.0 release, Crossplane is released on an eight week cadence. A cycle is comprised of three general stages:
+Weeks 1-6: Active Development Week 7: Feature Freeze Week 8: Code Freeze This results in six releases per year, with the most recent three releases being maintained at any given time. When a new release is cut, the fourth most recent release reaches end of life (EOL). Users can expect any given release to be maintained for six months.</description>
+    </item>
+    
+    <item>
+      <title>Release Cycle</title>
+      <link>/v1.9/reference/release-cycle/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v1.9/reference/release-cycle/</guid>
+      <description>Release Cycle Starting with the v1.0.0 release, Crossplane is released on an eight week cadence. A cycle is comprised of three general stages:
+Weeks 1-6: Active Development Week 7: Feature Freeze Week 8: Code Freeze This results in six releases per year, with the most recent three releases being maintained at any given time. When a new release is cut, the fourth most recent release reaches end of life (EOL). Users can expect any given release to be maintained for six months.</description>
+    </item>
+    
+    <item>
+      <title>crossplane</title>
+      <link>/master/api-docs/crossplane/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/master/api-docs/crossplane/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>crossplane</title>
+      <link>/v1.7/api-docs/crossplane/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v1.7/api-docs/crossplane/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>crossplane</title>
+      <link>/v1.8/api-docs/crossplane/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v1.8/api-docs/crossplane/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>crossplane</title>
+      <link>/v1.9/api-docs/crossplane/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v1.9/api-docs/crossplane/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>alibaba</title>
+      <link>/v1.8/api-docs/provider-alibaba/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v1.8/api-docs/provider-alibaba/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>alibaba</title>
+      <link>/v1.9/api-docs/provider-alibaba/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v1.9/api-docs/provider-alibaba/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>provider-alibaba</title>
+      <link>/master/api-docs/provider-alibaba/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/master/api-docs/provider-alibaba/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>provider-alibaba</title>
+      <link>/v1.7/api-docs/provider-alibaba/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v1.7/api-docs/provider-alibaba/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>aws</title>
+      <link>/v1.8/api-docs/provider-aws/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v1.8/api-docs/provider-aws/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>aws</title>
+      <link>/v1.9/api-docs/provider-aws/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v1.9/api-docs/provider-aws/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>provider-aws</title>
+      <link>/master/api-docs/provider-aws/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/master/api-docs/provider-aws/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>provider-aws</title>
+      <link>/v1.7/api-docs/provider-aws/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v1.7/api-docs/provider-aws/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>azure</title>
+      <link>/v1.8/api-docs/provider-azure/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v1.8/api-docs/provider-azure/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>azure</title>
+      <link>/v1.9/api-docs/provider-azure/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v1.9/api-docs/provider-azure/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>provider-azure</title>
+      <link>/master/api-docs/provider-azure/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/master/api-docs/provider-azure/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>provider-azure</title>
+      <link>/v1.7/api-docs/provider-azure/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v1.7/api-docs/provider-azure/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>gcp</title>
+      <link>/v1.8/api-docs/provider-gcp/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v1.8/api-docs/provider-gcp/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>gcp</title>
+      <link>/v1.9/api-docs/provider-gcp/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v1.9/api-docs/provider-gcp/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>provider-gcp</title>
+      <link>/master/api-docs/provider-gcp/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/master/api-docs/provider-gcp/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>provider-gcp</title>
+      <link>/v1.7/api-docs/provider-gcp/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v1.7/api-docs/provider-gcp/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>provider-rook</title>
+      <link>/master/api-docs/provider-rook/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/master/api-docs/provider-rook/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>provider-rook</title>
+      <link>/v1.7/api-docs/provider-rook/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v1.7/api-docs/provider-rook/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>rook</title>
+      <link>/v1.8/api-docs/provider-rook/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v1.8/api-docs/provider-rook/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>rook</title>
+      <link>/v1.9/api-docs/provider-rook/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v1.9/api-docs/provider-rook/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>helm</title>
+      <link>/v1.8/api-docs/provider-helm/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v1.8/api-docs/provider-helm/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>helm</title>
+      <link>/v1.9/api-docs/provider-helm/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v1.9/api-docs/provider-helm/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>provider-helm</title>
+      <link>/master/api-docs/provider-helm/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/master/api-docs/provider-helm/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>provider-helm</title>
+      <link>/v1.7/api-docs/provider-helm/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v1.7/api-docs/provider-helm/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Provider Development Guide</title>
+      <link>/master/contributing/provider_development_guide/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/master/contributing/provider_development_guide/</guid>
+      <description>Provider Development Guide Crossplane allows you to manage infrastructure directly from Kubernetes. Each infrastructure API resource that Crossplane orchestrates is known as a &amp;ldquo;managed resource&amp;rdquo;. This guide will walk through the process of adding support for a new kind of managed resource to a Crossplane Provider.
+You can watch TBS Episode 18 to follow along the live implementation of GCP PubSub managed resource.
+If there is a corresponding Terraform Provider, please consider generating a Crossplane Provider with Terrajet by following the Generating a Crossplane Provider guide.</description>
+    </item>
+    
+    <item>
+      <title>Provider Development Guide</title>
+      <link>/v1.7/contributing/provider_development_guide/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v1.7/contributing/provider_development_guide/</guid>
+      <description>Provider Development Guide Crossplane allows you to manage infrastructure directly from Kubernetes. Each infrastructure API resource that Crossplane orchestrates is known as a &amp;ldquo;managed resource&amp;rdquo;. This guide will walk through the process of adding support for a new kind of managed resource to a Crossplane Provider.
+You can watch TBS Episode 18 to follow along the live implementation of GCP PubSub managed resource.
+If there is a corresponding Terraform Provider, please consider generating a Crossplane Provider with Terrajet by following the Generating a Crossplane Provider guide.</description>
+    </item>
+    
+    <item>
+      <title>Provider Development Guide</title>
+      <link>/v1.8/contributing/provider_development_guide/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v1.8/contributing/provider_development_guide/</guid>
+      <description>Provider Development Guide Crossplane allows you to manage infrastructure directly from Kubernetes. Each infrastructure API resource that Crossplane orchestrates is known as a &amp;ldquo;managed resource&amp;rdquo;. This guide will walk through the process of adding support for a new kind of managed resource to a Crossplane Provider.
+You can watch TBS Episode 18 to follow along the live implementation of GCP PubSub managed resource.
+If there is a corresponding Terraform Provider, please consider generating a Crossplane Provider with Terrajet by following the Generating a Crossplane Provider guide.</description>
+    </item>
+    
+    <item>
+      <title>Provider Development Guide</title>
+      <link>/v1.9/contributing/provider_development_guide/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v1.9/contributing/provider_development_guide/</guid>
+      <description>Provider Development Guide Crossplane allows you to manage infrastructure directly from Kubernetes. Each infrastructure API resource that Crossplane orchestrates is known as a &amp;ldquo;managed resource&amp;rdquo;. This guide will walk through the process of adding support for a new kind of managed resource to a Crossplane Provider.
+You can watch TBS Episode 18 to follow along the live implementation of GCP PubSub managed resource.
+If there is a corresponding Terraform Provider, please consider generating a Crossplane Provider with Terrajet by following the Generating a Crossplane Provider guide.</description>
+    </item>
+    
+    <item>
+      <title>Observability Developer Guide</title>
+      <link>/master/contributing/observability_developer_guide/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/master/contributing/observability_developer_guide/</guid>
+      <description>Observability Developer Guide Introduction Observability is crucial to Crossplane users; both those operating Crossplane and those using Crossplane to operate their infrastructure. Crossplane currently approaches observability via Kubernetes events and structured logs.
+Goals In short, a non-admin user and an admin user should both be able to debug any issues only by inspecting logs and events. There should be no need to rebuild the Crossplane binary or to reach out to a Crossplane developer.</description>
+    </item>
+    
+    <item>
+      <title>Observability Developer Guide</title>
+      <link>/v1.7/contributing/observability_developer_guide/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v1.7/contributing/observability_developer_guide/</guid>
+      <description>Observability Developer Guide Introduction Observability is crucial to Crossplane users; both those operating Crossplane and those using Crossplane to operate their infrastructure. Crossplane currently approaches observability via Kubernetes events and structured logs.
+Goals In short, a non-admin user and an admin user should both be able to debug any issues only by inspecting logs and events. There should be no need to rebuild the Crossplane binary or to reach out to a Crossplane developer.</description>
+    </item>
+    
+    <item>
+      <title>Observability Developer Guide</title>
+      <link>/v1.8/contributing/observability_developer_guide/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v1.8/contributing/observability_developer_guide/</guid>
+      <description>Observability Developer Guide Introduction Observability is crucial to Crossplane users; both those operating Crossplane and those using Crossplane to operate their infrastructure. Crossplane currently approaches observability via Kubernetes events and structured logs.
+Goals In short, a non-admin user and an admin user should both be able to debug any issues only by inspecting logs and events. There should be no need to rebuild the Crossplane binary or to reach out to a Crossplane developer.</description>
+    </item>
+    
+    <item>
+      <title>Observability Developer Guide</title>
+      <link>/v1.9/contributing/observability_developer_guide/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v1.9/contributing/observability_developer_guide/</guid>
+      <description>Observability Developer Guide Introduction Observability is crucial to Crossplane users; both those operating Crossplane and those using Crossplane to operate their infrastructure. Crossplane currently approaches observability via Kubernetes events and structured logs.
+Goals In short, a non-admin user and an admin user should both be able to debug any issues only by inspecting logs and events. There should be no need to rebuild the Crossplane binary or to reach out to a Crossplane developer.</description>
+    </item>
+    
+    <item>
+      <title>Release Process</title>
+      <link>/master/contributing/release-process/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/master/contributing/release-process/</guid>
+      <description>Release Process This document is meant to be a complete end-to-end guide for how to release new versions of software for Crossplane and its related projects.
+tl;dr Process Overview All the details are available in the sections below, but we&amp;rsquo;ll start this guide with a very high level sequential overview for how to run the release process. These steps apply to all Crossplane projects, all of which utilize Github Actions for pipelines.</description>
+    </item>
+    
+    <item>
+      <title>Release Process</title>
+      <link>/v1.7/contributing/release-process/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v1.7/contributing/release-process/</guid>
+      <description>Release Process This document is meant to be a complete end-to-end guide for how to release new versions of software for Crossplane and its related projects.
+tl;dr Process Overview All the details are available in the sections below, but we&amp;rsquo;ll start this guide with a very high level sequential overview for how to run the release process. These steps apply to all Crossplane projects, all of which utilize Github Actions for pipelines.</description>
+    </item>
+    
+    <item>
+      <title>Release Process</title>
+      <link>/v1.8/contributing/release-process/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v1.8/contributing/release-process/</guid>
+      <description>Release Process This document is meant to be a complete end-to-end guide for how to release new versions of software for Crossplane and its related projects.
+tl;dr Process Overview All the details are available in the sections below, but we&amp;rsquo;ll start this guide with a very high level sequential overview for how to run the release process. These steps apply to all Crossplane projects, all of which utilize Github Actions for pipelines.</description>
+    </item>
+    
+    <item>
+      <title>Release Process</title>
+      <link>/v1.9/contributing/release-process/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v1.9/contributing/release-process/</guid>
+      <description>Release Process This document is meant to be a complete end-to-end guide for how to release new versions of software for Crossplane and its related projects.
+tl;dr Process Overview All the details are available in the sections below, but we&amp;rsquo;ll start this guide with a very high level sequential overview for how to run the release process. These steps apply to all Crossplane projects, all of which utilize Github Actions for pipelines.</description>
+    </item>
+    
+    <item>
+      <title>Adding Secret Store Support</title>
+      <link>/master/contributing/adding_external_secret_store_support/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/master/contributing/adding_external_secret_store_support/</guid>
+      <description>Adding External Secret Store Support to an Existing Provider To add support for External Secret Stores in a provider, we need the following changes at a high level:
+Bump Crossplane Runtime and Crossplane Tools to latest and generate existing resources to include PublishConnectionDetails API. Add a new Type and CRD for Secret StoreConfig. Add feature flag for enabling External Secret Store support. Add Secret Store Connection Details Manager as a ConnectionPublisher if feature enabled.</description>
+    </item>
+    
+    <item>
+      <title>Adding Secret Store Support</title>
+      <link>/v1.7/contributing/adding_external_secret_store_support/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v1.7/contributing/adding_external_secret_store_support/</guid>
+      <description>Adding External Secret Store Support to an Existing Provider To add support for External Secret Stores in a provider, we need the following changes at a high level:
+Bump Crossplane Runtime and Crossplane Tools to latest and generate existing resources to include PublishConnectionDetails API. Add a new Type and CRD for Secret StoreConfig. Add feature flag for enabling External Secret Store support. Add Secret Store Connection Details Manager as a ConnectionPublisher if feature enabled.</description>
+    </item>
+    
+    <item>
+      <title>Adding Secret Store Support</title>
+      <link>/v1.8/contributing/adding_external_secret_store_support/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v1.8/contributing/adding_external_secret_store_support/</guid>
+      <description>Adding External Secret Store Support to an Existing Provider To add support for External Secret Stores in a provider, we need the following changes at a high level:
+Bump Crossplane Runtime and Crossplane Tools to latest and generate existing resources to include PublishConnectionDetails API. Add a new Type and CRD for Secret StoreConfig. Add feature flag for enabling External Secret Store support. Add Secret Store Connection Details Manager as a ConnectionPublisher if feature enabled.</description>
+    </item>
+    
+    <item>
+      <title>Adding Secret Store Support</title>
+      <link>/v1.9/contributing/adding_external_secret_store_support/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v1.9/contributing/adding_external_secret_store_support/</guid>
+      <description>Adding External Secret Store Support to an Existing Provider To add support for External Secret Stores in a provider, we need the following changes at a high level:
+Bump Crossplane Runtime and Crossplane Tools to latest and generate existing resources to include PublishConnectionDetails API. Add a new Type and CRD for Secret StoreConfig. Add feature flag for enabling External Secret Store support. Add Secret Store Connection Details Manager as a ConnectionPublisher if feature enabled.</description>
+    </item>
+    
+    <item>
+      <title>Related Projects</title>
+      <link>/master/faqs/related_projects/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/master/faqs/related_projects/</guid>
+      <description>Related Projects While there are many projects that address similar issues, none of them encapsulate the full use case that Crossplane addresses. This list is not exhaustive and is not meant to provide a deep analysis of the following projects, but instead to motivate why Crossplane was created.
+Open Service Broker and Service Catalog The Open Service Broker and the Kubernetes Service Catalog are able to dynamically provision cloud services from Kubernetes.</description>
+    </item>
+    
+    <item>
+      <title>Related Projects</title>
+      <link>/v1.7/faqs/related_projects/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v1.7/faqs/related_projects/</guid>
+      <description>Related Projects While there are many projects that address similar issues, none of them encapsulate the full use case that Crossplane addresses. This list is not exhaustive and is not meant to provide a deep analysis of the following projects, but instead to motivate why Crossplane was created.
+Open Service Broker and Service Catalog The Open Service Broker and the Kubernetes Service Catalog are able to dynamically provision cloud services from Kubernetes.</description>
+    </item>
+    
+    <item>
+      <title>Related Projects</title>
+      <link>/v1.8/faqs/related_projects/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v1.8/faqs/related_projects/</guid>
+      <description>Related Projects While there are many projects that address similar issues, none of them encapsulate the full use case that Crossplane addresses. This list is not exhaustive and is not meant to provide a deep analysis of the following projects, but instead to motivate why Crossplane was created.
+Open Service Broker and Service Catalog The Open Service Broker and the Kubernetes Service Catalog are able to dynamically provision cloud services from Kubernetes.</description>
+    </item>
+    
+    <item>
+      <title>Related Projects</title>
+      <link>/v1.9/faqs/related_projects/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v1.9/faqs/related_projects/</guid>
+      <description>Related Projects While there are many projects that address similar issues, none of them encapsulate the full use case that Crossplane addresses. This list is not exhaustive and is not meant to provide a deep analysis of the following projects, but instead to motivate why Crossplane was created.
+Open Service Broker and Service Catalog The Open Service Broker and the Kubernetes Service Catalog are able to dynamically provision cloud services from Kubernetes.</description>
+    </item>
+    
+    <item>
+      <title>provider-aws</title>
+      <link>/v1.9/cloud-providers/aws/aws-provider/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v1.9/cloud-providers/aws/aws-provider/</guid>
+      <description>Adding Amazon Web Services (AWS) to Crossplane In this guide, we will walk through the steps necessary to configure your AWS account to be ready for integration with Crossplane. This will be done by adding an AWS ProviderConfig resource type, which enables Crossplane to communicate with an AWS account.
+Requirements Prior to adding AWS to Crossplane, following steps need to be taken
+Crossplane is installed in a k8s cluster provider-aws is installed in the same cluster kubectl is configured to communicate with the same cluster Step 1: Configure aws CLI Crossplane uses AWS security credentials, and stores them as a secret which is managed by an AWS ProviderConfig instance.</description>
+    </item>
+    
+    <item>
+      <title>provider-azure</title>
+      <link>/v1.9/cloud-providers/azure/azure-provider/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v1.9/cloud-providers/azure/azure-provider/</guid>
+      <description>Adding Microsoft Azure to Crossplane In this guide, we will walk through the steps necessary to configure your Azure account to be ready for integration with Crossplane. The general steps we will take are summarized below:
+Create a new service principal (account) that Crossplane will use to create and manage Azure resources Add the required permissions to the account Consent to the permissions using an administrator account Preparing your Microsoft Azure Account In order to manage resources in Azure, you must provide credentials for a Azure service principal that Crossplane can use to authenticate.</description>
+    </item>
+    
+    <item>
+      <title>provider-gcp</title>
+      <link>/v1.9/cloud-providers/gcp/gcp-provider/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v1.9/cloud-providers/gcp/gcp-provider/</guid>
+      <description>Adding Google Cloud Platform (GCP) to Crossplane In this guide, we will walk through the steps necessary to configure your GCP account to be ready for integration with Crossplane. The general steps we will take are summarized below:
+Create a new example project that all resources will be deployed to Enable required APIs such as Kubernetes and CloudSQL Create a service account that will be used to perform GCP operations from Crossplane Assign necessary roles to the service account Enable billing For your convenience, the specific steps to accomplish those tasks are provided for you below using either the gcloud command line tool, or the GCP console in a web browser.</description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>/master/cloud-providers/aws/aws-provider/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/master/cloud-providers/aws/aws-provider/</guid>
+      <description>Adding Amazon Web Services (AWS) to Crossplane In this guide, we will walk through the steps necessary to configure your AWS account to be ready for integration with Crossplane. This will be done by adding an AWS ProviderConfig resource type, which enables Crossplane to communicate with an AWS account.
+Requirements Prior to adding AWS to Crossplane, following steps need to be taken
+Crossplane is installed in a k8s cluster provider-aws is installed in the same cluster kubectl is configured to communicate with the same cluster Step 1: Configure aws CLI Crossplane uses AWS security credentials, and stores them as a secret which is managed by an AWS ProviderConfig instance.</description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>/master/cloud-providers/azure/azure-provider/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/master/cloud-providers/azure/azure-provider/</guid>
+      <description>Adding Microsoft Azure to Crossplane In this guide, we will walk through the steps necessary to configure your Azure account to be ready for integration with Crossplane. The general steps we will take are summarized below:
+Create a new service principal (account) that Crossplane will use to create and manage Azure resources Add the required permissions to the account Consent to the permissions using an administrator account Preparing your Microsoft Azure Account In order to manage resources in Azure, you must provide credentials for a Azure service principal that Crossplane can use to authenticate.</description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>/master/cloud-providers/gcp/gcp-provider/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/master/cloud-providers/gcp/gcp-provider/</guid>
+      <description>Adding Google Cloud Platform (GCP) to Crossplane In this guide, we will walk through the steps necessary to configure your GCP account to be ready for integration with Crossplane. The general steps we will take are summarized below:
+Create a new example project that all resources will be deployed to Enable required APIs such as Kubernetes and CloudSQL Create a service account that will be used to perform GCP operations from Crossplane Assign necessary roles to the service account Enable billing For your convenience, the specific steps to accomplish those tasks are provided for you below using either the gcloud command line tool, or the GCP console in a web browser.</description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>/v1.8/media/readme/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v1.8/media/readme/</guid>
+      <description>Crossplane Documentation Media The sources of the images in this file are:
+logo.svg - https://github.com/crossplane/artwork/tree/420102/logo composition-*.svg - https://drive.google.com/drive/folders/1ld-XNglPQBT4ue9IBVuDs4HQRizr-5AY?usp=sharing </description>
+    </item>
+    
+    <item>
+      <title>Provider AWS</title>
+      <link>/v1.7/cloud-providers/aws/aws-provider/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v1.7/cloud-providers/aws/aws-provider/</guid>
+      <description>Adding Amazon Web Services (AWS) to Crossplane In this guide, we will walk through the steps necessary to configure your AWS account to be ready for integration with Crossplane. This will be done by adding an AWS ProviderConfig resource type, which enables Crossplane to communicate with an AWS account.
+Requirements Prior to adding AWS to Crossplane, following steps need to be taken
+Crossplane is installed in a k8s cluster provider-aws is installed in the same cluster kubectl is configured to communicate with the same cluster Step 1: Configure aws CLI Crossplane uses AWS security credentials, and stores them as a secret which is managed by an AWS ProviderConfig instance.</description>
+    </item>
+    
+    <item>
+      <title>Provider Azure</title>
+      <link>/v1.7/cloud-providers/azure/azure-provider/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v1.7/cloud-providers/azure/azure-provider/</guid>
+      <description>Adding Microsoft Azure to Crossplane In this guide, we will walk through the steps necessary to configure your Azure account to be ready for integration with Crossplane. The general steps we will take are summarized below:
+Create a new service principal (account) that Crossplane will use to create and manage Azure resources Add the required permissions to the account Consent to the permissions using an administrator account Preparing your Microsoft Azure Account In order to manage resources in Azure, you must provide credentials for a Azure service principal that Crossplane can use to authenticate.</description>
+    </item>
+    
+    <item>
+      <title>Provider GCP</title>
+      <link>/v1.7/cloud-providers/gcp/gcp-provider/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v1.7/cloud-providers/gcp/gcp-provider/</guid>
+      <description>Adding Google Cloud Platform (GCP) to Crossplane In this guide, we will walk through the steps necessary to configure your GCP account to be ready for integration with Crossplane. The general steps we will take are summarized below:
+Create a new example project that all resources will be deployed to Enable required APIs such as Kubernetes and CloudSQL Create a service account that will be used to perform GCP operations from Crossplane Assign necessary roles to the service account Enable billing For your convenience, the specific steps to accomplish those tasks are provided for you below using either the gcloud command line tool, or the GCP console in a web browser.</description>
+    </item>
+    
+    <item>
+      <title>provider-aws</title>
+      <link>/v1.8/cloud-providers/aws/aws-provider/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v1.8/cloud-providers/aws/aws-provider/</guid>
+      <description>Adding Amazon Web Services (AWS) to Crossplane In this guide, we will walk through the steps necessary to configure your AWS account to be ready for integration with Crossplane. This will be done by adding an AWS ProviderConfig resource type, which enables Crossplane to communicate with an AWS account.
+Requirements Prior to adding AWS to Crossplane, following steps need to be taken
+Crossplane is installed in a k8s cluster provider-aws is installed in the same cluster kubectl is configured to communicate with the same cluster Step 1: Configure aws CLI Crossplane uses AWS security credentials, and stores them as a secret which is managed by an AWS ProviderConfig instance.</description>
+    </item>
+    
+    <item>
+      <title>provider-azure</title>
+      <link>/v1.8/cloud-providers/azure/azure-provider/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v1.8/cloud-providers/azure/azure-provider/</guid>
+      <description>Adding Microsoft Azure to Crossplane In this guide, we will walk through the steps necessary to configure your Azure account to be ready for integration with Crossplane. The general steps we will take are summarized below:
+Create a new service principal (account) that Crossplane will use to create and manage Azure resources Add the required permissions to the account Consent to the permissions using an administrator account Preparing your Microsoft Azure Account In order to manage resources in Azure, you must provide credentials for a Azure service principal that Crossplane can use to authenticate.</description>
+    </item>
+    
+    <item>
+      <title>provider-gcp</title>
+      <link>/v1.8/cloud-providers/gcp/gcp-provider/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v1.8/cloud-providers/gcp/gcp-provider/</guid>
+      <description>Adding Google Cloud Platform (GCP) to Crossplane In this guide, we will walk through the steps necessary to configure your GCP account to be ready for integration with Crossplane. The general steps we will take are summarized below:
+Create a new example project that all resources will be deployed to Enable required APIs such as Kubernetes and CloudSQL Create a service account that will be used to perform GCP operations from Crossplane Assign necessary roles to the service account Enable billing For your convenience, the specific steps to accomplish those tasks are provided for you below using either the gcloud command line tool, or the GCP console in a web browser.</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,8 @@
+<link rel="stylesheet" href="{{ "/css/main.css" | absURL }}" />
+
+{{- if eq .Kind "home" -}}
+    <link rel="stylesheet" href="{{ "/css/index.css" | absURL }}" />
+{{- else -}}
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<link rel="stylesheet" href="{{ "/css/docs.css" | absURL }}" />
+{{- end -}}

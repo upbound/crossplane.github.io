@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>FAQ on Crossplane</title>
+    <link>/v1.8/faqs/</link>
+    <description>Recent content in FAQ on Crossplane</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language><atom:link href="/v1.8/faqs/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Related Projects</title>
+      <link>/v1.8/faqs/related_projects/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v1.8/faqs/related_projects/</guid>
+      <description>Related Projects While there are many projects that address similar issues, none of them encapsulate the full use case that Crossplane addresses. This list is not exhaustive and is not meant to provide a deep analysis of the following projects, but instead to motivate why Crossplane was created.
+Open Service Broker and Service Catalog The Open Service Broker and the Kubernetes Service Catalog are able to dynamically provision cloud services from Kubernetes.</description>
+    </item>
+    
+  </channel>
+</rss>

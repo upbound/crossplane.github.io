@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Concepts on Crossplane</title>
+    <link>/master/concepts/</link>
+    <description>Recent content in Concepts on Crossplane</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language><atom:link href="/master/concepts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Providers</title>
+      <link>/master/concepts/providers/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/master/concepts/providers/</guid>
+      <description>Providers Providers are Crossplane packages that bundle a set of Managed Resources and their respective controllers to allow Crossplane to provision the respective infrastructure resource.
+Here is the list of prominent providers:
+Provider AWS GitHub Repo API Reference Amazon Web Services (AWS) IAM User Provider Jet AWS GitHub Repo API Reference Provider GCP GitHub Repo API Reference Google Cloud Platform (GCP) Service Account Provider Jet GCP GitHub Repo API Reference Provider Azure GitHub Repo API Reference Microsoft Azure Service Principal Provider Jet Azure GitHub Repo API Reference Provider Alibaba GitHub Repo API Reference Provider Rook GitHub Repo API Reference Provider Helm GitHub Repo API Reference Provider Terraform GitHub Repo API Reference Provider Kubernetes GitHub Repo API Reference Provider SQL GitHub Repo API Reference Provider Gitlab GitHub Repo API Reference Provider Equinix Metal GitHub Repo API Reference Provider Digital Ocean GitHub Repo API Reference Provider Civo GitHub Repo API Reference Provider IBM Cloud GitHub Repo API Reference Provider Argocd GitHub Repo API Reference Provider Styra GitHub Repo API Reference Provider Cloudflare GitHub Repo API Reference Installing Providers The core Crossplane controller can install provider controllers and CRDs for you through its own provider packaging mechanism, which is triggered by the application of a Provider resource.</description>
+    </item>
+    
+    <item>
+      <title>Managed Resources</title>
+      <link>/master/concepts/managed-resources/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/master/concepts/managed-resources/</guid>
+      <description>Managed Resources Overview A Managed Resource (MR) is Crossplane&amp;rsquo;s representation of a resource in an external system - most commonly a cloud provider. Managed Resources are opinionated, Crossplane Resource Model (XRM) compliant Kubernetes Custom Resources that are installed by a Crossplane provider.
+For example, RDSInstance in the AWS Provider corresponds to an actual RDS Instance in AWS. There is a one-to-one relationship and the changes on managed resources are reflected directly on the corresponding resource in the provider.</description>
+    </item>
+    
+    <item>
+      <title>Composite Resources</title>
+      <link>/master/concepts/composition/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/master/concepts/composition/</guid>
+      <description>Composite Resources Overview Crossplane Composite Resources are opinionated Kubernetes Custom Resources that are composed of Managed Resources. We often call them XRs for short.
+Composite Resources are designed to let you build your own platform with your own opinionated concepts and APIs without needing to write a Kubernetes controller from scratch. Instead, you define the schema of your XR and teach Crossplane which Managed Resources it should compose (i.e. create) when someone creates the XR you defined.</description>
+    </item>
+    
+    <item>
+      <title>Packages</title>
+      <link>/master/concepts/packages/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/master/concepts/packages/</guid>
+      <description>Crossplane Packages Crossplane packages are opinionated OCI images that contain a stream of YAML that can be parsed by the Crossplane package manager. Crossplane packages come in two varieties: Providers and Configurations. Ultimately, the primary purposes of Crossplane packages are as follows:
+Convenient Distribution: Crossplane packages can be pushed to or installed from any OCI-compatible registry. Version Upgrade: Crossplane can update packages in-place, meaning that you can pick up support for new resource types or controller bug-fixes without modifying your existing infrastructure.</description>
+    </item>
+    
+    <item>
+      <title>Terminology</title>
+      <link>/master/concepts/terminology/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/master/concepts/terminology/</guid>
+      <description>Terminology A Note on Style Each type of Kubernetes resource has a ‘Pascal case’ name - i.e. a title case name with no spaces between each word. Examples include ‘DaemonSet’ and ‘PersistentVolumeClaim’. Often these names are written using fixed width fonts to draw attention to the fact that they’re a concrete type of resource within the API - e.g. PersistentVolumeClaim.
+Crossplane follows this convention. We often use names like RDSInstance or CompositeResourceDefinition when discussing Crossplane types.</description>
+    </item>
+    
+  </channel>
+</rss>

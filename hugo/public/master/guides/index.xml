@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Guides on Crossplane</title>
+    <link>/master/guides/</link>
+    <description>Recent content in Guides on Crossplane</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language><atom:link href="/master/guides/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Upgrading to v0.14</title>
+      <link>/master/guides/upgrading-to-v0.14/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/master/guides/upgrading-to-v0.14/</guid>
+      <description>Upgrading to v0.14 Crossplane made a small handful of breaking changes in v0.14. The most broadly impactful change was updating the CompositeResourceDefinition (XRD) schema to support defining multiple versions of a composite resource (XR) at once. This guide covers how to upgrade from v0.13 of Crossplane to v0.14.
+Updating CompositeResourceDefinitions Updating Packages Updating CompositeResourceDefinitions In v0.14 the schema of XRD was updated to support defining multiple versions of an XR. This update requires manual update steps.</description>
+    </item>
+    
+    <item>
+      <title>Upgrading to v1.x</title>
+      <link>/master/guides/upgrading-to-v1.x/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/master/guides/upgrading-to-v1.x/</guid>
+      <description>Upgrading to v1.x Crossplane versions post v1.0 do not introduce any breaking changes, but may make some backward compatible changes to the core Crossplane CRDs. Helm does not currently touch CRDs when a chart is upgraded, so Crossplane has moved to managing its own CRDs as of v1.2.0. However, for versions prior to v1.2.0, you must manually apply the appropriate CRDs before upgrading.
+Upgrading to v1.0.x or v1.1.x To upgrade from the currently installed version, run:</description>
+    </item>
+    
+    <item>
+      <title>Vault as an External Secret Store</title>
+      <link>/master/guides/vault-as-secret-store/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/master/guides/vault-as-secret-store/</guid>
+      <description>Using Vault as an External Secret Store This guide walks through the steps required to configure Crossplane and its Providers to use Vault as an External Secret Store. For the sake of completeness, we will also include steps for Vault installation and setup, however, you can skip those and use your existing Vault.
+External Secret Stores are an alpha feature. They are not yet recommended for production use, and are disabled by default.</description>
+    </item>
+    
+    <item>
+      <title>Vault Credential Injection</title>
+      <link>/master/guides/vault-injection/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/master/guides/vault-injection/</guid>
+      <description>Using Vault for Provider Credentials This guide is adapted from the Vault on Minikube and Vault Kubernetes Sidecar guides.
+Most Crossplane providers support supplying credentials from at least the following sources:
+Kubernetes Secret Environment Variable Filesystem A provider may optionally support additional credentials sources, but the common sources cover a wide variety of use cases. One specific use case that is popular among organizations that use Vault for secrets management is using a sidecar to inject credentials into the filesystem.</description>
+    </item>
+    
+    <item>
+      <title>Multi-Tenant Crossplane</title>
+      <link>/master/guides/multi-tenant/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/master/guides/multi-tenant/</guid>
+      <description>Multi-Tenant Crossplane This guide describes how to use Crossplane effectively in multi-tenant environments by utilizing Kubernetes primitives and compatible policy enforcement projects in the cloud-native ecosystem.
+TL;DR Infrastructure operators in multi-tenant Crossplane environments typically utilize composition and Kubernetes RBAC to define lightweight, standardized policies that dictate what level of self-service developers are given when requesting infrastructure. This is primarily achieved through exposing abstract resource types at the namespace scope, defining Roles for teams and individuals within that namespace, and patching the spec.</description>
+    </item>
+    
+    <item>
+      <title>Composition Revisions</title>
+      <link>/master/guides/composition-revisions/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/master/guides/composition-revisions/</guid>
+      <description>Composition Revisions This guide discusses the use of &amp;ldquo;Composition Revisions&amp;rdquo; to safely make and roll back changes to a Crossplane Composition. It assumes familiarity with Crossplane, and particularly with Composition.
+Composition Revisions are an alpha feature. They are not yet recommended for production use, and are disabled by default.
+A Composition configures how Crossplane should reconcile a Composite Resource (XR). Put otherwise, when you create an XR the selected Composition determines what managed resources Crossplane will create in response.</description>
+    </item>
+    
+    <item>
+      <title>Self-Signed CA Certs</title>
+      <link>/master/guides/self-signed-ca-certs/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/master/guides/self-signed-ca-certs/</guid>
+      <description>Overview of Crossplane for Registry with Self-Signed CA Certificate ! Using self-signed certificates is not advised in production, it is recommended to only use self-signed certificates for testing.
+When Crossplane loads Configuration and Provider Packages from private registries, it must be configured to trust the CA and Intermediate certs.
+Crossplane needs to be installed via the Helm chart with the registryCaBundleConfig.name and registryCaBundleConfig.key parameters defined. See Install Crossplane.
+Configure Create a CA Bundle (A file containing your Root and Intermediate certificates in a specific order).</description>
+    </item>
+    
+  </channel>
+</rss>
