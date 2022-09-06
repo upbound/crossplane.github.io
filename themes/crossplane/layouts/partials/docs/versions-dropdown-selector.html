@@ -2,12 +2,12 @@
 {{ $master_ver := false }}
 
 <!-- get all the versions and break out semver order -->
-{{ range .Site.Pages }}
+{{ range .Site.Sections }}
     {{ if eq .Page.Params.version "master" }}
         <!-- note that master is a version but don't try to sort it -->
         {{ $master_ver = true }}
     {{ else if ne .Page.Params.version nil }}
-        {{/* Semver sorting from https://discourse.gohugo.io/t/sort-strings-based-on-semver/14425 */}}
+        {{/* Semver slicing from https://discourse.gohugo.io/t/sort-strings-based-on-semver/14425 */}}
         {{- $ver_major_minor := (float (replaceRE "([0-9]+\\.[0-9]+).*" "${1}" .Page.Params.version)) -}}
         {{- $ver_micro_str := (replaceRE "[0-9]+\\.[0-9]+(.*)" "${1}" .Page.Params.version | replaceRE "-DEV" "-0.01") -}}
         {{- $ver_micro := (div (float (or $ver_micro_str "0")) 100.00) -}}
