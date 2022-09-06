@@ -13,7 +13,7 @@
 {{- else if lt .Page.Params.version .Site.Params.latest -}}
 <div class="alert old">
     <p>
-        <b>PLEASE NOTE</b>: This document applies to <!-- TODO: current-ver --> version and not to the latest release <!-- TODO: latest-ver -->
+        <b>PLEASE NOTE</b>: This document applies to {{.Page.Params.Version}} version and not to the latest release {{.Site.Params.latest}}
     </p>
     <strong>
         Documentation for other releases can be found by using the version selector in the top right of any doc page.

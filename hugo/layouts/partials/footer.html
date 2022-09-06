@@ -24,17 +24,4 @@
       </p>
     </div>
     <script src="{{ "/js/slack-popup.js" | absURL }}"></script>
-    {{ if not .IsHome }}
-      <script src="{{ "/js/anchor.js" | absURL }}"></script>
-      <script>
-        anchors.options = {
-          placement: 'right',
-          icon: '#',
-        }
-
-        document.addEventListener('DOMContentLoaded', function(event) {
-          anchors.add('.docs-content h1, .docs-content h2, .docs-content h3, .docs-content h4, .docs-content h5, .docs-content h6');
-        });
-      </script>
-    {{ end }}
   </div>
