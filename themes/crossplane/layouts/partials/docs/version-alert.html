@@ -1,4 +1,4 @@
-{{- if eq .Page.Params.Version  "master" -}}
+{{- if eq .Page.Params.version "master" -}}
 <div class="alert master">
     <p>
         <b>PLEASE NOTE</b>: This document applies to an <b>unreleased</b> version of Crossplane. It is strongly recommended that you only use official releases of Crossplane, as unreleased versions are subject to changes and incompatibilities that will not be supported in the official releases.
@@ -13,7 +13,7 @@
 {{- else if lt .Page.Params.version .Site.Params.latest -}}
 <div class="alert old">
     <p>
-        <b>PLEASE NOTE</b>: This document applies to {{.Page.Params.Version}} version and not to the latest release {{.Site.Params.latest}}
+        <b>PLEASE NOTE</b>: This document applies to version {{ .Page.Params.version }} and not to the latest release {{.Site.Params.latest}}
     </p>
     <strong>
         Documentation for other releases can be found by using the version selector in the top right of any doc page.

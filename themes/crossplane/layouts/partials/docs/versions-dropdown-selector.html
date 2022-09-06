@@ -31,26 +31,33 @@
 {{ end }}
 
 {{ $cur_ver := .Page.Params.version }}
-
-<div class="versions latest">
-    <div><div><select onchange="window.location.href = this.value">
-        {{ $master_url := replace (replace .Page.RelPermalink .Page.Params.version "master") "v" "" }}
-        {{ if $master_ver }}
-            {{ if eq .Page.Params.version $cur_ver }}
-                <option selected="" value="{{ $master_url | absURL }}">Crossplane master pre-release</option>
-            {{ else }}
-                <option value="{{ .Permalink }}">Crossplane master pre-release</option>
-            {{ end }}
+<div id="docs-header">
+    <div>
+        <h1>Documentation</h1>
+        {{ if eq .Site.Params.latest $cur_ver }}
+            <div class="versions latest">
+        {{ else }}
+            <div class="versions">
         {{ end }}
-        {{ range $sorted_list }}
-            {{ range where (where $.Site.Pages "Title" $.Title) ".Page.Params.version" . }}
+        <div><div><select onchange="window.location.href = this.value">
+            {{ $master_url := replace (replace .Page.RelPermalink .Page.Params.version "master") "v" "" }}
+            {{ if $master_ver }}
                 {{ if eq .Page.Params.version $cur_ver }}
-                    <option selected="" value="{{ .Permalink }}">Crossplane v{{.Page.Params.version}}</option>
+                    <option selected="" value="{{ $master_url | absURL }}">Crossplane master</option>
                 {{ else }}
-                    <option value="{{ .Permalink }}">Crossplane v{{.Page.Params.version}}</option>
+                    <option value="{{ .Permalink }}">Crossplane master</option>
                 {{ end }}
             {{ end }}
-        {{ end }}
-    </select></div></div>
+            {{ range $sorted_list }}
+                {{ range where (where $.Site.Pages "Title" $.Title) ".Page.Params.version" . }}
+                    {{ if eq .Page.Params.version $cur_ver }}
+                        <option selected="" value="{{ .Permalink }}">Crossplane v{{.Page.Params.version}}</option>
+                    {{ else }}
+                        <option value="{{ .Permalink }}">Crossplane v{{.Page.Params.version}}</option>
+                    {{ end }}
+                {{ end }}
+            {{ end }}
+        </select></div></div>
+        </div>
+    </div>
 </div>
-
