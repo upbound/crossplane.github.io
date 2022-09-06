@@ -2,8 +2,10 @@ baseURL: "/"
 enableRobotsTXT: True
 languageCode: "en-us"
 title: "Crossplane"
-sectionPagesMenu: "main"
-
+disableKinds:
+  - taxonomy
+  - term
+  - RSS
 
 
 params:
