@@ -18,10 +18,10 @@
           </a>
         </li>
         <li>
-          <a href="{{ .Site.Params.latestDocs  }}">Documentation</a>
+          <a href="{{ (printf "/v%s" (string .Site.Params.latest)) | absURL }}">Documentation</a>
         </li>
         <li>
-          <a href="">Community</a>
+          <a href={{"/community" | absURL }}>Community</a>
         </li>
         <li>
           <a href="{{ .Site.Params.slackLink }}">Slack <span class="md-hidden">Channel</span></a>
