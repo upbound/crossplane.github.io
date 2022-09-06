@@ -1,3 +1,8 @@
+---
+title: "Getting Started"
+toc: true
+weight: 1
+---
 # Overview
 
 ![Crossplane](media/banner.png)

@@ -1,7 +1,7 @@
 ---
 title: Contributing
 toc: true
-weight: 1000
+weight: 50
 ---
 
 # Contributing

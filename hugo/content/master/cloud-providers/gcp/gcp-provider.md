@@ -1,3 +1,7 @@
+---
+title: Provider GCP
+weight: 441
+---
 # Adding Google Cloud Platform (GCP) to Crossplane
 
 In this guide, we will walk through the steps necessary to configure your GCP
@@ -33,7 +37,7 @@ account will have access to the services and roles sufficient to run the
 Crossplane GCP examples.
 
 ```bash
-curl -O https://raw.githubusercontent.com/crossplane/crossplane/master/docs/snippets/configure/gcp/credentials.sh
+curl -O https://raw.githubusercontent.com/crossplane/crossplane/release-1.7/docs/snippets/configure/gcp/credentials.sh
 ./credentials.sh
 # ... EXAMPLE OUTPUT ONLY
 # export ORGANIZATION_ID=987654321

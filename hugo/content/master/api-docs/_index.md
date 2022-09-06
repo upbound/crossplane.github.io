@@ -1,7 +1,7 @@
 ---
 title: API Documentation
 toc: true
-weight: 400
+weight: 40
 ---
 
 # API Documentation

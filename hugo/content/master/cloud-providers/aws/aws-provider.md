@@ -1,3 +1,7 @@
+---
+title: Provider AWS
+weight: 443
+---
 # Adding Amazon Web Services (AWS) to Crossplane
 
 In this guide, we will walk through the steps necessary to configure your AWS
@@ -28,8 +32,8 @@ Run `setup.sh` to read `aws` credentials and region, and create an `aws
 provider` instance in Crossplane:
 
 ```bash
-curl -O https://raw.githubusercontent.com/crossplane/crossplane/master/docs/snippets/configure/aws/providerconfig.yaml
-curl -O https://raw.githubusercontent.com/crossplane/crossplane/master/docs/snippets/configure/aws/setup.sh
+curl -O https://raw.githubusercontent.com/crossplane/crossplane/release-1.7/docs/snippets/configure/aws/providerconfig.yaml
+curl -O https://raw.githubusercontent.com/crossplane/crossplane/release-1.7/docs/snippets/configure/aws/setup.sh
 chmod +x setup.sh
 ./setup.sh [--profile aws_profile]
 ```

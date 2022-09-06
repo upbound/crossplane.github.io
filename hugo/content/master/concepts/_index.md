@@ -1,7 +1,7 @@
 ---
 title: Concepts
 toc: true
-weight: 100
+weight: 10
 ---
 
 # Overview

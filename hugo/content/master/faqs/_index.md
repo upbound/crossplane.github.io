@@ -1,7 +1,7 @@
 ---
 title: FAQ
 toc: true
-weight: 1200
+weight: 60
 ---
 
 # Frequently Asked Questions (FAQs)

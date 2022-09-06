@@ -1,3 +1,7 @@
+---
+title: Provider Azure
+weight: 442
+---
 # Adding Microsoft Azure to Crossplane
 
 In this guide, we will walk through the steps necessary to configure your Azure
