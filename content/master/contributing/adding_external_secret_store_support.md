@@ -1,11 +1,7 @@
 ---
 title: Adding Secret Store Support
-toc: true
 weight: 1004
-indent: true
 ---
-
-# Adding External Secret Store Support to an Existing Provider
 
 To add support for [External Secret Stores] in a provider, we need the following
 changes at a high level:

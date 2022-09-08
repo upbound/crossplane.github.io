@@ -1,18 +1,12 @@
 ---
 title: Managed Resources
-toc: true
 weight: 102
-indent: true
 ---
 
-# Managed Resources
-
-## Overview
-
-A Managed Resource (MR) is Crossplane's representation of a resource in an external
-system - most commonly a cloud provider. Managed Resources are opinionated,
-Crossplane Resource Model ([XRM][term-xrm]) compliant Kubernetes Custom
-Resources that are installed by a Crossplane [provider].
+A Managed Resource (MR) is Crossplane's representation of a resource in an
+external system - most commonly a cloud provider. Managed Resources are
+opinionated, Crossplane Resource Model ([XRM][term-xrm]) compliant Kubernetes
+Custom Resources that are installed by a Crossplane [provider].
 
 For example, `RDSInstance` in the AWS Provider corresponds to an actual RDS
 Instance in AWS. There is a one-to-one relationship and the changes on managed
@@ -63,7 +57,7 @@ spec:
 ```
 
 ```console
-kubectl apply -f https://raw.githubusercontent.com/crossplane/crossplane/release-1.7/docs/snippets/provision/aws.yaml
+kubectl apply -f https://raw.githubusercontent.com/crossplane/crossplane/master/docs/snippets/provision/aws.yaml
 ```
 
 Creating the above instance will cause Crossplane to provision an RDS instance
@@ -74,7 +68,8 @@ kubectl get rdsinstance rdspostgresql
 ```
 
 When provisioning is complete, you should see `READY: True` in the output. You
-can take a look at its connection secret that is referenced under `spec.writeConnectionSecretToRef`:
+can take a look at its connection secret that is referenced under
+`spec.writeConnectionSecretToRef`:
 
 ```console
 kubectl describe secret aws-rdspostgresql-conn -n crossplane-system
@@ -111,7 +106,7 @@ spec:
 ```
 
 ```console
-kubectl apply -f https://raw.githubusercontent.com/crossplane/crossplane/release-1.7/docs/snippets/provision/gcp.yaml
+kubectl apply -f https://raw.githubusercontent.com/crossplane/crossplane/master/docs/snippets/provision/gcp.yaml
 ```
 
 Creating the above instance will cause Crossplane to provision a CloudSQL
@@ -122,7 +117,8 @@ kubectl get cloudsqlinstance cloudsqlpostgresql
 ```
 
 When provisioning is complete, you should see `READY: True` in the output. You
-can take a look at its connection secret that is referenced under `spec.writeConnectionSecretToRef`:
+can take a look at its connection secret that is referenced under
+`spec.writeConnectionSecretToRef`:
 
 ```console
 kubectl describe secret cloudsqlpostgresql-conn -n crossplane-system
@@ -177,7 +173,7 @@ spec:
 ```
 
 ```console
-kubectl apply -f https://raw.githubusercontent.com/crossplane/crossplane/release-1.7/docs/snippets/provision/azure.yaml
+kubectl apply -f https://raw.githubusercontent.com/crossplane/crossplane/master/docs/snippets/provision/azure.yaml
 ```
 
 Creating the above instance will cause Crossplane to provision a PostgreSQL
@@ -189,7 +185,8 @@ kubectl get postgresqlserver sqlserverpostgresql
 ```
 
 When provisioning is complete, you should see `READY: True` in the output. You
-can take a look at its connection secret that is referenced under `spec.writeConnectionSecretToRef`:
+can take a look at its connection secret that is referenced under
+`spec.writeConnectionSecretToRef`:
 
 ```console
 kubectl describe secret sqlserverpostgresql-conn -n crossplane-system
@@ -241,6 +238,23 @@ conventions][api-versioning] for the CRDs that it deploys. In short, for
 instructions for manual migration will be provided when a new version of that
 CRD schema is released.
 
+In practice, we suggest the following guidelines to provider developers:
+* Every new kind has to be introduced as `v1alpha1` with no exception.
+* Breaking changes require a version change, i.e. `v1alpha1` needs to become
+  `v1alpha2`.
+  * Alpha resources don't require automatic conversions or manual instructions
+    but it's recommended that manual instructions are provided.
+  * Beta resources require at least manual instructions but it's recommended
+    that conversion webhooks are used so that users can upgrade without any
+    hands-on operation.
+  * Stable resources require conversion webhooks.
+* As long as the developer feels comfortable with the guarantees above, they can
+  bump the version to beta or stable given that the CRD shape adheres to the
+  Crossplane Resource Model (XRM) specifications for managed resources
+  [here][managed-api-patterns].
+* It's suggested that the bump from Alpha to Beta or from Beta to Stable happen
+  after a bake period which includes at least one release.
+
 ### Grouping
 
 In general, managed resources are high fidelity resources meaning they will
@@ -278,14 +292,14 @@ all managed resources actually have connection details to write - many will
 write an empty `Secret`.
 
 > Which managed resources have connection details and what connection details
-> they have is currently undocumented. This is tracked in
-> [this issue][issue-1143].
+> they have is currently undocumented. This is tracked in [this
+> issue][issue-1143].
 
 #### Immutable Properties
 
 There are configuration parameters in external resources that cloud providers do
-not allow to be changed. For example, in AWS, you cannot change the region
-of an `RDSInstance`.
+not allow to be changed. For example, in AWS, you cannot change the region of an
+`RDSInstance`.
 
 Some infrastructure tools such as Terraform delete and recreate the resource to
 accommodate those changes but Crossplane does not take that route. Unless the
@@ -447,3 +461,4 @@ including Velero.
 [provider]: providers.md
 [issue-727]: https://github.com/crossplane/crossplane/issues/727
 [issue-1143]: https://github.com/crossplane/crossplane/issues/1143
+[managed-api-patterns]: https://github.com/crossplane/crossplane/blob/master/design/one-pager-managed-resource-api-design.md

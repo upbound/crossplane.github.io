@@ -1,11 +1,7 @@
 ---
-title: Uninstall
-toc: true
+title: Uninstall Crossplane
 weight: 303
-indent: true
 ---
-
-# Uninstalling
 
 Crossplane has a number of components that must be cleaned up in order to
 guarantee proper removal from the cluster. When deleting objects, it is best to

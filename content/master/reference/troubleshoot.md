@@ -1,11 +1,7 @@
 ---
 title: Troubleshoot
-toc: true
 weight: 306
-indent: true
 ---
-
-# Troubleshooting
 
 * [Requested Resource Not Found]
 * [Resource Status and Conditions]

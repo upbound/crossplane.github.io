@@ -1,11 +1,7 @@
 ---
 title: Providers
-toc: true
 weight: 101
-indent: true
 ---
-
-# Providers
 
 Providers are Crossplane packages that bundle a set of [Managed
 Resources][managed-resources] and their respective controllers to allow
@@ -90,7 +86,7 @@ spec:
     secretRef:
       namespace: crossplane-system
       name: aws-creds
-      key: key
+      key: creds
 ```
 
 You can see that there is a reference to a key in a specific `Secret`. The value
