@@ -12,6 +12,7 @@
     {{- end -}}
   {{- end -}}
 
+
   {{- $version_sections = sort $version_sections.ByWeight -}}
 
   {{- $page_map := dict -}}
@@ -33,16 +34,20 @@
       {{- $this_sections_pages := index $page_map .Permalink -}}
         {{- $page_dict := dict "name" .Title "url" .Permalink "current" (eq . $current) "childCurrent" false "children" (slice) -}}
 
-        {{- range $this_sections_pages.ByWeight -}}
-          {{- $children_dict := dict "name" .Title "url" .Permalink "current" (eq . $current) -}}
-          {{- $child_list := index $page_dict "children" -}}
-          {{- $child_list = $child_list | append $children_dict -}}
-          {{- $page_dict = merge $page_dict (dict "children" $child_list) -}}
 
-          {{ if eq . $current }}
-            {{ $page_dict = merge $page_dict (dict "childCurrent" true) }}
-            {{ end }}
-        {{- end -}}
+        {{ if ne (len $this_sections_pages) 0 }}
+            {{- range $this_sections_pages.ByWeight -}}
+            {{- $children_dict := dict "name" .Title "url" .Permalink "current" (eq . $current) -}}
+            {{- $child_list := index $page_dict "children" -}}
+            {{- $child_list = $child_list | append $children_dict -}}
+            {{- $page_dict = merge $page_dict (dict "children" $child_list) -}}
+
+            {{ if eq . $current }}
+                {{ $page_dict = merge $page_dict (dict "childCurrent" true) }}
+                {{ end }}
+            {{- end -}}
+        {{ end }}
+
 
         menu.push({{- ($page_dict | jsonify) | safeJS -}})
     {{ end }}
