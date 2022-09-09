@@ -14,7 +14,7 @@ show off [demos] integrating with the projects they work on.
 - [Upgrading to v0.14]
 - [Upgrading to v1.x]
 - [Vault Provider Credential Injection]
-- [Using Managed Resources Directly]
+- 
 
 <!-- Named Links -->
 
