@@ -1,8 +1,6 @@
 ---
 title: Configure
-toc: true
 weight: 302
-indent: true
 ---
 
 # Configure Your Cloud Provider Account

@@ -1,8 +1,6 @@
 ---
 title: Uninstall
-toc: true
 weight: 303
-indent: true
 ---
 
 # Uninstalling

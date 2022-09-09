@@ -1,10 +1,7 @@
 ---
 title: FAQ
-toc: true
 weight: 1200
 ---
-
-# Frequently Asked Questions (FAQs)
 
 ### Where did the name Crossplane come from?
 

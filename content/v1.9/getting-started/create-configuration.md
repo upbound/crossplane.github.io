@@ -1,11 +1,7 @@
 ---
 title: Create a Configuration
-toc: true
 weight: 4
-indent: true
 ---
-
-# Create a Configuration
 
 In the [previous section] we were able to create a PostgreSQL database because
 we had installed a configuration package that defined the `PostgreSQLInstance`

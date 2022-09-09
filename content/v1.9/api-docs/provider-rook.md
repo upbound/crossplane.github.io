@@ -1,7 +1,6 @@
 ---
-title: rook
-toc: true
+title: provider-rook
 weight: 406
-indent: true
-redirect_to: https://doc.crds.dev/github.com/crossplane/provider-rook
+layout: redirect
+to: https://doc.crds.dev/github.com/crossplane/provider-rook
 ---

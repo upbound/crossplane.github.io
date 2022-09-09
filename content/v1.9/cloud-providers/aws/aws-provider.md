@@ -1,7 +1,3 @@
----
-title: provider-aws
-weight: 4000
----
 # Adding Amazon Web Services (AWS) to Crossplane
 
 In this guide, we will walk through the steps necessary to configure your AWS
@@ -96,7 +92,7 @@ metadata:
   namespace: crossplane-system
 type: Opaque
 data:
-  credentials: ${BASE64ENCODED_AWS_ACCOUNT_CREDS}
+  creds: ${BASE64ENCODED_AWS_ACCOUNT_CREDS}
 ---
 apiVersion: aws.crossplane.io/v1beta1
 kind: ProviderConfig
@@ -108,7 +104,7 @@ spec:
     secretRef:
       namespace: crossplane-system
       name: aws-account-creds
-      key: credentials
+      key: creds
 EOF
 
 # apply it to the cluster:

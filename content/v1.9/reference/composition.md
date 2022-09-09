@@ -1,11 +1,8 @@
 ---
 title: Composition
-toc: true
 weight: 304
-indent: true
 ---
 
-# Overview
 
 This reference provides detailed examples of defining, configuring, and using
 Composite Resources in Crossplane. You can also refer to Crossplane's [API

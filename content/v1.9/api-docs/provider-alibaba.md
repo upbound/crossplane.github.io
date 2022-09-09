@@ -1,7 +1,6 @@
 ---
-title: alibaba
-toc: true
+title: provider-alibaba
 weight: 402
-indent: true
-redirect_to: https://doc.crds.dev/github.com/crossplane/provider-alibaba
+layout: redirect
+to: https://doc.crds.dev/github.com/crossplane/provider-alibaba
 ---

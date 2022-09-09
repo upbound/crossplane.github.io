@@ -1,7 +1,6 @@
 ---
-title: azure
-toc: true
+title: provider-azure
 weight: 404
-indent: true
-redirect_to: https://doc.crds.dev/github.com/crossplane/provider-azure
+layout: redirect
+to: https://doc.crds.dev/github.com/crossplane/provider-azure
 ---

@@ -1,13 +1,7 @@
 ---
 title: Composite Resources
-toc: true
 weight: 103
-indent: true
 ---
-
-# Composite Resources
-
-## Overview
 
 Crossplane Composite Resources are opinionated Kubernetes Custom Resources that
 are _composed_ of [Managed Resources][managed-resources]. We often call them XRs

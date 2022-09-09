@@ -1,7 +1,3 @@
----
-title: provider-gcp
-weight: 4000
----
 # Adding Google Cloud Platform (GCP) to Crossplane
 
 In this guide, we will walk through the steps necessary to configure your GCP
@@ -232,7 +228,7 @@ metadata:
   namespace: ${PROVIDER_SECRET_NAMESPACE}
 type: Opaque
 data:
-  credentials: ${BASE64ENCODED_GCP_PROVIDER_CREDS}
+  creds: ${BASE64ENCODED_GCP_PROVIDER_CREDS}
 ---
 apiVersion: gcp.crossplane.io/v1beta1
 kind: ProviderConfig
@@ -246,7 +242,7 @@ spec:
     secretRef:
       namespace: ${PROVIDER_SECRET_NAMESPACE}
       name: gcp-account-creds
-      key: credentials
+      key: creds
 EOF
 
 # apply it to the cluster:

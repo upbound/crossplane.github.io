@@ -1,11 +1,8 @@
 ---
 title: Provision Infrastructure
-toc: true
 weight: 3
-indent: true
 ---
 
-# Provision Infrastructure
 
 Composite resources (XRs) are always cluster scoped - they exist outside of any
 namespace. This allows an XR to represent infrastructure that might be consumed

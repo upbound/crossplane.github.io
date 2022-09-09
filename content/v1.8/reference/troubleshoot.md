@@ -1,8 +1,6 @@
 ---
 title: Troubleshoot
-toc: true
 weight: 306
-indent: true
 ---
 
 # Troubleshooting

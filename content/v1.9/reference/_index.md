@@ -1,11 +1,7 @@
 ---
 title: Reference
-toc: true
-weight: 30
+weight: 300
 ---
-
-# Overview
-
 The reference documentation includes answers to frequently asked questions,
 information about similar projects, and links to resources that can help you
 learn more about Crossplane and Kubernetes. If you have additional information

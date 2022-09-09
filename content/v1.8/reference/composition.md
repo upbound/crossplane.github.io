@@ -1,11 +1,8 @@
 ---
 title: Composition
-toc: true
 weight: 304
-indent: true
 ---
 
-# Overview
 
 This reference provides detailed examples of defining, configuring, and using
 Composite Resources in Crossplane. You can also refer to Crossplane's [API
@@ -405,34 +402,6 @@ field.
   toFieldPath: status.zone
 ```
 
-`FromCompositeFieldPath` and `ToCompositeFieldPath` patches can also take a wildcarded
-field path in the `toFieldPath` parameter and patch each array element in the `toFieldPath`
-with the singular value provided in the `fromFieldPath`.
-
-```yaml
-# Patch from the XR's spec.parameters.allowedIPs to the CIDRBlock elements
-# inside the array spec.forProvider.firewallRules on the composed resource.
-resources:
-- name: exampleFirewall
-  base:
-    apiVersion: firewall.example.crossplane.io/v1beta1
-    kind: Firewall
-    spec:
-      forProvider:
-        firewallRules:
-        - Action: "Allow"
-          Destination: "example1"
-          CIDRBlock: ""
-        - Action: "Allow"
-          Destination: "example2"
-          CIDRBlock: ""
-- type: FromCompositeFieldPath
-  fromFieldPath: spec.parameters.allowedIP
-  toFieldPath: spec.forProvider.firewallRules[*].CIDRBlock
-```
-
-Note that the field to be patched requires some initial value to be set.
-
 `CombineFromComposite`. Combines multiple fields from the XR to produce one
 composed resource field.
 
@@ -526,7 +495,6 @@ Currently only `multiply` is supported.
 * string transform type `Convert`, accepts one of `ToUpper`, `ToLower`, `ToBase64`, `FromBase64`.
 * string transform type `TrimPrefix`, accepts a string to be trimmed from the beginning of the input.
 * string transform type `TrimSuffix`, accepts a string to be trimmed from the end of the input.
-* string transform type `Regexp`, accepts a string for regexp to be applied to.
 
 ```yaml
 # If you omit the field type, by default type is set to `Format` 
@@ -584,15 +552,6 @@ Currently only `multiply` is supported.
   string:
      type: TrimSuffix
      trim: '-test'
-
-# If the value of the 'from' field is 'arn:aws:iam::42:example, the value of the
-# 'to' field will be set to "42". Note that the 'to' field is always a string. 
-- type: string
-  string:
-     type: Regexp
-     regexp:
-      match: 'arn:aws:iam::(\d+):.*'
-      group: 1  # Optional capture group. Omit to match the entire regexp.
 ```
 
 `convert`. Transforms values of one type to another, for example from a string
@@ -825,7 +784,10 @@ so:
 
 1. Use a `ToCompositeFieldPath` patch to patch from your source composed
    resource to the XR. Typically you'll want to patch to a status field or an
-   annotation.
+   annotation. Note: If you are using a field other than a label or annotation 
+   then the field you are patching to needs to be defined in the XR definition. 
+   For instance, if you are patching to `.status.foo` then the definition for 
+   the XR must define `.status.foo`.
 1. Use a `FromCompositeFieldPath` patch to patch from the 'intermediary' field
    you patched to in step 1 to a field on the destination composed resource.
 

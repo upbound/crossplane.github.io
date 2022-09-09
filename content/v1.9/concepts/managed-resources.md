@@ -1,13 +1,7 @@
 ---
 title: Managed Resources
-toc: true
 weight: 102
-indent: true
 ---
-
-# Managed Resources
-
-## Overview
 
 A Managed Resource (MR) is Crossplane's representation of a resource in an
 external system - most commonly a cloud provider. Managed Resources are

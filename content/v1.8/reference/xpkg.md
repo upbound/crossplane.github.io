@@ -1,8 +1,6 @@
 ---
 title: xpkg Specification
-toc: true
 weight: 305
-indent: true
 ---
 
 # Overview

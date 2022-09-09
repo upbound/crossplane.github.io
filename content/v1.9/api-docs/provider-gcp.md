@@ -1,7 +1,6 @@
 ---
-title: gcp
-toc: true
+title: provider-gcp
 weight: 405
-indent: true
-redirect_to: https://doc.crds.dev/github.com/crossplane/provider-gcp
+layout: redirect
+to: https://doc.crds.dev/github.com/crossplane/provider-gcp
 ---

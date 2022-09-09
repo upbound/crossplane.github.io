@@ -1,11 +1,9 @@
 ---
 title: Install & Configure
-toc: true
 weight: 2
-indent: true
 ---
 
-# Choosing Your Crossplane Distribution
+## Choosing Your Crossplane Distribution
 
 Users looking to use Crossplane for the first time have two options available to
 them today. The first way is to use the version of Crossplane which is

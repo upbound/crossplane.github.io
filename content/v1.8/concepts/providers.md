@@ -1,11 +1,8 @@
 ---
 title: Providers
-toc: true
 weight: 101
-indent: true
 ---
 
-# Providers
 
 Providers are Crossplane packages that bundle a set of [Managed
 Resources][managed-resources] and their respective controllers to allow
@@ -52,7 +49,7 @@ kind: Provider
 metadata:
   name: provider-aws
 spec:
-  package: "crossplane/provider-aws:v1.9.0"
+  package: "crossplane/provider-aws:master"
 ```
 
 The field `spec.package` is where you refer to the container image of the
@@ -63,9 +60,9 @@ There are a few other ways to to trigger the installation of provider packages:
 
 * As part of Crossplane Helm chart by adding the following statement to your
   `helm install` command: `--set
-  provider.packages={crossplane/provider-aws:v1.9.0}`.
+  provider.packages={crossplane/provider-aws:master}`.
 * Using the Crossplane CLI: `kubectl crossplane install provider
-  crossplane/provider-aws:v1.9.0`
+  crossplane/provider-aws:master`
 
 You can uninstall a provider by deleting the `Provider` resource
 you've created.
@@ -90,7 +87,7 @@ spec:
     secretRef:
       namespace: crossplane-system
       name: aws-creds
-      key: key
+      key: creds
 ```
 
 You can see that there is a reference to a key in a specific `Secret`. The value

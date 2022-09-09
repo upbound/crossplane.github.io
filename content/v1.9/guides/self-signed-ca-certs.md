@@ -5,9 +5,8 @@ weight: 270
 indent: true  
 ---  
 
-# Overview of Crossplane for Registry with Self-Signed CA Certificate  
 
-> ! Using self-signed certificates is not advised in production, it is 
+> Using self-signed certificates is not advised in production, it is 
 recommended to only use self-signed certificates for testing.
 
 When Crossplane loads Configuration and Provider Packages from private 

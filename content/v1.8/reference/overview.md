@@ -1,6 +1,5 @@
 ---
 title: Reference
-toc: true
 weight: 300
 ---
 

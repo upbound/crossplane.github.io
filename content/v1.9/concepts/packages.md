@@ -1,11 +1,7 @@
 ---
-title: Packages
-toc: true
+title: Crossplane Packages
 weight: 104
-indent: true
 ---
-
-# Crossplane Packages
 
 Crossplane packages are opinionated [OCI images] that contain a stream of YAML
 that can be parsed by the Crossplane package manager. Crossplane packages come
@@ -31,11 +27,20 @@ purposes of Crossplane packages are as follows:
 
 The following packaging operations are covered in detail below:
 
+- [Table of Contents](#table-of-contents)
 - [Building a Package](#building-a-package)
   - [Provider Packages](#provider-packages)
   - [Configuration Packages](#configuration-packages)
 - [Pushing a Package](#pushing-a-package)
 - [Installing a Package](#installing-a-package)
+  - [spec.package](#specpackage)
+  - [spec.packagePullPolicy](#specpackagepullpolicy)
+  - [spec.revisionActivationPolicy](#specrevisionactivationpolicy)
+  - [spec.revisionHistoryLimit](#specrevisionhistorylimit)
+  - [spec.packagePullSecrets](#specpackagepullsecrets)
+  - [spec.skipDependencyResolution](#specskipdependencyresolution)
+  - [spec.ignoreCrossplaneConstraints](#specignorecrossplaneconstraints)
+  - [spec.controllerConfigRef](#speccontrollerconfigref)
 - [Upgrading a Package](#upgrading-a-package)
   - [Package Upgrade Issues](#package-upgrade-issues)
 - [The Package Cache](#the-package-cache)

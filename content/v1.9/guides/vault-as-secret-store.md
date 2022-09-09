@@ -1,11 +1,7 @@
 ---
 title: Vault as an External Secret Store 
-toc: true
 weight: 230
-indent: true
 ---
-
-# Using Vault as an External Secret Store
 
 This guide walks through the steps required to configure Crossplane and
 its Providers to use [Vault] as an [External Secret Store]. For the sake of

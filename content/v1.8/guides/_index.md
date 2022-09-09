@@ -1,10 +1,8 @@
 ---
 title: Guides
-toc: true
 weight: 200
 ---
 
-# Guides
 
 This section contains guides for using Crossplane in specific scenarios or
 alongside other technologies. If you are interested in writing and

@@ -1,13 +1,8 @@
 ---
 title: Managed Resources
-toc: true
 weight: 102
-indent: true
 ---
 
-# Managed Resources
-
-## Overview
 
 A Managed Resource (MR) is Crossplane's representation of a resource in an
 external system - most commonly a cloud provider. Managed Resources are
@@ -63,7 +58,7 @@ spec:
 ```
 
 ```console
-kubectl apply -f https://raw.githubusercontent.com/crossplane/crossplane/release-1.9/docs/snippets/provision/aws.yaml
+kubectl apply -f https://raw.githubusercontent.com/crossplane/crossplane/release-1.8/docs/snippets/provision/aws.yaml
 ```
 
 Creating the above instance will cause Crossplane to provision an RDS instance
@@ -112,7 +107,7 @@ spec:
 ```
 
 ```console
-kubectl apply -f https://raw.githubusercontent.com/crossplane/crossplane/release-1.9/docs/snippets/provision/gcp.yaml
+kubectl apply -f https://raw.githubusercontent.com/crossplane/crossplane/release-1.8/docs/snippets/provision/gcp.yaml
 ```
 
 Creating the above instance will cause Crossplane to provision a CloudSQL
@@ -179,7 +174,7 @@ spec:
 ```
 
 ```console
-kubectl apply -f https://raw.githubusercontent.com/crossplane/crossplane/release-1.9/docs/snippets/provision/azure.yaml
+kubectl apply -f https://raw.githubusercontent.com/crossplane/crossplane/release-1.8/docs/snippets/provision/azure.yaml
 ```
 
 Creating the above instance will cause Crossplane to provision a PostgreSQL

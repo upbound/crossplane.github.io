@@ -1,8 +1,6 @@
 ---
 title: Install
-toc: true
 weight: 301
-indent: true
 ---
 
 # Install Crossplane

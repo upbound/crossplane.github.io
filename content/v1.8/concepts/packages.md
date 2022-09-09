@@ -1,11 +1,8 @@
 ---
-title: Packages
-toc: true
+title: Crossplane Packages
 weight: 104
-indent: true
 ---
 
-# Crossplane Packages
 
 Crossplane packages are opinionated [OCI images] that contain a stream of YAML
 that can be parsed by the Crossplane package manager. Crossplane packages come
@@ -31,11 +28,20 @@ purposes of Crossplane packages are as follows:
 
 The following packaging operations are covered in detail below:
 
+- [Table of Contents](#table-of-contents)
 - [Building a Package](#building-a-package)
   - [Provider Packages](#provider-packages)
   - [Configuration Packages](#configuration-packages)
 - [Pushing a Package](#pushing-a-package)
 - [Installing a Package](#installing-a-package)
+  - [spec.package](#specpackage)
+  - [spec.packagePullPolicy](#specpackagepullpolicy)
+  - [spec.revisionActivationPolicy](#specrevisionactivationpolicy)
+  - [spec.revisionHistoryLimit](#specrevisionhistorylimit)
+  - [spec.packagePullSecrets](#specpackagepullsecrets)
+  - [spec.skipDependencyResolution](#specskipdependencyresolution)
+  - [spec.ignoreCrossplaneConstraints](#specignorecrossplaneconstraints)
+  - [spec.controllerConfigRef](#speccontrollerconfigref)
 - [Upgrading a Package](#upgrading-a-package)
   - [Package Upgrade Issues](#package-upgrade-issues)
 - [The Package Cache](#the-package-cache)
@@ -109,8 +115,8 @@ all types that its package installs, as well as `Secrets`, `ConfigMaps`, and
 > Note that the Crossplane RBAC manager can be configured to reject permissions
 > for certain API groups. If a package requests permissions that Crossplane is
 > configured to reject, the package will fail to be installed.
-> Authorized permissions should be aggregated to the rbac manager clusterrole 
-> (the cluster role defined by the provider-clusterrole flag in the rbac manager) 
+> Authorized permissions should be aggregated to the rbac manager clusterrole
+> (the cluster role defined by the provider-clusterrole flag in the rbac manager)
 > by using the label `rbac.crossplane.io/aggregate-to-allowed-provider-permissions: "true"`
 
 The `spec.crossplane.version` field specifies the version constraints for core
@@ -478,7 +484,6 @@ ensure that the controller image that it references is able to be pulled by the
 cluster nodes. This can be accomplished either by pushing it to a registry, or
 by [pre-pulling images] onto nodes in the cluster.
 
-
 <!-- Named Links -->
 
 [OCI images]: https://github.com/opencontainers/image-spec
@@ -486,7 +491,7 @@ by [pre-pulling images] onto nodes in the cluster.
 [provider-docs]: https://doc.crds.dev/github.com/crossplane/crossplane/meta.pkg.crossplane.io/Provider/v1
 [configuration-docs]: https://doc.crds.dev/github.com/crossplane/crossplane/meta.pkg.crossplane.io/Configuration/v1
 [lock-api]: https://doc.crds.dev/github.com/crossplane/crossplane/pkg.crossplane.io/Lock/v1beta1
-[getting-started-with-gcp]: https://github.com/crossplane/crossplane/tree/release-1.9/docs/snippets/package/gcp
+[getting-started-with-gcp]: https://github.com/crossplane/crossplane/tree/release-1.8/docs/snippets/package/gcp
 [specification]: https://github.com/Masterminds/semver#basic-comparisons
 [composition]: composition.md
 [IAM Roles for Service Accounts]: https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts.html
