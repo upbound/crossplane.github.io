@@ -276,6 +276,6 @@ own infrastructure APIs.
 <!-- Named Links -->
 
 [Persistent Volumes (PV) and Persistent Volume Claims (PVC)]: https://kubernetes.io/docs/concepts/storage/persistent-volumes/
-[composition]: ../concepts/composition.md
-[setup]: install-configure.md
-[next section]: create-configuration.md
+[composition]: {{<ref "../concepts/composition" >}}
+[setup]: {{<ref "install-configure" >}}
+[next section]: {{<ref "create-configuration" >}}

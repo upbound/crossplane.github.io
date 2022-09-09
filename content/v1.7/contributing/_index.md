@@ -13,6 +13,6 @@ our [`CONTRIBUTING.md`] file. The following documents supplement that guide.
 3. [Release Process]
 
 [`CONTRIBUTING.md`]: https://github.com/crossplane/crossplane/blob/master/CONTRIBUTING.md
-[Provider Development Guide]: provider_development_guide.md
-[Observability Developer Guide]: observability_developer_guide.md
-[Release Process]: release-process.md
+[Provider Development Guide]: {{<ref "provider_development_guide" >}}
+[Observability Developer Guide]: {{<ref "observability_developer_guide" >}}
+[Release Process]: {{<ref "release-process" >}}

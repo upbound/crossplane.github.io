@@ -731,9 +731,9 @@ rm -rf crossplane-config
 
 <!-- Named Links -->
 
-[previous section]: provision-infrastructure.md
-[composed]: ../concepts/composition.md
-[composition]: ../concepts/composition.md
+[previous section]: {{<ref "provision-infrastructure" >}}
+[composed]: {{<ref "../concepts/composition" >}}
+[composition]: {{<ref "../concepts/composition" >}}
 [Docker Hub]: https://hub.docker.com/
-[packages]: ../concepts/packages.md
-[concepts]: ../concepts/overview.md
+[packages]: {{<ref "../concepts/packages" >}}
+[concepts]: {{<ref "../concepts" >}}

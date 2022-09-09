@@ -17,4 +17,4 @@ We believe in a multi-flavor cloud.
 ### Related Projects
 See [Related Projects].
 
-[Related Projects]: related_projects.md
+[Related Projects]: {{<ref "related_projects" >}}

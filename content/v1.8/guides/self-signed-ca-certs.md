@@ -53,4 +53,4 @@ in an `override.yaml` file would look like this:
 ```
 
 
-[Install Crossplane]: ../reference/install.md
+[Install Crossplane]: {{<ref "../reference/install" >}}

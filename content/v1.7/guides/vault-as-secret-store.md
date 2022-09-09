@@ -471,7 +471,7 @@ kubectl -n default delete claim my-ess
 
 [Vault]: https://www.vaultproject.io/
 [External Secret Store]: https://github.com/crossplane/crossplane/blob/master/design/design-doc-external-secret-stores.md
-[the previous guide]: vault-injection.md
+[the previous guide]: {{<ref "vault-injection" >}}
 [this issue]: https://github.com/crossplane/crossplane/issues/2985
 [Kubernetes Auth Method]: https://www.vaultproject.io/docs/auth/kubernetes
 [Unseal]: https://www.vaultproject.io/docs/concepts/seal

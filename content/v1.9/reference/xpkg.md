@@ -197,7 +197,7 @@ unmodified.
 
 <!-- Named Links -->
 
-[packages]: ../concepts/packages.md
+[packages]: {{<ref "../concepts/packages" >}}
 [OCI images]: https://github.com/opencontainers/image-spec
 [OCI image specification]: https://github.com/opencontainers/image-spec/blob/main/spec.md
 [YAML]: https://yaml.org/spec/1.2.2/

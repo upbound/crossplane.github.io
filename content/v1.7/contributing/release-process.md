@@ -170,7 +170,7 @@ For all repos with Helm charts:
 
 For crossplane/crossplane:
 * [Docs website](https://crossplane.io/docs/latest)
-* [Configuration Packages](https://cloud.upbound.io/browse)
+* [Configuration Packages](https://marketplace.upbound.io)
 
 ### Tag Next Pre-release
 

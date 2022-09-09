@@ -46,10 +46,10 @@ learn more about all of these concepts in the [composition documentation].
 
 <!-- Named Links -->
 
-[Packages]: packages.md
+[Packages]: {{<ref "packages" >}}
 [CRDs]: https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/
 [controllers]: https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/#custom-controllers
-[providers documentation]: providers.md
+[providers documentation]: {{<ref "providers" >}}
 [doc.crds.dev]: https://doc.crds.dev
-[managed resources documentation]: managed-resources.md
-[composition documentation]: composition.md
+[managed resources documentation]: {{<ref "managed-resources" >}}
+[composition documentation]: {{<ref "composition" >}}
