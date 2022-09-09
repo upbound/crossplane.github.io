@@ -19,7 +19,7 @@ markup:
 
 
 params:
-  upboundLink: "https://upbound.io/"
+  upboundLink: "https://www.upbound.io/"
   slackLink: "https://slack.crossplane.io/"
   githubLink: "https://github.com/crossplane/crossplane"
   twitterLink: "https://twitter.com/crossplane_io"
