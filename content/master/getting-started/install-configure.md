@@ -461,12 +461,12 @@ Slack][Slack] and our community will highlight it here!</i>
 
 <!-- Named Links -->
 
-[package]: ../concepts/packages.md
-[provision infrastructure]: provision-infrastructure.md
+[package]: {{<ref "../concepts/packages" >}}
+[provision infrastructure]: {{<ref "provision-infrastructure" >}}
 [create a configuration]: create-configuration.md
 [Install]: ../reference/install.md
 [Configure]: ../reference/configure.md
-[Uninstall]: ../reference/uninstall.md
+[Uninstall]: {{<ref "../reference/uninstall" >}}
 [Kubernetes cluster]: https://kubernetes.io/docs/setup/
 [Minikube]: https://kubernetes.io/docs/tasks/tools/install-minikube/
 [Helm]:https://docs.helm.sh/using_helm/
