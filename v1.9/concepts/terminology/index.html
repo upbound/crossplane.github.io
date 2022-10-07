@@ -1,0 +1,126 @@
+<!doctype html><html lang=en><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=description content="Crossplane is a framework for building cloud native control planes without needing to write code. It has a highly extensible backend that enables you to build a control plane that can orchestrate applications and infrastructure no matter where they run, and a highly configurable frontend that puts you in control of the schema of the declarative API it offers."><meta http-equiv=x-ua-compatible content="ie=edge"><title>Terminology| Crossplane Documentation</title><meta name=twitter:card content="summary"><meta name=twitter:site content="https://crossplane.io"><meta name=twitter:title content="Crossplane"><meta name=twitter:description content="The cloud-native control plane framework"><meta name=twitter:image:src content="https://crossplane.io/images/twitter-card_400x400.jpg"><link rel=apple-touch-icon sizes=180x180 href="/favicons/apple-touch-icon.png?v=1.0"><link rel=icon type=image/png sizes=32x32 href="/favicons/favicon-32x32.png?v=1.0"><link rel=icon type=image/png sizes=16x16 href="/favicons/favicon-16x16.png?v=1.0"><link rel=manifest href="/favicons/site.webmanifest?v=1.0"><link rel=mask-icon href="/favicons/safari-pinned-tab.svg?v=1.0" color=#5bbad5><link rel="shortcut icon" href="/favicons/favicon.ico?v=1.0"><meta name=msapplication-TileColor content="#da532c"><meta name=theme-color content="#ffffff"><link rel=stylesheet href=/css/main.css><link rel=stylesheet href=https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css><link rel=stylesheet href=/css/docs.css><script src=https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js></script>
+<script src=https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js></script></head><body><div id=header><div><div class=logo><a href=/><img src=/images/logo.svg alt="Crossplane Logo"></a></div><div class=hamburger-controls onclick='return document.body.classList.contains("menu-open")?document.body.classList.remove("menu-open"):document.body.classList.add("menu-open"),!1'><span></span>
+<span></span>
+<span></span></div><ul class=links><li><a href=https://github.com/crossplane/crossplane><span class=md-hidden>Get Started on</span> GitHub</a></li><li><a href=/v1.9/>Documentation</a></li><li><a href=/community/>Community</a></li><li><a href=https://slack.crossplane.io/>Slack <span class=md-hidden>Channel</span></a></li><li><a href=https://blog.crossplane.io/>Blog</a></li><li><a href=https://twitter.com/crossplane_io>Twitter</a></li></ul></div></div><div id=docs-header><div><h1>Documentation</h1><div class="versions latest"><div><div><select onchange="window.location.href=this.value"><option selected value=/master/concepts/terminology/>Crossplane master</option><option selected value=/v1.9/concepts/terminology/>Crossplane v1.9</option><option value=/v1.8/concepts/terminology/>Crossplane v1.8</option><option value=/v1.7/concepts/terminology/>Crossplane v1.7</option></select></div></div></div></div></div><div class=page><div class=docs-menu><ul id=docs-ul></ul></div><div class=docs-content><div class=docs-actions><a id=edit href=https://github.com/crossplane/crossplane/tree/release-1.9/docs/terminology.md><img src=/images/github-teal.svg>Edit on GitHub</a></div><h1>Terminology</h1><h2 id=a-note-on-style>A Note on Style</h2><p>Each type of Kubernetes resource has a ‘Pascal case’ name - i.e. a title case
+name with no spaces between each word. Examples include ‘DaemonSet’ and
+‘PersistentVolumeClaim’. Often these names are written using fixed width fonts
+to draw attention to the fact that they’re a concrete type of resource within
+the API - e.g. <code>PersistentVolumeClaim</code>.</p><p>Crossplane follows this convention. We often use names like RDSInstance or
+CompositeResourceDefinition when discussing Crossplane types. Crossplane also
+has “classes of types” - i.e. concepts that aren’t a distinct type of API
+resource, but rather describe a group of conceptually similar types. For example
+there is no ManagedResource type in Crossplane - instead types like RDSInstance
+and GKECluster are said to be “a managed resource”.</p><p>Use your discretion as to whether you use pascal case when writing about a
+distinct type - e.g. “RDS Instance” and “RDSInstance” are both fine. The pascal
+case form makes more sense in contexts like documentation where you’re referring
+to Crossplane’s RDSInstance managed resource rather than the general concept of
+“an RDS instance”. Avoid using Pascal case when talking about classes of types -
+i.e. always write “managed resource”, not “ManagedResource”. Each of the below
+terms clarify whether they correspond to a single type, or a class of types.</p><h3 id=why-x>Why &lsquo;X&rsquo;?</h3><p>You may notice that Crossplane uses “X” as shorthand for “Crossplane” and/or
+“Composite”. This is because some of our concepts - specifically Composite
+Resources (XRs) and Composite Resource Definitions (XRDs) are modelled on
+similar Kubernetes concepts - Custom Resources (CRs) and Custom Resource
+Definitions (CRDs). We chose to abbreviate to (e.g.) XRD instead of CRD to avoid
+confusion.</p><h2 id=crossplane-terms>Crossplane Terms</h2><p>The below terms are commonly used in the Crossplane ecosystem.</p><h3 id=composition>Composition</h3><p>The term Composition has two related but distinct meanings.</p><p>“Composition” refers broadly to the feature of Crossplane that allows teams to
+define their own opinionated platform APIs.</p><p>“A Composition” or <code>Composition</code> (fixed width) refers to the key Crossplane API
+type that configures how Crossplane should compose resources into a higher level
+“composite resource”. A Composition tells Crossplane “when someone creates
+composite resource X, you should respond by creating resources Y and Z”.</p><p>The latter use of Composition represents a distinct Crossplane API type so
+Pascal case and fixed width fonts are appropriate. We also tend to capitalise
+the former use, representing the feature in general, but fixed width fonts are
+not appropriate in that context.</p><blockquote><p>Folks accustomed to Terraform might think of a Composition as a Terraform
+module; the HCL code that describes how to take input variables and use them
+to create resources in some cloud API. Folks accustomed to Helm might think of
+a Composition as a Helm chart’s templates; the moustache templated YAML files
+that describe how to take Helm chart values and render Kubernetes resources.</p></blockquote><h3 id=composite-resource>Composite Resource</h3><p>A “Composite Resource” or “XR” is an API type defined using Crossplane. A
+composite resource’s API type is arbitrary - dictated by the concept the author
+wishes to expose as an API, for example an “AcmeCoDB”. A common convention is
+for types to start with &ldquo;X&rdquo; - e.g. &ldquo;XAcmeCoDB&rdquo;.</p><p>We talk about Crossplane being a tool teams can use to define their own
+opinionated platform APIs. Those APIs are made up of composite resources; when
+you are interacting with an API that your platform team has defined, you’re
+interacting with composite resources.</p><p>A composite resource can be thought of as the interface to a Composition. It
+provides the inputs a Composition uses to compose resources into a higher level
+concept. In fact, the composite resource <em>is</em> the high level concept.</p><p>The term “Composite Resource” refers to a class of types, so avoid using Pascal
+case - “Composite Resource” not CompositeResource. Use pascal case when
+referring to a distinct type of composite resource - e.g. a XAcmeCoDB.</p><blockquote><p>Folks accustomed to Terraform might think of a composite resource as a
+<code>tfvars</code> file that supplies values for the variables a Terraform module uses
+to create resources in some cloud API. Folks accustomed to Helm might think of
+a composite resource as the <code>values.yaml</code> file that supplies inputs to a Helm
+chart’s templates.</p></blockquote><h3 id=composite-resource-claim>Composite Resource Claim</h3><p>A “Composite Resource Claim”, “XRC”, or just “a claim” is also an API type
+defined using Crossplane. Each type of claim corresponds to a type of composite
+resource, and the pair have nearly identical schemas. Like composite resources,
+the type of a claim is arbitrary.</p><p>We talk about Crossplane being a tool platform teams can use to offer
+opinionated platform APIs to the application teams they support. The platform
+team offers those APIs using claims. It helps to think of the claim as an
+application team’s interface to a composite resource. You could also think of
+claims as the public (app team) facing part of the opinionated platform API,
+while composite resources are the private (platform team) facing part.</p><p>A common convention is for a claim to be of the same type as its corresponding
+composite resource, but without the &ldquo;X&rdquo; prefix. So an &ldquo;AcmeCoDB&rdquo; would be a type
+of claim, and a &ldquo;XAcmeCoDB&rdquo; would be the corresponding type of composite
+resource. This allows claim consumers to be relatively ignorant of Crossplane
+and composition, and to instead simply think about managing “an AcmeCo DB” while
+the platform team worries about the implementation details.</p><p>The term “Composite Resource Claim” refers to a class of types, so avoid using
+Pascal case - “Composite Resource Claim” not CompositeResourceClaim. Use Pascal
+case when referring to a distinct type of composite resource claim - e.g. an
+AcmeCoDB.</p><blockquote><p>Claims map to the same concepts as described above under the composite
+resource heading; i.e. <code>tfvars</code> files and Helm <code>values.yaml</code> files. Imagine
+that some <code>tfvars</code> files and some <code>values.yaml</code> files were only accessible to
+the platform team while others were offered to application teams; that’s the
+difference between a composite resource and a claim.</p></blockquote><h3 id=composite-resource-definition>Composite Resource Definition</h3><p>A “Composite Resource Definition” or “XRD” is the API type used to define new
+types of composite resources and claims. Types of composite resources and types
+of claims exist because they were defined into existence by an XRD. The XRD
+configures Crossplane with support for the composite resources and claims that
+make up a platform API.</p><p>XRDs are often conflated with composite resources (XRs) - try to avoid this.
+When someone uses the platform API to create infrastructure they’re not creating
+XRDs but rather creating composite resources (XRs). It may help to think of a
+composite resource as a database entry, while an XRD is a database schema. For
+those familiar with Kubernetes, the relationship is very similar to that between
+a Custom Resource Definition (CRD) and a Custom Resource (CR).</p><p>A <code>CompositeResourceDefinition</code> is a distinct Crossplane API type, so Pascal
+case and fixed width fonts are appropriate.</p><blockquote><p>There isn’t a direct analog to XRDs in the Helm ecosystem, but they’re a
+little bit like the variable blocks in a Terraform module that define which
+variables exist, whether those variables are strings or integers, whether
+they’re required or optional, etc.</p></blockquote><h3 id=managed-resource>Managed Resource</h3><p>Managed resources are granular, high fidelity Crossplane representations of a
+resource in an external system - i.e. resources that are managed by Crossplane.
+Managed resources are what Crossplane enables platform teams to compose into
+higher level composite resources, forming an opinionated platform API. They&rsquo;re
+the building blocks of Crossplane.</p><p>You’ll often hear three related terms used in the Crossplane ecosystem; composed
+resource, managed resource, and external resource. While there are some subtle
+contextual differences, these all broadly refer to the same thing. Take an
+RDSInstance for example; it is a managed resource. A distinct resource within
+the Crossplane API that represents an AWS RDS instance. When we make a
+distinction between the managed resource and an external resource we’re simply
+making the distinction between Crossplane’s representation of the thing (the
+<code>RDSInstance</code> in the Kubernetes API), and the actual thing in whatever external
+system Crossplane is orchestrating (the RDS instance in AWS&rsquo;s API). When we
+mention composed resources, we mean a managed resource of which a composite
+resource is composed.</p><p>Managed resources are a class of resource, so avoid using Pascal case - “managed
+resource” not “ManagedResource”.</p><blockquote><p>Managed resources are similar to Terraform resource blocks, or a distinct
+Kubernetes resource within a Helm chart.</p></blockquote><h3 id=package>Package</h3><p>Packages extend Crossplane, either with support for new kinds of composite
+resources and claims, or support for new kinds of managed resources. There are
+two types of Crossplane package; configurations and providers.</p><p>A package is not a distinct type in the Crossplane API, but rather a class of
+types. Therefore Pascal case is not appropriate.</p><h3 id=configuration>Configuration</h3><p>A configuration extends Crossplane by installing conceptually related groups of
+XRDs and Compositions, as well as dependencies like providers or further
+configurations. Put otherwise, it configures the opinionated platform API
+that Crossplane exposes.</p><p>A <code>Configuration</code> is a distinct type in the Crossplane API, therefore Pascal
+case and fixed width fonts are appropriate.</p><h3 id=provider>Provider</h3><p>A provider extends Crossplane by installing controllers for new kinds of managed
+resources. Providers typically group conceptually related managed resources; for
+example the AWS provider installs support for AWS managed resources like
+RDSInstance and S3Bucket.</p><p>A <code>Provider</code> is a distinct type in the Crossplane API, therefore Pascal case and
+fixed width fonts are appropriate. Note that each Provider package has its own
+configuration type, called a <code>ProviderConfig</code>. Don’t confuse the two; the former
+installs the provider while the latter specifies configuration that is relevant
+to all of its managed resources.</p><blockquote><p>Providers are directly analogous to Terraform providers.</p></blockquote><h3 id=crossplane-resource-model>Crossplane Resource Model</h3><p>The Crossplane Resource Model or XRM is neither a distinct Crossplane API type,
+or a class of types. Rather it represents the fact that Crossplane has a
+consistent, opinionated API. The strict definition of the XRM is currently
+somewhat vague, but it could broadly be interpreted as a catchall term referring
+to all of the concepts mentioned on this page.</p></div></div><script>var i,j,menu=[],menuDom,item,itemDom,children;menu.push({childCurrent:!1,children:[{current:!1,name:"Install \u0026 Configure",url:"/v1.9/getting-started/install-configure/"},{current:!1,name:"Provision Infrastructure",url:"/v1.9/getting-started/provision-infrastructure/"},{current:!1,name:"Create a Configuration",url:"/v1.9/getting-started/create-configuration/"}],current:!1,name:"Getting Started",url:"/v1.9/getting-started/"}),menu.push({childCurrent:!0,children:[{current:!1,name:"Providers",url:"/v1.9/concepts/providers/"},{current:!1,name:"Managed Resources",url:"/v1.9/concepts/managed-resources/"},{current:!1,name:"Composite Resources",url:"/v1.9/concepts/composition/"},{current:!1,name:"Crossplane Packages",url:"/v1.9/concepts/packages/"},{current:!0,name:"Terminology",url:"/v1.9/concepts/terminology/"}],current:!1,name:"Concepts",url:"/v1.9/concepts/"}),menu.push({childCurrent:!1,children:[{current:!1,name:"Upgrading to v0.14",url:"/v1.9/guides/upgrading-to-v0.14/"},{current:!1,name:"Upgrading to v1.x",url:"/v1.9/guides/upgrading-to-v1.x/"},{current:!1,name:"Vault as an External Secret Store",url:"/v1.9/guides/vault-as-secret-store/"},{current:!1,name:"Vault Credential Injection",url:"/v1.9/guides/vault-injection/"},{current:!1,name:"Multi-Tenant Crossplane",url:"/v1.9/guides/multi-tenant/"},{current:!1,name:"Composition Revisions",url:"/v1.9/guides/composition-revisions/"},{current:!1,name:"Self-Signed CA Certs",url:"/v1.9/guides/self-signed-ca-certs/"}],current:!1,name:"Guides",url:"/v1.9/guides/"}),menu.push({childCurrent:!1,children:[{current:!1,name:"Install Crossplane",url:"/v1.9/reference/install/"},{current:!1,name:"Configure Your Cloud Provider Account",url:"/v1.9/reference/configure/"},{current:!1,name:"Uninstall",url:"/v1.9/reference/uninstall/"},{current:!1,name:"Composition",url:"/v1.9/reference/composition/"},{current:!1,name:"xpkg Specification",url:"/v1.9/reference/xpkg/"},{current:!1,name:"Troubleshoot",url:"/v1.9/reference/troubleshoot/"},{current:!1,name:"Learn More",url:"/v1.9/reference/learn_more/"},{current:!1,name:"Release Cycle",url:"/v1.9/reference/release-cycle/"}],current:!1,name:"Reference",url:"/v1.9/reference/"}),menu.push({childCurrent:!1,children:[{current:!1,name:"crossplane",url:"/v1.9/api-docs/crossplane/"},{current:!1,name:"provider-alibaba",url:"/v1.9/api-docs/provider-alibaba/"},{current:!1,name:"provider-aws",url:"/v1.9/api-docs/provider-aws/"},{current:!1,name:"provider-azure",url:"/v1.9/api-docs/provider-azure/"},{current:!1,name:"provider-gcp",url:"/v1.9/api-docs/provider-gcp/"},{current:!1,name:"provider-rook",url:"/v1.9/api-docs/provider-rook/"},{current:!1,name:"provider-helm",url:"/v1.9/api-docs/provider-helm/"}],current:!1,name:"API Documentation",url:"/v1.9/api-docs/"}),menu.push({childCurrent:!1,children:[{current:!1,name:"Provider Development Guide",url:"/v1.9/contributing/provider_development_guide/"},{current:!1,name:"Observability Developer Guide",url:"/v1.9/contributing/observability_developer_guide/"},{current:!1,name:"Release Process",url:"/v1.9/contributing/release-process/"},{current:!1,name:"Adding Secret Store Support",url:"/v1.9/contributing/adding_external_secret_store_support/"}],current:!1,name:"Contributing",url:"/v1.9/contributing/"}),menu.push({childCurrent:!1,children:[{current:!1,name:"Related Projects",url:"/v1.9/faqs/related_projects/"}],current:!1,name:"FAQ",url:"/v1.9/faqs/"});function getEntry(e){var t=document.createElement("li");return e.current?(t.innerHTML=e.name,t.classList.add("current")):t.innerHTML='<a href="'+e.url+'">'+e.name+"</a>",t}function flushCss(e){e.offsetHeight}function addArrow(e){var t=document.createElement("a");t.classList.add("arrow"),t.innerHTML="<div />",t.onclick=function(e){return function(){var n=59,s=16,t=n+s+e.lastChild.clientHeight+"px";return e.classList.toggle("open"),e.classList.contains("open")?e.style.height=t:(e.style.height==="auto"&&(e.style.transition="none",e.style.height=t,flushCss(e),e.style.transition=""),e.style.height="59px"),!1}}(e),e.appendChild(t),item.current&&item.children||item.childCurrent?(e.classList.add("open"),e.style.height="auto"):e.style.height="59px"}menuDom=document.getElementById("docs-ul");for(i=0;i<menu.length;i++){if(item=menu[i],itemDom=getEntry(item),item.childCurrent&&itemDom.classList.add("childCurrent"),item.children){addArrow(itemDom),itemDom.classList.add("children"),children=document.createElement("ul");for(j=0;j<item.children.length;j++)children.appendChild(getEntry(item.children[j]));itemDom.appendChild(children)}menuDom.appendChild(itemDom)}</script><script src=/js/anchor.js></script>
+<script>anchors.options={placement:"right",icon:"#"},document.addEventListener("DOMContentLoaded",function(){anchors.add(".docs-content h1, .docs-content h2, .docs-content h3, .docs-content h4, .docs-content h5, .docs-content h6")})</script><div id=footer><div class=footer-main><div class=main><div class=logo><img src=/images/logo.svg alt="Crossplane Logo"></div></div><div class="links sm-hidden"><a href=https://twitter.com/crossplane_io>Twitter</a>
+<a href=/v1.9/>Documentation</a>
+<a href=https://github.com/crossplane/crossplane>GitHub</a>
+<a href=https://slack.crossplane.io/>Slack Channel</a>
+<a href=https://www.youtube.com/channel/UC19FgzMBMqBro361HbE46Fw>YouTube</a>
+<a href=https://groups.google.com/forum/#!forum/crossplane-dev>Forum</a></div></div><div class=lf-copyright><p>&#169; Crossplane Authors 2022. Documentation distributed under
+<a href=https://creativecommons.org/licenses/by/4.0/>CC-BY-4.0</a>.</p><p>&#169; 2022 The Linux Foundation. All rights reserved. The Linux Foundation has
+registered trademarks and uses trademarks. For a list of trademarks of The Linux Foundation, please see our
+<a href=https://www.linuxfoundation.org/trademark-usage/>Trademark Usage</a> page.</p></div><script src=/js/slack-popup.js></script></div><script>(function(e,t,n,s,o,i,a){e.GoogleAnalyticsObject=o,e[o]=e[o]||function(){(e[o].q=e[o].q||[]).push(arguments)},e[o].l=1*new Date,i=t.createElement(n),a=t.getElementsByTagName(n)[0],i.async=1,i.src=s,a.parentNode.insertBefore(i,a)})(window,document,"script","https://www.google-analytics.com/analytics.js","ga"),ga("create","UA-110275540-2","auto"),ga("send","pageview")</script><script async src="https://www.googletagmanager.com/gtag/js?id=G-SFCPQYSLHY"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag("js",new Date),gtag("config","G-SFCPQYSLHY")</script><script type=text/javascript id=hs-script-loader async defer src=https://js.hs-scripts.com/5557732.js></script></body></html>

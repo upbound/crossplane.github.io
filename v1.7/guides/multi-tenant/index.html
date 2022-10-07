@@ -1,0 +1,207 @@
+<!doctype html><html lang=en><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=description content="Crossplane is a framework for building cloud native control planes without needing to write code. It has a highly extensible backend that enables you to build a control plane that can orchestrate applications and infrastructure no matter where they run, and a highly configurable frontend that puts you in control of the schema of the declarative API it offers."><meta http-equiv=x-ua-compatible content="ie=edge"><meta name=robots content="noindex"><title>Multi-Tenant Crossplane| Crossplane Documentation</title><meta name=twitter:card content="summary"><meta name=twitter:site content="https://crossplane.io"><meta name=twitter:title content="Crossplane"><meta name=twitter:description content="The cloud-native control plane framework"><meta name=twitter:image:src content="https://crossplane.io/images/twitter-card_400x400.jpg"><link rel=apple-touch-icon sizes=180x180 href="/favicons/apple-touch-icon.png?v=1.0"><link rel=icon type=image/png sizes=32x32 href="/favicons/favicon-32x32.png?v=1.0"><link rel=icon type=image/png sizes=16x16 href="/favicons/favicon-16x16.png?v=1.0"><link rel=manifest href="/favicons/site.webmanifest?v=1.0"><link rel=mask-icon href="/favicons/safari-pinned-tab.svg?v=1.0" color=#5bbad5><link rel="shortcut icon" href="/favicons/favicon.ico?v=1.0"><meta name=msapplication-TileColor content="#da532c"><meta name=theme-color content="#ffffff"><link rel=stylesheet href=/css/main.css><link rel=stylesheet href=https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css><link rel=stylesheet href=/css/docs.css><script src=https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js></script>
+<script src=https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js></script></head><body><div id=header><div><div class=logo><a href=/><img src=/images/logo.svg alt="Crossplane Logo"></a></div><div class=hamburger-controls onclick='return document.body.classList.contains("menu-open")?document.body.classList.remove("menu-open"):document.body.classList.add("menu-open"),!1'><span></span>
+<span></span>
+<span></span></div><ul class=links><li><a href=https://github.com/crossplane/crossplane><span class=md-hidden>Get Started on</span> GitHub</a></li><li><a href=/v1.9/>Documentation</a></li><li><a href=/community/>Community</a></li><li><a href=https://slack.crossplane.io/>Slack <span class=md-hidden>Channel</span></a></li><li><a href=https://blog.crossplane.io/>Blog</a></li><li><a href=https://twitter.com/crossplane_io>Twitter</a></li></ul></div></div><div id=docs-header><div><h1>Documentation</h1><div class=versions><div><div><select onchange="window.location.href=this.value"><option selected value=/master/guides/multi-tenant/>Crossplane master</option><option value=/v1.9/guides/multi-tenant/>Crossplane v1.9</option><option value=/v1.8/guides/multi-tenant/>Crossplane v1.8</option><option selected value=/v1.7/guides/multi-tenant/>Crossplane v1.7</option></select></div></div></div></div></div><div class=page><div class=docs-menu><ul id=docs-ul></ul></div><div class=docs-content><div class=docs-actions><a id=edit href=https://github.com/crossplane/crossplane/tree/release-1.7/docs/multi-tenant.md><img src=/images/github-teal.svg>Edit on GitHub</a></div><div class="alert old"><p><b>PLEASE NOTE</b>: This document applies to version 1.7 and not to the latest release 1.9</p><strong>Documentation for other releases can be found by using the version selector in the top right of any doc page.</strong></div><h1>Multi-Tenant Crossplane</h1><h1 id=multi-tenant-crossplane>Multi-Tenant Crossplane</h1><p>This guide describes how to use Crossplane effectively in multi-tenant
+environments by utilizing Kubernetes primitives and compatible policy
+enforcement projects in the cloud-native ecosystem.</p><h2 id=tldr>TL;DR</h2><p>Infrastructure operators in multi-tenant Crossplane environments typically
+utilize composition and Kubernetes RBAC to define lightweight, standardized
+policies that dictate what level of self-service developers are given when
+requesting infrastructure. This is primarily achieved through exposing abstract
+resource types at the namespace scope, defining <code>Roles</code> for teams and
+individuals within that namespace, and patching the <code>spec.providerConfigRef</code> of
+the underlying managed resources so that they use a specific <code>ProviderConfig</code>
+and credentials when provisioned from each namespace. Larger organizations, or
+those with more complex environments, may choose to incorporate third-party
+policy engines, or scale to multiple Crossplane clusters. The following sections
+describe each of these scenarios in greater detail.</p><ul><li><a href=#background>Background</a><ul><li><a href=#cluster-scoped-managed-resources>Cluster Scoped Managed Resources</a></li><li><a href=#namespace-scoped-claims>Namespace Scoped Claims</a></li></ul></li><li><a href=#single-cluster-multi-tenancy>Single Cluster Multi Tenancy</a><ul><li><a href=#composition-as-an-isolation-mechanism>Composition as an Isolation Mechanism</a></li><li><a href=#namespaces-as-an-isolation-mechanism>Namespaces as an Isolation Mechanism</a></li><li><a href=#policy-enforcement-with-open-policy-agent>Policy Enforcement with Open Policy Agent</a></li></ul></li><li><a href=#multi-cluster-multi-tenancy>Multi Cluster Multi Tenancy</a><ul><li><a href=#reproducible-platforms-with-configuration-packages>Reproducible Platforms with Configuration Packages</a></li><li><a href=#control-plane-of-control-planes>Control Plane of Control Planes</a></li><li><a href=#service-provisioning-using-open-service-broker-api>Service Provisioning using Open Service Broker API</a></li></ul></li></ul><h2 id=background>Background</h2><p>Crossplane is designed to run in multi-tenant environments where many teams are
+consuming the services and abstractions provided by infrastructure operators in
+the cluster. This functionality is facilitated by two major design patterns in
+the Crossplane ecosystem.</p><h3 id=cluster-scoped-managed-resources>Cluster-Scoped Managed Resources</h3><p>Typically, Crossplane providers, which supply granular <a href=/v1.7/concepts/managed-resources/>managed resources</a> that
+reflect an external API, authenticate by using a <code>ProviderConfig</code> object that
+points to a credentials source (such as a Kubernetes <code>Secret</code>, the <code>Pod</code>
+filesystem, or an environment variable). Then, every managed resource references
+a <code>ProviderConfig</code> that points to credentials with sufficient permissions to
+manage that resource type.</p><p>For example, the following <code>ProviderConfig</code> for <code>provider-aws</code> points to a
+Kubernetes <code>Secret</code> with AWS credentials.</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#f92672>apiVersion</span>: <span style=color:#ae81ff>aws.crossplane.io/v1beta1</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>kind</span>: <span style=color:#ae81ff>ProviderConfig</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>metadata</span>:
+</span></span><span style=display:flex><span>  <span style=color:#f92672>name</span>: <span style=color:#ae81ff>cool-aws-creds</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>spec</span>:
+</span></span><span style=display:flex><span>  <span style=color:#f92672>credentials</span>:
+</span></span><span style=display:flex><span>    <span style=color:#f92672>source</span>: <span style=color:#ae81ff>Secret</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>secretRef</span>:
+</span></span><span style=display:flex><span>      <span style=color:#f92672>namespace</span>: <span style=color:#ae81ff>crossplane-system</span>
+</span></span><span style=display:flex><span>      <span style=color:#f92672>name</span>: <span style=color:#ae81ff>aws-creds</span>
+</span></span><span style=display:flex><span>      <span style=color:#f92672>key</span>: <span style=color:#ae81ff>creds</span>
+</span></span></code></pre></div><p>If a user desired for these credentials to be used to provision an
+<code>RDSInstance</code>, they would reference the <code>ProviderConfig</code> in the object manifest:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#f92672>apiVersion</span>: <span style=color:#ae81ff>database.aws.crossplane.io/v1beta1</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>kind</span>: <span style=color:#ae81ff>RDSInstance</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>metadata</span>:
+</span></span><span style=display:flex><span>  <span style=color:#f92672>name</span>: <span style=color:#ae81ff>rdsmysql</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>spec</span>:
+</span></span><span style=display:flex><span>  <span style=color:#f92672>forProvider</span>:
+</span></span><span style=display:flex><span>    <span style=color:#f92672>region</span>: <span style=color:#ae81ff>us-east-1</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>dbInstanceClass</span>: <span style=color:#ae81ff>db.t3.medium</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>masterUsername</span>: <span style=color:#ae81ff>masteruser</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>allocatedStorage</span>: <span style=color:#ae81ff>20</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>engine</span>: <span style=color:#ae81ff>mysql</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>engineVersion</span>: <span style=color:#e6db74>&#34;5.6.35&#34;</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>skipFinalSnapshotBeforeDeletion</span>: <span style=color:#66d9ef>true</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>providerConfigRef</span>:
+</span></span><span style=display:flex><span>    <span style=color:#f92672>name</span>: <span style=color:#ae81ff>cool-aws-creds</span> <span style=color:#75715e># name of ProviderConfig above</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>writeConnectionSecretToRef</span>:
+</span></span><span style=display:flex><span>    <span style=color:#f92672>namespace</span>: <span style=color:#ae81ff>crossplane-system</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>name</span>: <span style=color:#ae81ff>aws-rdsmysql-conn</span>
+</span></span></code></pre></div><p>Since both the <code>ProviderConfig</code> and all managed resources are cluster-scoped,
+the RDS controller in <code>provider-aws</code> will resolve this reference by fetching the
+<code>ProviderConfig</code>, obtaining the credentials it points to, and using those
+credentials to reconcile the <code>RDSInstance</code>. This means that anyone who has been
+given <a href=https://kubernetes.io/docs/reference/access-authn-authz/rbac/>RBAC</a> to manage <code>RDSInstance</code> objects can use any credentials to do so.
+In practice, Crossplane assumes that only folks acting as infrastructure
+administrators or platform builders will interact directly with cluster-scoped
+resources.</p><h3 id=namespace-scoped-claims>Namespace Scoped Claims</h3><p>While managed resources exist at the cluster scope, composite resources, which
+are defined using a <strong>CompositeResourceDefinition (XRD)</strong> may exist at either
+the cluster or namespace scope. Platform builders define XRDs and
+<strong>Compositions</strong> that specify what granular managed resources should be created
+in response to the creation of an instance of the XRD. More information about
+this architecture can be found in the <a href=/v1.7/concepts/composition/>Composition</a> documentation.</p><p>Every XRD is exposed at the cluster scope, but only those with <code>spec.claimNames</code>
+defined will have a namespace-scoped variant.</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#f92672>apiVersion</span>: <span style=color:#ae81ff>apiextensions.crossplane.io/v1</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>kind</span>: <span style=color:#ae81ff>CompositeResourceDefinition</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>metadata</span>:
+</span></span><span style=display:flex><span>  <span style=color:#f92672>name</span>: <span style=color:#ae81ff>xmysqlinstances.example.org</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>spec</span>:
+</span></span><span style=display:flex><span>  <span style=color:#f92672>group</span>: <span style=color:#ae81ff>example.org</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>names</span>:
+</span></span><span style=display:flex><span>    <span style=color:#f92672>kind</span>: <span style=color:#ae81ff>XMySQLInstance</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>plural</span>: <span style=color:#ae81ff>xmysqlinstances</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>claimNames</span>:
+</span></span><span style=display:flex><span>    <span style=color:#f92672>kind</span>: <span style=color:#ae81ff>MySQLInstance</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>plural</span>: <span style=color:#ae81ff>mysqlinstances</span>
+</span></span><span style=display:flex><span>...
+</span></span></code></pre></div><p>When the example above is created, Crossplane will produce two
+<a href=https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/>CustomResourceDefinitions</a>:</p><ol><li>A cluster-scoped type with <code>kind: XMySQLInstance</code>. This is referred to as a
+<strong>Composite Resource (XR)</strong>.</li><li>A namespace-scoped type with <code>kind: MySQLInstance</code>. This is referred to as a
+<strong>Claim (XRC)</strong>.</li></ol><p>Platform builders may choose to define an arbitrary number of Compositions that
+map to these types, meaning that creating a <code>MySQLInstance</code> in a given namespace
+can result in the creations of any set of managed resources at the cluster
+scope. For instance, creating a <code>MySQLInstance</code> could result in the creation of
+the <code>RDSInstance</code> defined above.</p><h2 id=single-cluster-multi-tenancy>Single Cluster Multi-Tenancy</h2><p>Depending on the size and scope of an organization, platform teams may choose to
+run one central Crossplane control plane, or many different ones for each team
+or business unit. This section will focus on servicing multiple teams within a
+single cluster, which may or may not be one of many other Crossplane clusters in
+the organization.</p><h3 id=composition-as-an-isolation-mechanism>Composition as an Isolation Mechanism</h3><p>While managed resources always reflect every field that the underlying provider
+API exposes, XRDs can have any schema that a platform builder chooses. The
+fields in the XRD schema can then be patched onto fields in the underlying
+managed resource defined in a Composition, essentially exposing those fields as
+configurable to the consumer of the XR or XRC.</p><p>This feature serves as a lightweight policy mechanism by only giving the
+consumer the ability to customize the underlying resources to the extent the
+platform builder desires. For instance, in the examples above, a platform
+builder may choose to define a <code>spec.location</code> field in the schema of the
+<code>XMySQLInstance</code> that is an enum with options <code>east</code> and <code>west</code>. In the
+Composition, those fields could map to the <code>RDSInstance</code> <code>spec.region</code> field,
+making the value either <code>us-east-1</code> or <code>us-west-1</code>. If no other patches were
+defined for the <code>RDSInstance</code>, giving a user the ability (using RBAC) to create
+a <code>XMySQLInstance</code> / <code>MySQLInstance</code> would be akin to giving the ability to
+create a very specifically configured <code>RDSInstance</code>, where they can only decide
+the region where it lives and they are restricted to two options.</p><p>This model is in contrast to many infrastructure as code tools where the end
+user must have provider credentials to create the underlying resources that are
+rendered from the abstraction. Crossplane takes a different approach, defining
+various credentials in the cluster (using the <code>ProviderConfig</code>), then giving
+only the provider controllers the ability to utilize those credentials and
+provision infrastructure on the users behalf. This creates a consistent
+permission model, even when using many providers with differing IAM models, by
+standardizing on Kubernetes RBAC.</p><h3 id=namespaces-as-an-isolation-mechanism>Namespaces as an Isolation Mechanism</h3><p>While the ability to define abstract schemas and patches to concrete resource
+types using composition is powerful, the ability to define Claim types at the
+namespace scope enhances the functionality further by enabling RBAC to be
+applied with namespace restrictions. Most users in a cluster do not have access
+to cluster-scoped resources as they are considered only relevant to
+infrastructure admins by both Kubernetes and Crossplane.</p><p>Building on our simple <code>XMySQLInstance</code> / <code>MySQLInstance</code> example, a platform
+builder may choose to define permissions on <code>MySQLInstance</code> at the namespace
+scope using a <code>Role</code>. This allows for giving users the ability to create and
+manage <code>MySQLInstances</code> in their given namespace, but not the ability to see
+those defined in other namespaces.</p><p>Furthermore, because the <code>metadata.namespace</code> is a field on the XRC, patching can
+be utilized to configure managed resources based on the namespace in which the
+corresponding XRC was defined. This is especially useful if a platform builder
+wants to designate specific credentials or a set of credentials that users in a
+given namespace can utilize when provisioning infrastructure using an XRC. This
+can be accomplished today by creating one or more <code>ProviderConfig</code> objects that
+include the name of the namespace in the <code>ProviderConfig</code> name. For example, if
+any <code>MySQLInstance</code> created in the <code>team-1</code> namespace should use specific AWS
+credentials when the provider controller creates the underlying <code>RDSInstance</code>,
+the platform builder could:</p><ol><li>Define a <code>ProviderConfig</code> with name <code>team-1</code>.</li></ol><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#f92672>apiVersion</span>: <span style=color:#ae81ff>aws.crossplane.io/v1beta1</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>kind</span>: <span style=color:#ae81ff>ProviderConfig</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>metadata</span>:
+</span></span><span style=display:flex><span>  <span style=color:#f92672>name</span>: <span style=color:#ae81ff>team-1</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>spec</span>:
+</span></span><span style=display:flex><span>  <span style=color:#f92672>credentials</span>:
+</span></span><span style=display:flex><span>    <span style=color:#f92672>source</span>: <span style=color:#ae81ff>Secret</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>secretRef</span>:
+</span></span><span style=display:flex><span>      <span style=color:#f92672>namespace</span>: <span style=color:#ae81ff>crossplane-system</span>
+</span></span><span style=display:flex><span>      <span style=color:#f92672>name</span>: <span style=color:#ae81ff>team-1-creds</span>
+</span></span><span style=display:flex><span>      <span style=color:#f92672>key</span>: <span style=color:#ae81ff>creds</span>
+</span></span></code></pre></div><ol start=2><li>Define a <code>Composition</code> that patches the name of the Claim reference in the XR
+to the <code>providerConfigRef</code> of the <code>RDSInstance</code>.</li></ol><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span>...
+</span></span><span style=display:flex><span><span style=color:#f92672>resources</span>:
+</span></span><span style=display:flex><span>- <span style=color:#f92672>base</span>:
+</span></span><span style=display:flex><span>    <span style=color:#f92672>apiVersion</span>: <span style=color:#ae81ff>database.aws.crossplane.io/v1beta1</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>kind</span>: <span style=color:#ae81ff>RDSInstance</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>spec</span>:
+</span></span><span style=display:flex><span>      <span style=color:#f92672>forProvider</span>:
+</span></span><span style=display:flex><span>      <span style=color:#ae81ff>...</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>patches</span>:
+</span></span><span style=display:flex><span>  - <span style=color:#f92672>fromFieldPath</span>: <span style=color:#ae81ff>spec.claimRef.namespace</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>toFieldPath</span>: <span style=color:#ae81ff>spec.providerConfigRef.name</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>policy</span>:
+</span></span><span style=display:flex><span>      <span style=color:#f92672>fromFieldPath</span>: <span style=color:#ae81ff>Required</span>
+</span></span></code></pre></div><p>This would result in the <code>RDSInstance</code> using the <code>ProviderConfig</code> of whatever
+namespace the corresponding <code>MySQLInstance</code> was created in.</p><blockquote><p>Note that this model currently only allows for a single <code>ProviderConfig</code> per
+namespace. However, future Crossplane releases should allow for defining a set
+of <code>ProviderConfig</code> that can be selected from using <a href=https://github.com/crossplane/crossplane/pull/2093>Multiple Source Field
+patching</a>.</p></blockquote><h3 id=policy-enforcement-with-open-policy-agent>Policy Enforcement with Open Policy Agent</h3><p>In some Crossplane deployment models, only using composition and RBAC to define
+policy will not be flexible enough. However, because Crossplane brings
+management of external infrastructure to the Kubernetes API, it is well suited
+to integrate with other projects in the cloud-native ecosystem. Organizations
+and individuals that need a more robust policy engine, or just prefer a more
+general language for defining policy, often turn to <a href=https://www.openpolicyagent.org/>Open Policy Agent</a> (OPA).
+OPA allows platform builders to write custom logic in <a href=https://www.openpolicyagent.org/docs/latest/policy-language/>Rego</a>, a domain-specific
+language. Writing policy in this manner allows for not only incorporating the
+information available in the specific resource being evaluated, but also using
+other state represented in the cluster. Crossplane users typically install OPA&rsquo;s
+<a href=https://open-policy-agent.github.io/gatekeeper/website/docs/>Gatekeeper</a> to make policy management as streamlined as possible.</p><blockquote><p>A live demo of using OPA with Crossplane can be viewed <a href=https://youtu.be/TaF0_syejXc>here</a>.</p></blockquote><h2 id=multi-cluster-multi-tenancy>Multi-Cluster Multi-Tenancy</h2><p>Organizations that deploy Crossplane across many clusters typically take
+advantage of two major features that make managing multiple control planes much
+simpler.</p><h3 id=reproducible-platforms-with-configuration-packages>Reproducible Platforms with Configuration Packages</h3><p><a href=/v1.7/concepts/packages/>Configuration packages</a> allow platform builders to package their XRDs and
+Compositions into <a href=https://github.com/opencontainers/image-spec>OCI images</a> that can be distributed via any OCI-compliant
+image registry. These packages can also declare dependencies on providers,
+meaning that a single package can declare all of the granular managed resources,
+the controllers that must be deployed to reconcile them, and the abstract types
+that expose the underlying resources using composition.</p><p>Organizations with many Crossplane deployments utilize Configuration packages to
+reproduce their platform in each cluster. This can be as simple as installing
+Crossplane with the flag to automatically install a Configuration package
+alongside it.</p><pre tabindex=0><code>helm install crossplane --namespace crossplane-system crossplane-stable/crossplane --set configuration.packages={&#34;registry.upbound.io/xp/getting-started-with-aws:latest&#34;}
+</code></pre><h3 id=control-plane-of-control-planes>Control Plane of Control Planes</h3><p>Taking the multi-cluster multi-tenancy model one step further, some
+organizations opt to manage their many Crossplane clusters using a single
+central Crossplane control plane. This requires setting up the central cluster,
+then using a provider to spin up new clusters (such as an <a href=https://doc.crds.dev/github.com/crossplane/provider-aws/eks.aws.crossplane.io/Cluster/v1beta1@v0.17.0>EKS Cluster</a> using
+<a href=https://github.com/crossplane-contrib/provider-aws>provider-aws</a>), then using <a href=https://github.com/crossplane-contrib/provider-helm>provider-helm</a> to install Crossplane into the new
+remote cluster, potentially bundling a common Configuration package into each
+install using the method described above.</p><p>This advanced pattern allows for full management of Crossplane clusters using
+Crossplane itself, and when done properly, is a scalable solution to providing
+dedicated control planes to many tenants within a single organization.</p><h3 id=service-provisioning-using-open-service-broker-api>Service Provisioning using Open Service Broker API</h3><p>Another way to achieve multi-cluster multi-tenancy is by leveraging the
+possibilities of the <a href=https://github.com/openservicebrokerapi/servicebroker>Open Service Broker API</a> specification and tie it
+together with Crossplane.</p><p>A possible architecture could look like this: Crossplane and the
+<a href=https://github.com/vshn/crossplane-service-broker>Crossplane Service Broker</a> are running on the central control plane cluster.
+The Crossplane objects which represent the service offerings and service plans,
+the XRDs and Compositions, leverage <a href=https://github.com/crossplane-contrib/provider-helm>provider-helm</a> to spin up service instances
+on one or many service clusters. The end-user uses the <a href=https://github.com/kubernetes-sigs/service-catalog>Kubernetes Service Catalog</a>
+to order services via the Crossplane Service Broker. A demo of this concept can be
+found under <a href=https://github.com/vshn/application-catalog-demo>vshn/application-catalog-demo</a>.</p><p>This way even a tight integration of Crossplane in to <a href=https://www.cloudfoundry.org/>Cloudfoundry</a> is possible.</p></div></div><script>var i,j,menu=[],menuDom,item,itemDom,children;menu.push({childCurrent:!1,children:[{current:!1,name:"Install \u0026 Configure",url:"/v1.7/getting-started/install-configure/"},{current:!1,name:"Provision Infrastructure",url:"/v1.7/getting-started/provision-infrastructure/"},{current:!1,name:"Create a Configuration",url:"/v1.7/getting-started/create-configuration/"}],current:!1,name:"Getting Started",url:"/v1.7/getting-started/"}),menu.push({childCurrent:!1,children:[{current:!1,name:"Providers",url:"/v1.7/concepts/providers/"},{current:!1,name:"Managed Resources",url:"/v1.7/concepts/managed-resources/"},{current:!1,name:"Composite Resources",url:"/v1.7/concepts/composition/"},{current:!1,name:"Packages",url:"/v1.7/concepts/packages/"},{current:!1,name:"Terminology",url:"/v1.7/concepts/terminology/"}],current:!1,name:"Concepts",url:"/v1.7/concepts/"}),menu.push({childCurrent:!0,children:[{current:!1,name:"Upgrading to v0.14",url:"/v1.7/guides/upgrading-to-v0.14/"},{current:!1,name:"Upgrading to v1.x",url:"/v1.7/guides/upgrading-to-v1.x/"},{current:!1,name:"Vault as an External Secret Store",url:"/v1.7/guides/vault-as-secret-store/"},{current:!1,name:"Vault Credential Injection",url:"/v1.7/guides/vault-injection/"},{current:!0,name:"Multi-Tenant Crossplane",url:"/v1.7/guides/multi-tenant/"},{current:!1,name:"Composition Revisions",url:"/v1.7/guides/composition-revisions/"},{current:!1,name:"Self-Signed CA Certs",url:"/v1.7/guides/self-signed-ca-certs/"}],current:!1,name:"Guides",url:"/v1.7/guides/"}),menu.push({childCurrent:!1,children:[{current:!1,name:"Install Crossplane",url:"/v1.7/reference/install/"},{current:!1,name:"Configure Your Cloud Provider Account",url:"/v1.7/reference/configure/"},{current:!1,name:"Uninstall",url:"/v1.7/reference/uninstall/"},{current:!1,name:"Composition",url:"/v1.7/reference/composition/"},{current:!1,name:"xpkg Specification",url:"/v1.7/reference/xpkg/"},{current:!1,name:"Troubleshoot",url:"/v1.7/reference/troubleshoot/"},{current:!1,name:"Learn More",url:"/v1.7/reference/learn_more/"},{current:!1,name:"Release Cycle",url:"/v1.7/reference/release-cycle/"}],current:!1,name:"Reference",url:"/v1.7/reference/"}),menu.push({childCurrent:!1,children:[{current:!1,name:"crossplane",url:"/v1.7/api-docs/crossplane/"},{current:!1,name:"provider-alibaba",url:"/v1.7/api-docs/provider-alibaba/"},{current:!1,name:"provider-aws",url:"/v1.7/api-docs/provider-aws/"},{current:!1,name:"provider-azure",url:"/v1.7/api-docs/provider-azure/"},{current:!1,name:"provider-gcp",url:"/v1.7/api-docs/provider-gcp/"},{current:!1,name:"provider-rook",url:"/v1.7/api-docs/provider-rook/"},{current:!1,name:"provider-helm",url:"/v1.7/api-docs/provider-helm/"}],current:!1,name:"API Documentation",url:"/v1.7/api-docs/"}),menu.push({childCurrent:!1,children:[{current:!1,name:"Provider Development Guide",url:"/v1.7/contributing/provider_development_guide/"},{current:!1,name:"Observability Developer Guide",url:"/v1.7/contributing/observability_developer_guide/"},{current:!1,name:"Release Process",url:"/v1.7/contributing/release-process/"},{current:!1,name:"Adding Secret Store Support",url:"/v1.7/contributing/adding_external_secret_store_support/"}],current:!1,name:"Contributing",url:"/v1.7/contributing/"}),menu.push({childCurrent:!1,children:[{current:!1,name:"Related Projects",url:"/v1.7/faqs/related_projects/"}],current:!1,name:"FAQ",url:"/v1.7/faqs/"});function getEntry(e){var t=document.createElement("li");return e.current?(t.innerHTML=e.name,t.classList.add("current")):t.innerHTML='<a href="'+e.url+'">'+e.name+"</a>",t}function flushCss(e){e.offsetHeight}function addArrow(e){var t=document.createElement("a");t.classList.add("arrow"),t.innerHTML="<div />",t.onclick=function(e){return function(){var n=59,s=16,t=n+s+e.lastChild.clientHeight+"px";return e.classList.toggle("open"),e.classList.contains("open")?e.style.height=t:(e.style.height==="auto"&&(e.style.transition="none",e.style.height=t,flushCss(e),e.style.transition=""),e.style.height="59px"),!1}}(e),e.appendChild(t),item.current&&item.children||item.childCurrent?(e.classList.add("open"),e.style.height="auto"):e.style.height="59px"}menuDom=document.getElementById("docs-ul");for(i=0;i<menu.length;i++){if(item=menu[i],itemDom=getEntry(item),item.childCurrent&&itemDom.classList.add("childCurrent"),item.children){addArrow(itemDom),itemDom.classList.add("children"),children=document.createElement("ul");for(j=0;j<item.children.length;j++)children.appendChild(getEntry(item.children[j]));itemDom.appendChild(children)}menuDom.appendChild(itemDom)}</script><script src=/js/anchor.js></script>
+<script>anchors.options={placement:"right",icon:"#"},document.addEventListener("DOMContentLoaded",function(){anchors.add(".docs-content h1, .docs-content h2, .docs-content h3, .docs-content h4, .docs-content h5, .docs-content h6")})</script><div id=footer><div class=footer-main><div class=main><div class=logo><img src=/images/logo.svg alt="Crossplane Logo"></div></div><div class="links sm-hidden"><a href=https://twitter.com/crossplane_io>Twitter</a>
+<a href=/v1.9/>Documentation</a>
+<a href=https://github.com/crossplane/crossplane>GitHub</a>
+<a href=https://slack.crossplane.io/>Slack Channel</a>
+<a href=https://www.youtube.com/channel/UC19FgzMBMqBro361HbE46Fw>YouTube</a>
+<a href=https://groups.google.com/forum/#!forum/crossplane-dev>Forum</a></div></div><div class=lf-copyright><p>&#169; Crossplane Authors 2022. Documentation distributed under
+<a href=https://creativecommons.org/licenses/by/4.0/>CC-BY-4.0</a>.</p><p>&#169; 2022 The Linux Foundation. All rights reserved. The Linux Foundation has
+registered trademarks and uses trademarks. For a list of trademarks of The Linux Foundation, please see our
+<a href=https://www.linuxfoundation.org/trademark-usage/>Trademark Usage</a> page.</p></div><script src=/js/slack-popup.js></script></div><script>(function(e,t,n,s,o,i,a){e.GoogleAnalyticsObject=o,e[o]=e[o]||function(){(e[o].q=e[o].q||[]).push(arguments)},e[o].l=1*new Date,i=t.createElement(n),a=t.getElementsByTagName(n)[0],i.async=1,i.src=s,a.parentNode.insertBefore(i,a)})(window,document,"script","https://www.google-analytics.com/analytics.js","ga"),ga("create","UA-110275540-2","auto"),ga("send","pageview")</script><script async src="https://www.googletagmanager.com/gtag/js?id=G-SFCPQYSLHY"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag("js",new Date),gtag("config","G-SFCPQYSLHY")</script><script type=text/javascript id=hs-script-loader async defer src=https://js.hs-scripts.com/5557732.js></script></body></html>

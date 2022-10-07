@@ -1,0 +1,260 @@
+<!doctype html><html lang=en><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=description content="Crossplane is a framework for building cloud native control planes without needing to write code. It has a highly extensible backend that enables you to build a control plane that can orchestrate applications and infrastructure no matter where they run, and a highly configurable frontend that puts you in control of the schema of the declarative API it offers."><meta http-equiv=x-ua-compatible content="ie=edge"><title>Crossplane Packages| Crossplane Documentation</title><meta name=twitter:card content="summary"><meta name=twitter:site content="https://crossplane.io"><meta name=twitter:title content="Crossplane"><meta name=twitter:description content="The cloud-native control plane framework"><meta name=twitter:image:src content="https://crossplane.io/images/twitter-card_400x400.jpg"><link rel=apple-touch-icon sizes=180x180 href="/favicons/apple-touch-icon.png?v=1.0"><link rel=icon type=image/png sizes=32x32 href="/favicons/favicon-32x32.png?v=1.0"><link rel=icon type=image/png sizes=16x16 href="/favicons/favicon-16x16.png?v=1.0"><link rel=manifest href="/favicons/site.webmanifest?v=1.0"><link rel=mask-icon href="/favicons/safari-pinned-tab.svg?v=1.0" color=#5bbad5><link rel="shortcut icon" href="/favicons/favicon.ico?v=1.0"><meta name=msapplication-TileColor content="#da532c"><meta name=theme-color content="#ffffff"><link rel=stylesheet href=/css/main.css><link rel=stylesheet href=https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css><link rel=stylesheet href=/css/docs.css><script src=https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js></script>
+<script src=https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js></script></head><body><div id=header><div><div class=logo><a href=/><img src=/images/logo.svg alt="Crossplane Logo"></a></div><div class=hamburger-controls onclick='return document.body.classList.contains("menu-open")?document.body.classList.remove("menu-open"):document.body.classList.add("menu-open"),!1'><span></span>
+<span></span>
+<span></span></div><ul class=links><li><a href=https://github.com/crossplane/crossplane><span class=md-hidden>Get Started on</span> GitHub</a></li><li><a href=/v1.9/>Documentation</a></li><li><a href=/community/>Community</a></li><li><a href=https://slack.crossplane.io/>Slack <span class=md-hidden>Channel</span></a></li><li><a href=https://blog.crossplane.io/>Blog</a></li><li><a href=https://twitter.com/crossplane_io>Twitter</a></li></ul></div></div><div id=docs-header><div><h1>Documentation</h1><div class="versions latest"><div><div><select onchange="window.location.href=this.value"><option selected value=/master/concepts/packages/>Crossplane master</option><option selected value=/v1.9/concepts/packages/>Crossplane v1.9</option><option value=/v1.8/concepts/packages/>Crossplane v1.8</option></select></div></div></div></div></div><div class=page><div class=docs-menu><ul id=docs-ul></ul></div><div class=docs-content><div class=docs-actions><a id=edit href=https://github.com/crossplane/crossplane/tree/release-1.9/docs/packages.md><img src=/images/github-teal.svg>Edit on GitHub</a></div><h1>Crossplane Packages</h1><p>Crossplane packages are opinionated <a href=https://github.com/opencontainers/image-spec>OCI images</a> that contain a stream of YAML
+that can be parsed by the Crossplane package manager. Crossplane packages come
+in two varieties: <a href=/v1.9/concepts/providers/>Providers</a> and Configurations. Ultimately, the primary
+purposes of Crossplane packages are as follows:</p><ul><li><strong>Convenient Distribution</strong>: Crossplane packages can be pushed to or installed
+from any OCI-compatible registry.</li><li><strong>Version Upgrade</strong>: Crossplane can update packages in-place, meaning that you
+can pick up support for new resource types or controller bug-fixes without
+modifying your existing infrastructure.</li><li><strong>Permissions</strong>: Crossplane allocates permissions to packaged controllers in a
+manner that ensures they will not maliciously take over control of existing
+resources owned by other packages. Installing CRDs via packages also allows
+Crossplane itself to manage those resources, allowing for powerful
+<a href=/v1.9/concepts/composition/>composition</a> features to be enabled.</li><li><strong>Dependency Management</strong>: Crossplane resolves dependencies between packages,
+automatically installing a package&rsquo;s dependencies if they are not present in
+the cluster, and checking if dependency versions are valid if they are already
+installed.</li></ul><h2 id=table-of-contents>Table of Contents</h2><p>The following packaging operations are covered in detail below:</p><ul><li><a href=#table-of-contents>Table of Contents</a></li><li><a href=#building-a-package>Building a Package</a><ul><li><a href=#provider-packages>Provider Packages</a></li><li><a href=#configuration-packages>Configuration Packages</a></li></ul></li><li><a href=#pushing-a-package>Pushing a Package</a></li><li><a href=#installing-a-package>Installing a Package</a><ul><li><a href=#specpackage>spec.package</a></li><li><a href=#specpackagepullpolicy>spec.packagePullPolicy</a></li><li><a href=#specrevisionactivationpolicy>spec.revisionActivationPolicy</a></li><li><a href=#specrevisionhistorylimit>spec.revisionHistoryLimit</a></li><li><a href=#specpackagepullsecrets>spec.packagePullSecrets</a></li><li><a href=#specskipdependencyresolution>spec.skipDependencyResolution</a></li><li><a href=#specignorecrossplaneconstraints>spec.ignoreCrossplaneConstraints</a></li><li><a href=#speccontrollerconfigref>spec.controllerConfigRef</a></li></ul></li><li><a href=#upgrading-a-package>Upgrading a Package</a><ul><li><a href=#package-upgrade-issues>Package Upgrade Issues</a></li></ul></li><li><a href=#the-package-cache>The Package Cache</a><ul><li><a href=#pre-populating-the-package-cache>Pre-Populating the Package Cache</a></li></ul></li></ul><h2 id=building-a-package>Building a Package</h2><p>As stated above, Crossplane packages are just opinionated OCI images, meaning
+they can be constructed using any tool that outputs files that comply the the
+OCI specification. However, constructing packages using the Crossplane CLI is a
+more streamlined experience, as it will perform build-time checks on your
+packages to ensure that they are compliant with the Crossplane <a href=https://github.com/crossplane/crossplane/blob/1aa83092172bdf0d2ed64754d33517c612ff7368/design/one-pager-package-format-v2.md>package format</a>.</p><p>Providers and Configurations vary in the types of resources they may contain in
+their packages. All packages must have a <code>crossplane.yaml</code> file in the root
+directory with package contents. The <code>crossplane.yaml</code> contains the package&rsquo;s
+metadata, which governs how Crossplane will install the package.</p><h3 id=provider-packages>Provider Packages</h3><p>A Provider package contains a <code>crossplane.yaml</code> with the following format:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#f92672>apiVersion</span>: <span style=color:#ae81ff>meta.pkg.crossplane.io/v1</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>kind</span>: <span style=color:#ae81ff>Provider</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>metadata</span>:
+</span></span><span style=display:flex><span>  <span style=color:#f92672>name</span>: <span style=color:#ae81ff>provider-gcp</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>spec</span>:
+</span></span><span style=display:flex><span>  <span style=color:#f92672>crossplane</span>:
+</span></span><span style=display:flex><span>    <span style=color:#f92672>version</span>: <span style=color:#e6db74>&#34;&gt;=v1.0.0&#34;</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>controller</span>:
+</span></span><span style=display:flex><span>    <span style=color:#f92672>image</span>: <span style=color:#ae81ff>crossplane/provider-gcp-controller:v0.14.0</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>permissionRequests</span>:
+</span></span><span style=display:flex><span>    - <span style=color:#f92672>apiGroups</span>:
+</span></span><span style=display:flex><span>      - <span style=color:#ae81ff>apiextensions.crossplane.io</span>
+</span></span><span style=display:flex><span>      <span style=color:#f92672>resources</span>:
+</span></span><span style=display:flex><span>      - <span style=color:#ae81ff>compositions</span>
+</span></span><span style=display:flex><span>      <span style=color:#f92672>verbs</span>:
+</span></span><span style=display:flex><span>      - <span style=color:#ae81ff>get</span>
+</span></span><span style=display:flex><span>      - <span style=color:#ae81ff>list</span>
+</span></span><span style=display:flex><span>      - <span style=color:#ae81ff>create</span>
+</span></span><span style=display:flex><span>      - <span style=color:#ae81ff>update</span>
+</span></span><span style=display:flex><span>      - <span style=color:#ae81ff>patch</span>
+</span></span><span style=display:flex><span>      - <span style=color:#ae81ff>watch</span>
+</span></span></code></pre></div><p>See all available fields in the <a href=https://doc.crds.dev/github.com/crossplane/crossplane/meta.pkg.crossplane.io/Provider/v1>official documentation</a>.</p><blockquote><p>Note: The <code>meta.pkg.crossplane.io</code> group does not contain custom resources
+that may be installed into the cluster. They are strictly used as metadata in
+a Crossplane package.</p></blockquote><p>A Provider package may optionally contain one or more CRDs. These CRDs will be
+installed prior to the creation of the Provider&rsquo;s <code>Deployment</code>. Crossplane will
+not install <em>any</em> CRDs for a package unless it can determine that <em>all</em> CRDs can
+be installed. This guards against multiple Providers attempting to reconcile the
+same CRDs. Crossplane will also create a <code>ServiceAccount</code> with permissions to
+reconcile these CRDs and it will be assigned to the controller <code>Deployment</code>.</p><p>The <code>spec.controller.image</code> fields specifies that the <code>Provider</code> desires for the
+controller <code>Deployment</code> to be created with the provided image. It is important
+to note that this image is separate from the package image itself. In the case
+above, it is an image containing the <code>provider-gcp</code> controller binary.</p><p>The <code>spec.controller.permissionRequests</code> field allows a package author to
+request additional RBAC for the packaged controller. The controller&rsquo;s
+<code>ServiceAccount</code> will automatically give the controller permission to reconcile
+all types that its package installs, as well as <code>Secrets</code>, <code>ConfigMaps</code>, and
+<code>Events</code>. Any additional permissions must be explicitly requested.</p><blockquote><p>Note that the Crossplane RBAC manager can be configured to reject permissions
+for certain API groups. If a package requests permissions that Crossplane is
+configured to reject, the package will fail to be installed.
+Authorized permissions should be aggregated to the rbac manager clusterrole
+(the cluster role defined by the provider-clusterrole flag in the rbac manager)
+by using the label <code>rbac.crossplane.io/aggregate-to-allowed-provider-permissions: "true"</code></p></blockquote><p>The <code>spec.crossplane.version</code> field specifies the version constraints for core
+Crossplane that the <code>Provider</code> is compatible with. It is advisable to use this
+field if a package relies on specific features in a minimum version of
+Crossplane.</p><blockquote><p>All version constraints used in packages follow the <a href=https://github.com/Masterminds/semver#basic-comparisons>specification</a> outlined
+in the <code>Masterminds/semver</code> repository.</p></blockquote><p>For an example Provider package, see <a href=https://github.com/crossplane/provider-gcp/tree/master/package>provider-gcp</a>.</p><p>To build a Provider package, navigate to the package root directory and execute
+the following command:</p><pre tabindex=0><code>kubectl crossplane build provider
+</code></pre><p>If the Provider package is valid, you will see a file with the <code>.xpkg</code>
+extension.</p><blockquote><p>Note that the Crossplane CLI will not follow symbolic links for files in the
+root package directory.</p></blockquote><h3 id=configuration-packages>Configuration Packages</h3><p>A Configuration package contains a <code>crossplane.yaml</code> with the following format:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#f92672>apiVersion</span>: <span style=color:#ae81ff>meta.pkg.crossplane.io/v1</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>kind</span>: <span style=color:#ae81ff>Configuration</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>metadata</span>:
+</span></span><span style=display:flex><span>  <span style=color:#f92672>name</span>: <span style=color:#ae81ff>my-org-infra</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>spec</span>:
+</span></span><span style=display:flex><span>  <span style=color:#f92672>crossplane</span>:
+</span></span><span style=display:flex><span>    <span style=color:#f92672>version</span>: <span style=color:#e6db74>&#34;&gt;=v1.0.0&#34;</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>dependsOn</span>:
+</span></span><span style=display:flex><span>    - <span style=color:#f92672>provider</span>: <span style=color:#ae81ff>crossplane/provider-gcp</span>
+</span></span><span style=display:flex><span>      <span style=color:#f92672>version</span>: <span style=color:#e6db74>&#34;&gt;=v0.14.0&#34;</span>
+</span></span></code></pre></div><p>See all available fields in the <a href=https://doc.crds.dev/github.com/crossplane/crossplane/meta.pkg.crossplane.io/Configuration/v1>official documentation</a>.</p><p>A Configuration package may also specify one or more of
+<code>CompositeResourceDefinition</code> and <code>Composition</code> types. These resources will be
+installed and will be solely owned by the Configuration package. No other
+package will be able to modify them.</p><p>The <code>spec.crossplane.version</code> field serves the same purpose that it does in a
+<code>Provider</code> package.</p><p>The <code>spec.dependsOn</code> field specifies packages that this package depends on. When
+installed, the package manager will ensure that all dependencies are present and
+have a valid version given the constraint. If a dependency is not installed, the
+package manager will install it at the latest version that fits within the
+provided constraints.</p><blockquote><p>Dependency resolution is a <code>beta</code> feature and depends on the <code>v1beta1</code>
+<a href=https://doc.crds.dev/github.com/crossplane/crossplane/pkg.crossplane.io/Lock/v1beta1><code>Lock</code> API</a>.</p></blockquote><p>For an example Configuration package, see <a href=https://github.com/crossplane/crossplane/tree/release-1.9/docs/snippets/package/gcp>getting-started-with-gcp</a>.</p><p>To build a Configuration package, navigate to the package root directory and
+execute the following command:</p><pre tabindex=0><code>kubectl crossplane build configuration
+</code></pre><p>If the Provider package is valid, you will see a file with the <code>.xpkg</code>
+extension.</p><h2 id=pushing-a-package>Pushing a Package</h2><p>Crossplane packages can be pushed to any OCI-compatible registry. If a specific
+registry is not specified they will be pushed to Docker Hub.</p><p>To push a Provider package, execute the following command:</p><pre tabindex=0><code>kubectl crossplane push provider crossplane/provider-gcp:v0.14.0
+</code></pre><p>To push a Configuration package, execute the following command:</p><pre tabindex=0><code>kubectl crossplane push configuration crossplane/my-org-infra:v0.1.0
+</code></pre><blockquote><p>Note: Both of the above commands assume a single <code>.xpkg</code> file exists in the
+directory. If multiple exist or you would like to specify a package in a
+different directory, you can supply the <code>-f</code> flag with the path to the
+package.</p></blockquote><h2 id=installing-a-package>Installing a Package</h2><p>Packages can be installed into a Crossplane cluster using the Crossplane CLI.</p><p>To install a Provider package, execute the following command:</p><pre tabindex=0><code>kubectl crossplane install provider crossplane/provider-gcp:v0.12.0
+</code></pre><p>To install a Configuration package, execute the following command:</p><pre tabindex=0><code>kubectl crossplane install configuration crossplane/my-org-infra:v0.1.0
+</code></pre><p>Packages can also be installed manually by creating a <code>Provider</code> or
+<code>Configuration</code> object directly. The preceding commands would result in the
+creation of the following two resources, which could have been authored by hand:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#f92672>apiVersion</span>: <span style=color:#ae81ff>pkg.crossplane.io/v1</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>kind</span>: <span style=color:#ae81ff>Provider</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>metadata</span>:
+</span></span><span style=display:flex><span>  <span style=color:#f92672>name</span>: <span style=color:#ae81ff>provider-gcp</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>spec</span>:
+</span></span><span style=display:flex><span>  <span style=color:#f92672>package</span>: <span style=color:#ae81ff>crossplane/provider-gcp:v0.12.0</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>packagePullPolicy</span>: <span style=color:#ae81ff>IfNotPresent</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>revisionActivationPolicy</span>: <span style=color:#ae81ff>Automatic</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>revisionHistoryLimit</span>: <span style=color:#ae81ff>1</span>
+</span></span></code></pre></div><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#f92672>apiVersion</span>: <span style=color:#ae81ff>pkg.crossplane.io/v1</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>kind</span>: <span style=color:#ae81ff>Configuration</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>metadata</span>:
+</span></span><span style=display:flex><span>  <span style=color:#f92672>name</span>: <span style=color:#ae81ff>my-org-infra</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>spec</span>:
+</span></span><span style=display:flex><span>  <span style=color:#f92672>package</span>: <span style=color:#ae81ff>crossplane/my-org-infra:v0.1.0</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>packagePullPolicy</span>: <span style=color:#ae81ff>IfNotPresent</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>revisionActivationPolicy</span>: <span style=color:#ae81ff>Automatic</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>revisionHistoryLimit</span>: <span style=color:#ae81ff>1</span>
+</span></span></code></pre></div><blockquote><p>Note: These types differ from the <code>Provider</code> and <code>Configuration</code> types we saw
+earlier. They exist in the <code>pkg.crossplane.io</code> group rather than the
+<code>meta.pkg.crossplane.io</code> group and are actual custom resources created in the
+cluster.</p></blockquote><p>The default fields specified above can be configured with different values to
+modify the installation and upgrade behavior of a package. In addition, there
+are multiple other fields which can further customize how the package manager
+handles a specific revision.</p><h3 id=specpackage>spec.package</h3><p>This is the package image that we built, pushed, and are asking Crossplane to
+install. The tag we specify here is important. Crossplane will periodically
+check if the installed image matches the digest of the image in the remote
+registry. If it does not, Crossplane will create a new <em>Revision</em> (either
+<code>ProviderRevision</code> or <code>ConfigurationRevision</code>). If you do not wish Crossplane to
+ever update your packages without explicitly instructing it to do so, you should
+consider specifying a tag which you know will not have the underlying contents
+change unexpectedly (e.g. a specific semantic version, such as <code>v0.1.0</code>) or, for
+an even stronger guarantee, providing the image with a <code>@sha256</code> extension
+instead of a tag.</p><h3 id=specpackagepullpolicy>spec.packagePullPolicy</h3><p>Valid values: <code>IfNotPresent</code>, <code>Always</code>, or <code>Never</code> (default: <code>IfNotPresent</code>)</p><p>When a package is installed, Crossplane downloads the image contents into a
+cache. Depending on the image identifier (tag or digest) and the
+<code>packagePullPolicy</code>, the Crossplane package manager will decide if and when to
+check and see if newer package contents are available. The following table
+describes expected behavior based on the supplied fields:</p><table><thead><tr><th></th><th><code>IfNotPresent</code></th><th><code>Always</code></th><th><code>Never</code></th></tr></thead><tbody><tr><td>Semver Tag (e.g. <code>v1.3.0</code>)</td><td>Package is downloaded when initially installed, and as long as it is present in the cache, it will not be downloaded again. If the cache is lost and the a new version of the package image has been pushed for the same tag, package could inadvertently be upgraded.<br><br><strong>Upgrade Safety: Strong</strong></td><td>Package is downloaded when initially installed, but Crossplane will check every minute if new content is available. New content would have to be pushed for the same semver tag for upgrade to take place.<br><br><strong>Upgrade Safety: Weak</strong></td><td>Crossplane will never download content. Must manually load package image in cache.<br><br><strong>Upgrade Safety: Strongest</strong></td></tr><tr><td>Digest (e.g. <code>@sha256:28b6...</code>)</td><td>Package is downloaded when initially installed, and as long as it is present in the cache, it will not be downloaded again. If the cache is lost but an image with this digest is still available, it will be downloaded again. The package will never be upgraded without a user changing the digest.<br><br><strong>Upgrade Safety: Very Strong</strong></td><td>Package is downloaded when initially installed, but Crossplane will check every minute if new content is available. Because image digest is used, new content will never be downloaded.<br><br><strong>Upgrade Safety: Strong</strong></td><td>Crossplane will never download content. Must manually load package image in cache.<br><br><strong>Upgrade Safety: Strongest</strong></td></tr><tr><td>Channel Tag (e.g. <code>latest</code>)</td><td>Package is downloaded when initially installed, and as long as it is present in the cache, it will not be downloaded again. If the cache is lost, the latest version of this package image will be downloaded again, which will frequently have different contents.<br><br><strong>Upgrade Safety: Weak</strong></td><td>Package is downloaded when initially installed, but Crossplane will check every minute if new content is available. When the image content is new, Crossplane will download the new contents and create a new revision.<br><br><strong>Upgrade Safety: Very Weak</strong></td><td>Crossplane will never download content. Must manually load package image in cache.<br><br><strong>Upgrade Safety: Strongest</strong></td></tr></tbody></table><h3 id=specrevisionactivationpolicy>spec.revisionActivationPolicy</h3><p>Valid values: <code>Automatic</code> or <code>Manual</code> (default: <code>Automatic</code>)</p><p>When Crossplane downloads new contents for a package, regardless of whether it
+was a manual upgrade (i.e. user updating package image tag), or an automatic one
+(enabled by the <code>packagePullPolicy</code>), it will create a new package revision.
+However, the new objects and / or controllers will not be installed until the
+new revision is marked as <code>Active</code>. This activation process is configured by the
+<code>revisionActivationPolicy</code> field.</p><p>An <code>Active</code> package revision attempts to become the <em>controller</em> of all
+resources it installs. There can only be one controller of a resource, so if two
+<code>Active</code> revisions both install the same resource, one will fail to install
+until the other cedes control.</p><p>An <code>Inactive</code> package revision attempts to become the <em>owner</em> of all resources
+it installs. There can be an arbitrary number of owners of a resource, so
+multiple <code>Inactive</code> revisions and a single <code>Active</code> revision can exist for a
+resource. Importantly, an <code>Inactive</code> package revision will not perform any
+auxiliary actions (such as creating a <code>Deployment</code> in the case of a <code>Provider</code>),
+meaning we will not encounter a situation where two revisions are fighting over
+reconciling a resource.</p><p>With <code>revisionActivationPolicy: Automatic</code>, Crossplane will mark any new
+revision as <code>Active</code> when it is created, as well as transition any old revisions
+to <code>Inactive</code>. When <code>revisionActivationPolicy: Manual</code>, the user must manually
+edit a new revision and mark it as <code>Active</code>. This can be useful if you are using
+a <code>packagePullPolicy: Automatic</code> with a channel tag (e.g. <code>latest</code>) and you want
+Crossplane to create new revisions when a new version is available, but you
+don&rsquo;t want to automatically update to that newer revision.</p><p>It is recommended for most users to use semver tags or image digests and
+manually update their packages, but use a <code>revisionActivationPolicy: Automatic</code>
+to avoid having to manually activate new versions. However, each user should
+consider their specific environment and choose a combination that makes sense
+for them.</p><h3 id=specrevisionhistorylimit>spec.revisionHistoryLimit</h3><p>Valid values: any integer, disabled by explicitly setting to <code>0</code> (default <code>1</code>)</p><p>When a revision transitions from <code>Inactive</code> to <code>Active</code>, its revision number
+gets set to one greater than the largest revision number of all revisions for
+its package. Therefore, as the number of revisions increases, the least recently
+<code>Active</code> revision will have the lowest revision number. Crossplane will garbage
+collect old <code>Inactive</code> revisions if they fall outside the
+<code>spec.revisionHistoryLimit</code>. For instance, if my revision history limit is <code>3</code>
+and I currently have three old <code>Inactive</code> revisions and one <code>Active</code> revision,
+when I upgrade the next time, the new revision will be given the highest
+revision number when it becomes <code>Active</code>, the previously <code>Active</code> revision will
+become <code>Inactive</code>, and the oldest <code>Inactive</code> revision will be garbage collected.</p><blockquote><p>Note: In the case that <code>spec.revisionActivationPolicy: Manual</code> and you upgrade
+enough times (but do not make <code>Active</code> the new revisions), it is possible that
+activating a newer revision could cause the previously <code>Active</code> revision to
+immediately be garbage collected if it is outside the
+<code>spec.revisionHistoryLimit</code>.</p></blockquote><h3 id=specpackagepullsecrets>spec.packagePullSecrets</h3><p>Valid values: slice of <code>Secret</code> names (secrets must exist in <code>namespace</code>
+Crossplane was installed in, typically <code>crossplane-system</code>)</p><p>This field allows a user to provide credentials required to pull a package from
+a private repository on a registry. The credentials are passed along to a
+packaged controller if the package is a <code>Provider</code>, but are not passed along to
+any dependencies.</p><h3 id=specskipdependencyresolution>spec.skipDependencyResolution</h3><p>Valid values: <code>true</code> or <code>false</code> (default: <code>false</code>)</p><p>If <code>skipDependencyResolution: true</code>, the package manager will install a package
+without considering its dependencies.</p><h3 id=specignorecrossplaneconstraints>spec.ignoreCrossplaneConstraints</h3><p>Valid values: <code>true</code> or <code>false</code> (default: <code>false</code>)</p><p>If <code>ignoreCrossplaneConstraints: true</code>, the package manager will install a
+package without considering the version of Crossplane that is installed.</p><h3 id=speccontrollerconfigref>spec.controllerConfigRef</h3><blockquote><p>This field is only available when installing a <code>Provider</code> and is an <code>alpha</code>
+feature that depends on the <code>v1alpha1</code> <a href=https://doc.crds.dev/github.com/crossplane/crossplane/pkg.crossplane.io/ControllerConfig/v1alpha1><code>ControllerConfig</code> API</a>.</p></blockquote><p>Valid values: name of a <code>ControllerConfig</code> object</p><p>Packaged <code>Provider</code> controllers are installed in the form of a <code>Deployment</code>.
+Crossplane populates the <code>Deployment</code> with default values that may not be
+appropriate for every use-case. In the event that a user wants to override some
+of the defaults that Crossplane has set, they may create and reference a
+<code>ControllerConfig</code>.</p><p>An example of when this may be useful is when a user is running Crossplane on
+EKS and wants to take advantage of <a href=https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts.html>IAM Roles for Service Accounts</a>. This
+requires setting an <code>fsGroup</code> and annotating the <code>ServiceAccount</code> that
+Crossplane creates for the controller. This could be accomplished with the
+following <code>ControllerConfig</code> and <code>Provider</code>:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#f92672>apiVersion</span>: <span style=color:#ae81ff>pkg.crossplane.io/v1alpha1</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>kind</span>: <span style=color:#ae81ff>ControllerConfig</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>metadata</span>:
+</span></span><span style=display:flex><span>  <span style=color:#f92672>name</span>: <span style=color:#ae81ff>aws-config</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>annotations</span>:
+</span></span><span style=display:flex><span>    <span style=color:#f92672>eks.amazonaws.com/role-arn</span>: <span style=color:#ae81ff>arn:aws:iam::$AWS_ACCOUNT_ID\:role/$IAM_ROLE_NAME</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>spec</span>:
+</span></span><span style=display:flex><span>  <span style=color:#f92672>podSecurityContext</span>:
+</span></span><span style=display:flex><span>    <span style=color:#f92672>fsGroup</span>: <span style=color:#ae81ff>2000</span>
+</span></span><span style=display:flex><span>---
+</span></span><span style=display:flex><span><span style=color:#f92672>apiVersion</span>: <span style=color:#ae81ff>pkg.crossplane.io/v1</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>kind</span>: <span style=color:#ae81ff>Provider</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>metadata</span>:
+</span></span><span style=display:flex><span>  <span style=color:#f92672>name</span>: <span style=color:#ae81ff>provider-aws</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>spec</span>:
+</span></span><span style=display:flex><span>  <span style=color:#f92672>package</span>: <span style=color:#ae81ff>crossplane/provider-aws:v0.15.0</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>controllerConfigRef</span>:
+</span></span><span style=display:flex><span>    <span style=color:#f92672>name</span>: <span style=color:#ae81ff>aws-config</span>
+</span></span></code></pre></div><p>You can find all configurable values in the <a href=https://doc.crds.dev/github.com/crossplane/crossplane/pkg.crossplane.io/ControllerConfig/v1alpha1>official <code>ControllerConfig</code>
+documentation</a>.</p><h2 id=upgrading-a-package>Upgrading a Package</h2><p>Upgrading a <code>Provider</code> or <code>Configuration</code> to a new version can be accomplished
+by editing the existing manifest and applying it with a new version tag in
+<code>spec.package</code>. Crossplane will observe the updated manifest and create a new
+<code>ProviderRevision</code> or <code>ConfigurationRevision</code> for the specified version. The new
+revision will be activated in accordance with <code>spec.revisionActivationPolicy</code>.</p><h3 id=package-upgrade-issues>Package Upgrade Issues</h3><p>Upgrading a package can require manual intervention in the event that the
+previous version of the package supported a version of a custom resource that
+has been dropped and replaced by a new version in the new package revision.
+Kubernetes does not allow for applying a <code>CustomResourceDefinition</code> (CRD) that
+drops a version in the <code>spec</code> that is in the current <code>status.storedVersions</code>
+list, meaning that a revision cannot update and become the <em>controller</em> of all
+of its resources.</p><p>This situation can be remedied by manually deleting the offending CRD and
+letting the new revision re-create it. In the event that custom resources exist
+for the given CRD, they must be deleted before the CRD can be removed.</p><h2 id=the-package-cache>The Package Cache</h2><p>When a package is installed into a cluster, Crossplane fetches the package image
+and stores its contents in a dedicated package cache. By default, this cache is
+backed by an <a href=https://kubernetes.io/docs/concepts/storage/volumes/#emptydir><code>emptyDir</code> Volume</a>, meaning that all cached data
+is lost when a <code>Pod</code> restarts. Users who wish for cache contents to be persisted
+between <code>Pod</code> restarts may opt to instead use a <a href=https://kubernetes.io/docs/concepts/storage/volumes/#persistentvolumeclaim><code>persistentVolumeClaim</code>
+(PVC)</a> by setting the <code>packageCache.pvc</code> Helm chart parameter to the name
+of the PVC.</p><h3 id=pre-populating-the-package-cache>Pre-Populating the Package Cache</h3><p>Because the package cache can be backed by any storage medium, users are able to
+optionally to pre-populate the cache with images that are not present on an
+external <a href=https://github.com/opencontainers/distribution-spec>OCI registry</a>. To utilize a package that has been manually stored in
+the cache, users must specify the name of the package in <code>spec.package</code> and use
+<code>packagePullPolicy: Never</code>. For instance, if a user built a <code>Configuration</code>
+package named <code>mycoolpkg.xpkg</code> and loaded it into the volume that was to be used
+for the package cache (i.e. copied the <code>.xpkg</code> file into the storage medium
+backing the PVC), the package could be utilized with the following manifest:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#f92672>apiVersion</span>: <span style=color:#ae81ff>pkg.crossplane.io/v1</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>kind</span>: <span style=color:#ae81ff>Configuration</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>metadata</span>:
+</span></span><span style=display:flex><span>  <span style=color:#f92672>name</span>: <span style=color:#ae81ff>my-cool-pkg</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>spec</span>:
+</span></span><span style=display:flex><span>  <span style=color:#f92672>package</span>: <span style=color:#ae81ff>mycoolpkg</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>packagePullPolicy</span>: <span style=color:#ae81ff>Never</span>
+</span></span></code></pre></div><p>Importantly, as long as a package is being used as the <code>spec.package</code> of a
+<code>Configuration</code> or <code>Provider</code>, it must remain in the cache. For this reason, it
+is recommended that users opt for a durable storage medium when manually loading
+packages into the cache.</p><p>In addition, if manually loading a <code>Provider</code> package into the cache, users must
+ensure that the controller image that it references is able to be pulled by the
+cluster nodes. This can be accomplished either by pushing it to a registry, or
+by <a href=https://kubernetes.io/docs/concepts/containers/images/#pre-pulled-images>pre-pulling images</a> onto nodes in the cluster.</p></div></div><script>var i,j,menu=[],menuDom,item,itemDom,children;menu.push({childCurrent:!1,children:[{current:!1,name:"Install \u0026 Configure",url:"/v1.9/getting-started/install-configure/"},{current:!1,name:"Provision Infrastructure",url:"/v1.9/getting-started/provision-infrastructure/"},{current:!1,name:"Create a Configuration",url:"/v1.9/getting-started/create-configuration/"}],current:!1,name:"Getting Started",url:"/v1.9/getting-started/"}),menu.push({childCurrent:!0,children:[{current:!1,name:"Providers",url:"/v1.9/concepts/providers/"},{current:!1,name:"Managed Resources",url:"/v1.9/concepts/managed-resources/"},{current:!1,name:"Composite Resources",url:"/v1.9/concepts/composition/"},{current:!0,name:"Crossplane Packages",url:"/v1.9/concepts/packages/"},{current:!1,name:"Terminology",url:"/v1.9/concepts/terminology/"}],current:!1,name:"Concepts",url:"/v1.9/concepts/"}),menu.push({childCurrent:!1,children:[{current:!1,name:"Upgrading to v0.14",url:"/v1.9/guides/upgrading-to-v0.14/"},{current:!1,name:"Upgrading to v1.x",url:"/v1.9/guides/upgrading-to-v1.x/"},{current:!1,name:"Vault as an External Secret Store",url:"/v1.9/guides/vault-as-secret-store/"},{current:!1,name:"Vault Credential Injection",url:"/v1.9/guides/vault-injection/"},{current:!1,name:"Multi-Tenant Crossplane",url:"/v1.9/guides/multi-tenant/"},{current:!1,name:"Composition Revisions",url:"/v1.9/guides/composition-revisions/"},{current:!1,name:"Self-Signed CA Certs",url:"/v1.9/guides/self-signed-ca-certs/"}],current:!1,name:"Guides",url:"/v1.9/guides/"}),menu.push({childCurrent:!1,children:[{current:!1,name:"Install Crossplane",url:"/v1.9/reference/install/"},{current:!1,name:"Configure Your Cloud Provider Account",url:"/v1.9/reference/configure/"},{current:!1,name:"Uninstall",url:"/v1.9/reference/uninstall/"},{current:!1,name:"Composition",url:"/v1.9/reference/composition/"},{current:!1,name:"xpkg Specification",url:"/v1.9/reference/xpkg/"},{current:!1,name:"Troubleshoot",url:"/v1.9/reference/troubleshoot/"},{current:!1,name:"Learn More",url:"/v1.9/reference/learn_more/"},{current:!1,name:"Release Cycle",url:"/v1.9/reference/release-cycle/"}],current:!1,name:"Reference",url:"/v1.9/reference/"}),menu.push({childCurrent:!1,children:[{current:!1,name:"crossplane",url:"/v1.9/api-docs/crossplane/"},{current:!1,name:"provider-alibaba",url:"/v1.9/api-docs/provider-alibaba/"},{current:!1,name:"provider-aws",url:"/v1.9/api-docs/provider-aws/"},{current:!1,name:"provider-azure",url:"/v1.9/api-docs/provider-azure/"},{current:!1,name:"provider-gcp",url:"/v1.9/api-docs/provider-gcp/"},{current:!1,name:"provider-rook",url:"/v1.9/api-docs/provider-rook/"},{current:!1,name:"provider-helm",url:"/v1.9/api-docs/provider-helm/"}],current:!1,name:"API Documentation",url:"/v1.9/api-docs/"}),menu.push({childCurrent:!1,children:[{current:!1,name:"Provider Development Guide",url:"/v1.9/contributing/provider_development_guide/"},{current:!1,name:"Observability Developer Guide",url:"/v1.9/contributing/observability_developer_guide/"},{current:!1,name:"Release Process",url:"/v1.9/contributing/release-process/"},{current:!1,name:"Adding Secret Store Support",url:"/v1.9/contributing/adding_external_secret_store_support/"}],current:!1,name:"Contributing",url:"/v1.9/contributing/"}),menu.push({childCurrent:!1,children:[{current:!1,name:"Related Projects",url:"/v1.9/faqs/related_projects/"}],current:!1,name:"FAQ",url:"/v1.9/faqs/"});function getEntry(e){var t=document.createElement("li");return e.current?(t.innerHTML=e.name,t.classList.add("current")):t.innerHTML='<a href="'+e.url+'">'+e.name+"</a>",t}function flushCss(e){e.offsetHeight}function addArrow(e){var t=document.createElement("a");t.classList.add("arrow"),t.innerHTML="<div />",t.onclick=function(e){return function(){var n=59,s=16,t=n+s+e.lastChild.clientHeight+"px";return e.classList.toggle("open"),e.classList.contains("open")?e.style.height=t:(e.style.height==="auto"&&(e.style.transition="none",e.style.height=t,flushCss(e),e.style.transition=""),e.style.height="59px"),!1}}(e),e.appendChild(t),item.current&&item.children||item.childCurrent?(e.classList.add("open"),e.style.height="auto"):e.style.height="59px"}menuDom=document.getElementById("docs-ul");for(i=0;i<menu.length;i++){if(item=menu[i],itemDom=getEntry(item),item.childCurrent&&itemDom.classList.add("childCurrent"),item.children){addArrow(itemDom),itemDom.classList.add("children"),children=document.createElement("ul");for(j=0;j<item.children.length;j++)children.appendChild(getEntry(item.children[j]));itemDom.appendChild(children)}menuDom.appendChild(itemDom)}</script><script src=/js/anchor.js></script>
+<script>anchors.options={placement:"right",icon:"#"},document.addEventListener("DOMContentLoaded",function(){anchors.add(".docs-content h1, .docs-content h2, .docs-content h3, .docs-content h4, .docs-content h5, .docs-content h6")})</script><div id=footer><div class=footer-main><div class=main><div class=logo><img src=/images/logo.svg alt="Crossplane Logo"></div></div><div class="links sm-hidden"><a href=https://twitter.com/crossplane_io>Twitter</a>
+<a href=/v1.9/>Documentation</a>
+<a href=https://github.com/crossplane/crossplane>GitHub</a>
+<a href=https://slack.crossplane.io/>Slack Channel</a>
+<a href=https://www.youtube.com/channel/UC19FgzMBMqBro361HbE46Fw>YouTube</a>
+<a href=https://groups.google.com/forum/#!forum/crossplane-dev>Forum</a></div></div><div class=lf-copyright><p>&#169; Crossplane Authors 2022. Documentation distributed under
+<a href=https://creativecommons.org/licenses/by/4.0/>CC-BY-4.0</a>.</p><p>&#169; 2022 The Linux Foundation. All rights reserved. The Linux Foundation has
+registered trademarks and uses trademarks. For a list of trademarks of The Linux Foundation, please see our
+<a href=https://www.linuxfoundation.org/trademark-usage/>Trademark Usage</a> page.</p></div><script src=/js/slack-popup.js></script></div><script>(function(e,t,n,s,o,i,a){e.GoogleAnalyticsObject=o,e[o]=e[o]||function(){(e[o].q=e[o].q||[]).push(arguments)},e[o].l=1*new Date,i=t.createElement(n),a=t.getElementsByTagName(n)[0],i.async=1,i.src=s,a.parentNode.insertBefore(i,a)})(window,document,"script","https://www.google-analytics.com/analytics.js","ga"),ga("create","UA-110275540-2","auto"),ga("send","pageview")</script><script async src="https://www.googletagmanager.com/gtag/js?id=G-SFCPQYSLHY"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag("js",new Date),gtag("config","G-SFCPQYSLHY")</script><script type=text/javascript id=hs-script-loader async defer src=https://js.hs-scripts.com/5557732.js></script></body></html>

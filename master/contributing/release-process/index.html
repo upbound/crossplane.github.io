@@ -1,0 +1,129 @@
+<!doctype html><html lang=en><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=description content="Crossplane is a framework for building cloud native control planes without needing to write code. It has a highly extensible backend that enables you to build a control plane that can orchestrate applications and infrastructure no matter where they run, and a highly configurable frontend that puts you in control of the schema of the declarative API it offers."><meta http-equiv=x-ua-compatible content="ie=edge"><meta name=robots content="noindex"><title>Release Process| Crossplane Documentation</title><meta name=twitter:card content="summary"><meta name=twitter:site content="https://crossplane.io"><meta name=twitter:title content="Crossplane"><meta name=twitter:description content="The cloud-native control plane framework"><meta name=twitter:image:src content="https://crossplane.io/images/twitter-card_400x400.jpg"><link rel=apple-touch-icon sizes=180x180 href="/favicons/apple-touch-icon.png?v=1.0"><link rel=icon type=image/png sizes=32x32 href="/favicons/favicon-32x32.png?v=1.0"><link rel=icon type=image/png sizes=16x16 href="/favicons/favicon-16x16.png?v=1.0"><link rel=manifest href="/favicons/site.webmanifest?v=1.0"><link rel=mask-icon href="/favicons/safari-pinned-tab.svg?v=1.0" color=#5bbad5><link rel="shortcut icon" href="/favicons/favicon.ico?v=1.0"><meta name=msapplication-TileColor content="#da532c"><meta name=theme-color content="#ffffff"><link rel=stylesheet href=/css/main.css><link rel=stylesheet href=https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css><link rel=stylesheet href=/css/docs.css><script src=https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js></script>
+<script src=https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js></script></head><body><div id=header><div><div class=logo><a href=/><img src=/images/logo.svg alt="Crossplane Logo"></a></div><div class=hamburger-controls onclick='return document.body.classList.contains("menu-open")?document.body.classList.remove("menu-open"):document.body.classList.add("menu-open"),!1'><span></span>
+<span></span>
+<span></span></div><ul class=links><li><a href=https://github.com/crossplane/crossplane><span class=md-hidden>Get Started on</span> GitHub</a></li><li><a href=/v1.9/>Documentation</a></li><li><a href=/community/>Community</a></li><li><a href=https://slack.crossplane.io/>Slack <span class=md-hidden>Channel</span></a></li><li><a href=https://blog.crossplane.io/>Blog</a></li><li><a href=https://twitter.com/crossplane_io>Twitter</a></li></ul></div></div><div id=docs-header><div><h1>Documentation</h1><div class=versions><div><div><select onchange="window.location.href=this.value"><option selected value=/master/contributing/release-process/>Crossplane master</option><option value=/v1.9/contributing/release-process/>Crossplane v1.9</option><option value=/v1.8/contributing/release-process/>Crossplane v1.8</option><option value=/v1.7/contributing/release-process/>Crossplane v1.7</option></select></div></div></div></div></div><div class=page><div class=docs-menu><ul id=docs-ul></ul></div><div class=docs-content><div class=docs-actions><a id=edit href=https://github.com/crossplane/crossplane/tree/master/docs/release-process.md><img src=/images/github-teal.svg>Edit on GitHub</a></div><div class="alert master"><p><b>PLEASE NOTE</b>: This document applies to an <b>unreleased</b> version of Crossplane. It is strongly recommended that you only use official releases of Crossplane, as unreleased versions are subject to changes and incompatibilities that will not be supported in the official releases.</p><p>If you are using an official release version of Crossplane, you should refer to the documentation for your specific version.</p><strong>Documentation for other releases can be found by using the version selector in the top right of any doc page.</strong></div><h1>Release Process</h1><p>This document is meant to be a complete end-to-end guide for how to release new
+versions of software for Crossplane and its related projects.</p><h2 id=tldr-process-overview>tl;dr Process Overview</h2><p>All the details are available in the sections below, but we&rsquo;ll start this guide
+with a very high level sequential overview for how to run the release process.
+These steps apply to all Crossplane projects, all of which utilize <a href=https://github.com/features/actions>Github
+Actions</a> for pipelines.</p><ol><li><strong>feature freeze</strong>: Merge all completed features into main development branch
+of all repos to begin &ldquo;feature freeze&rdquo; period.</li><li><strong>pin dependencies</strong>: Update the go module on main development branch to
+depend on stable versions of dependencies if needed.</li><li><strong>branch repo</strong>: Create a new release branch using the GitHub UI for the
+repo.</li><li><strong>release branch prep</strong>: Make any release-specific updates on the release
+branch (typically documentation).</li><li><strong>tag release</strong>: Run the <code>Tag</code> action on the <em>release branch</em> with the
+desired version (e.g. <code>v0.14.0</code>).</li><li><strong>build/publish</strong>: Run the <code>CI</code> and <code>Configurations</code> action on the release
+branch with the version that was just tagged.</li><li><strong>tag next pre-release</strong>: Run the <code>tag</code> action on the main development branch
+with the <code>rc.0</code> for the next release (e.g. <code>v0.15.0-rc.0</code>).</li><li><strong>verify</strong>: Verify all artifacts have been published successfully, perform
+sanity testing.</li><li><strong>promote</strong>: Run the <code>Promote</code> action to promote release to desired
+channel(s).</li><li><strong>release notes</strong>: Publish well authored and complete release notes on
+GitHub.</li><li><strong>announce</strong>: Announce the release on Twitter, Slack, etc.</li></ol><h2 id=detailed-process>Detailed Process</h2><p>This section will walk through the release process in more fine grained and
+prescriptive detail.</p><h3 id=feature-freeze>Feature Freeze</h3><p>Feature freeze should be performed on all repos. In order to start the feature
+freeze period, the following conditions should be met:</p><ul><li>All expected features should be
+<a href=https://github.com/crossplane/crossplane/blob/master/design/one-pager-definition-of-done.md>&ldquo;complete&rdquo;</a>
+and merged into main development branch. This includes user guides, examples,
+API documentation, and test updates.</li><li>All issues in the
+<a href=https://github.com/crossplane/crossplane/milestones>milestone</a> should be
+closed</li><li>Sanity testing has been performed on main development branch</li></ul><h3 id=pin-dependencies>Pin Dependencies</h3><p>It is a best practice to release Crossplane projects with &ldquo;pinned&rdquo; dependencies
+to specific stable versions. For example, after crossplane-runtime has been
+released, we want to update the main Crossplane repo to use that specific
+released version.</p><p>To update a dependency to a specific version, simply edit the <code>go.mod</code> file to
+point to the desired version, then run <code>go mod tidy</code>.</p><h3 id=create-release-branch>Create Release Branch</h3><p>Creating the release branch can be done within the <a href=https://help.github.com/en/github/collaborating-with-issues-and-pull-requests/creating-and-deleting-branches-within-your-repository>GitHub
+UI</a>.
+Basically, you just use the branch selector drop down and type in the name of
+the new release branch, e.g. <code>release-0.5</code>. Release branch names always follow
+the convention of <code>release-[minor-semver]</code>.</p><p>If this is the first ever release branch being created in a repo (uncommon), you
+should also set up branch protection rules for the <code>release-*</code> pattern. You can
+find existing examples in the <a href=https://github.com/crossplane/crossplane/settings/branches>Crossplane repo
+settings</a>.</p><p>At this point, the <code>HEAD</code> commit in the release branch will be our release
+candidate. The build pipeline will automatically be started due to the create
+branch event, so we can start to perform testing on this build. Note that it
+should be the exact same as what is currently in main development branch since
+they are using the same commit and have the same tag. Also note that this is not
+the official release build since we have not made the official release tag yet
+(e.g. <code>v0.5.0</code>).</p><h3 id=release-branch-prep>Release Branch Prep</h3><p>Some repos may not require any release branch prep. This is desirable as it
+reduces the burden of running a new release. If this is the case for the repo
+being released, you may skip this step.</p><p>In the core Crossplane repository, we need to update the release branch docs and
+examples to point to the new versions that we will be releasing soon.</p><ul><li>Documentation, such as pinning
+<a href=https://github.com/crossplane/crossplane/blob/release-0.14/docs/snippets>snippet</a>
+links to the current release branch.<ul><li>searching for <code>:v</code> will help a lot here</li></ul></li></ul><h4 id=bug-fixes-in-release-branch>Bug Fixes in Release Branch</h4><p>During our testing of the release candidate, we may find issues or bugs that we
+triage and decide we want to fix before the release goes out. In order to fix a
+bug in the release branch, the following process is recommended:</p><ol><li><p>Make the bug fix into main development branch first through the normal PR
+process</p><ol><li>If the applicable code has already been removed from the main development
+branch then simply fix the bug directly in the release branch by opening
+a PR directly against the release branch</li></ol></li><li><p>Backport the fix by performing a cherry-pick of the fix&rsquo;s commit hash
+(<strong>not</strong> the merge commit) from main development branch into the release
+branch. For example, to backport a fix from the main development branch to
+<code>v0.5.0</code>, something like the following should be used:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-console data-lang=console><span style=display:flex><span>git fetch --all
+</span></span><span style=display:flex><span>git checkout -b release-0.5 upstream/release-0.5
+</span></span><span style=display:flex><span>git cherry-pick -x &lt;fix commit hash&gt;
+</span></span></code></pre></div></li><li><p>Open a PR with the cherry-pick commit targeting the release-branch</p></li></ol><p>After all bugs have been fixed and backported to the release branch, we can move
+on to tagging the final release commit.</p><h3 id=tag-release>Tag Release</h3><p>Now it&rsquo;s time to run the <code>Tag</code> action on the release branch.</p><p>Run the tag action by going to the repo&rsquo;s &ldquo;Actions&rdquo; tab in the Github UI. You
+will be prompted for the desired branch and the version you are tagging. The
+latest commit on the selected branch will be the commit that is tagged.</p><h3 id=draft-release-notes>Draft Release Notes</h3><p>We&rsquo;re getting close to starting the official release, so you should take this
+opportunity to draft up the release notes. You can create a <a href=https://github.com/crossplane/crossplane/releases/new>new release draft
+here</a>. Make sure you
+select &ldquo;This is a pre-release&rdquo; and hit &ldquo;Save draft&rdquo; when you are ready to share
+and collect feedback. Do <strong>not</strong> hit &ldquo;Publish release&rdquo; yet.</p><p>You can see and follow the template and structure from <a href=https://github.com/crossplane/crossplane/releases>previous
+releases</a>.</p><h3 id=build-and-publish>Build and Publish</h3><p>Run the <code>CI</code> action on the release branch. This will build and publish the
+official release with the correct version tag and all of its release artifacts
+will be published.</p><p>If there are any <code>Configuration</code> packages that are built in the repo, you must
+also run the <code>Configurations</code> action on the release branch. This will build,
+tag, and publish the <code>Configuration</code> packages to the configured OCI image
+registry.</p><p>After the pipeline runs successfully, you should verify that all artifacts have
+been published to:</p><p>For all repos:</p><ul><li><a href=https://hub.docker.com/repository/docker/crossplane>Docker Hub</a></li></ul><p>For all repos with Helm charts:</p><ul><li><a href=https://releases.crossplane.io/>S3 releases bucket</a></li><li><a href=https://charts.crossplane.io/>Helm chart repository</a></li></ul><p>For crossplane/crossplane:</p><ul><li><a href=https://crossplane.io/docs/latest>Docs website</a></li><li><a href=https://marketplace.upbound.io>Configuration Packages</a></li></ul><h3 id=tag-next-pre-release>Tag Next Pre-release</h3><p>The next step is to create the pre-release tag for the <code>HEAD</code> commit in main
+development branch. This tag serves as an indication of when the release was
+branched from the main development branch and is also important for generating
+future versions of the main development branch builds since that <a href=https://github.com/upbound/build/blob/master/makelib/common.mk#L182-L196>versioning
+process</a>
+is based on <code>git describe --tags</code>.</p><blockquote><p>NOTE: the <code>build</code> submodule uses the latest tag by timestamp on the branch
+which the commit it is building resides on. If there were no prep commits made
+on the release branch, then its <code>HEAD</code> is even with the main development
+branch (i.e. the stable tag and the next pre-release tag will be on the same
+commit). This means that we must tag the pre-release version <em>after</em> the
+stable version to ensure subsequent builds use the next pre-release tag as
+their base. If there are additional commits on the release branch before the
+stable tag is created, then the pre-release tag could be created first.</p></blockquote><p>To accomplish this, run the <code>Tag</code> action for the repo on the main development
+branch branch. You will be prompted to enter the <code>version</code> for the tag. Since
+this tag will essentially be the start of pre-releases working towards the
+<strong>next</strong> version, the <code>version</code> should be the <strong>next</strong> release number, plus a
+trailing tag to indicate it is a pre-release. The current convention is to use
+<code>*-rc.0</code>. For example, when we are releasing the <code>v0.9.0</code> release and we are
+ready for the main development branch to start working towards the <strong>next</strong>
+release of <code>v0.10.0</code>, we would make the tag <code>v0.10.0-rc.0</code></p><p>After the tag action has succeeded, verify in the <a href=https://github.com/crossplane/crossplane/tags>GitHub
+UI</a> that the tag was successfully
+applied to the correct commit.</p><p>The main development branch can now be opened for new features since we have a
+safe release branch to continue bug fixes and improvements for the release
+itself. Essentially, the main development branch is free to now diverge from the
+release branch.</p><h3 id=promote>Promote</h3><p>If everything looks good with the official versioned release that we just
+published, we can go ahead and run the <code>Promote</code> action on the release branch.
+This is a very quick pipeline that doesn&rsquo;t rebuild anything, it simply makes
+metadata changes to the published release to also include the release in the
+channel of your choice.</p><p>Run the <code>Promote</code> action on the release branch and input the version you would
+like to promote (e.g. <code>v0.5.0</code>) and the channel you&rsquo;d like to promote it to.</p><p>After the <code>Promote</code> actions have succeeded, verify on DockerHub and the Helm
+chart repository that the release has been promoted to the right channels.</p><h3 id=publish-release-notes>Publish Release Notes</h3><p>Now that the release has been published and verified, you can publish the
+<a href=https://github.com/crossplane/crossplane/releases>release notes</a> that you
+drafted earlier. After incorporating all feedback, you can now click on the
+&ldquo;Publish release&rdquo; button.</p><p>This will send an email notification with the release notes to all watchers of
+the repo.</p><h3 id=announce-release>Announce Release</h3><p>We have completed the entire release, so it&rsquo;s now time to announce it to the
+world. Using the <a href=https://twitter.com/crossplane_io>@crossplane_io</a> Twitter
+account, tweet about the new release and blog. You&rsquo;ll see examples from the
+previous releases, such as this tweet for
+<a href=https://twitter.com/crossplane_io/status/1189307636350705664>v0.4</a>.</p><p>Post a link to this tweet on the Slack #announcements channel, then copy a link
+to that and post it in the #general channel.</p><h3 id=patch-releases>Patch Releases</h3><p>We also have the ability to run patch releases to update previous releases that
+have already been published. These patch releases are always run from the last
+release branch, we do <strong>not</strong> create a new release branch for a patch release.</p><p>The basic flow is <strong>very</strong> similar to a normal release, but with a few less
+steps. Please refer to details for each step in the sections above.</p><ul><li>Fix any bugs in the main development branch first and then <code>cherry-pick -x</code> to
+the release branch<ul><li>If main development branch has already removed the relevant code then make
+your fix directly in the release branch</li></ul></li><li>After all testing on the release branch look good and any docs/tests have been
+updated with the new version number, run the <code>Tag</code> action on the release
+branch with the new patch version (e.g. <code>v0.5.1</code>)</li><li>Run the normal <code>CI</code> action on the release branch to build and publish the
+release</li><li>Publish release notes</li><li>Run <code>Promote</code> action to promote the patch release to the appropriate channels</li></ul></div></div><script>var i,j,menu=[],menuDom,item,itemDom,children;menu.push({childCurrent:!1,children:[{current:!1,name:"Install \u0026 Configure",url:"/master/getting-started/install-configure/"},{current:!1,name:"Provision Infrastructure",url:"/master/getting-started/provision-infrastructure/"},{current:!1,name:"Create a Configuration",url:"/master/getting-started/create-configuration/"}],current:!1,name:"Getting Started",url:"/master/getting-started/"}),menu.push({childCurrent:!1,children:[{current:!1,name:"Providers",url:"/master/concepts/providers/"},{current:!1,name:"Managed Resources",url:"/master/concepts/managed-resources/"},{current:!1,name:"Composite Resources",url:"/master/concepts/composition/"},{current:!1,name:"Crossplane Packages",url:"/master/concepts/packages/"},{current:!1,name:"Terminology",url:"/master/concepts/terminology/"}],current:!1,name:"Concepts",url:"/master/concepts/"}),menu.push({childCurrent:!1,children:[{current:!1,name:"Upgrading to v0.14",url:"/master/guides/upgrading-to-v0.14/"},{current:!1,name:"Upgrading to v1.x",url:"/master/guides/upgrading-to-v1.x/"},{current:!1,name:"Vault as an External Secret Store",url:"/master/guides/vault-as-secret-store/"},{current:!1,name:"Vault Credential Injection",url:"/master/guides/vault-injection/"},{current:!1,name:"Multi-Tenant Crossplane",url:"/master/guides/multi-tenant/"},{current:!1,name:"Configuring Crossplane with Argo CD",url:"/master/guides/argo-cd-crossplane/"},{current:!1,name:"Self-Signed CA Certs",url:"/master/guides/self-signed-ca-certs/"},{current:!1,name:"Composition Revisions",url:"/master/guides/composition-revisions/"}],current:!1,name:"Guides",url:"/master/guides/"}),menu.push({childCurrent:!1,children:[{current:!1,name:"Install Crossplane",url:"/master/reference/install/"},{current:!1,name:"Configure Your Cloud Provider Account",url:"/master/reference/configure/"},{current:!1,name:"Uninstall Crossplane",url:"/master/reference/uninstall/"},{current:!1,name:"Composition",url:"/master/reference/composition/"},{current:!1,name:"xpkg Specification",url:"/master/reference/xpkg/"},{current:!1,name:"Troubleshoot",url:"/master/reference/troubleshoot/"},{current:!1,name:"Learn More",url:"/master/reference/learn_more/"},{current:!1,name:"Release Cycle",url:"/master/reference/release-cycle/"}],current:!1,name:"Reference",url:"/master/reference/"}),menu.push({childCurrent:!1,children:[{current:!1,name:"Crossplane",url:"/master/api-docs/crossplane/"},{current:!1,name:"provider-alibaba",url:"/master/api-docs/provider-alibaba/"},{current:!1,name:"provider-aws",url:"/master/api-docs/provider-aws/"},{current:!1,name:"provider-azure",url:"/master/api-docs/provider-azure/"},{current:!1,name:"provider-gcp",url:"/master/api-docs/provider-gcp/"},{current:!1,name:"provider-helm",url:"/master/api-docs/provider-helm/"},{current:!1,name:"provider-rook",url:"/master/api-docs/provider-rook/"}],current:!1,name:"API Documentation",url:"/master/api-docs/"}),menu.push({childCurrent:!0,children:[{current:!1,name:"Provider Development Guide",url:"/master/contributing/provider_development_guide/"},{current:!1,name:"Observability Developer Guide",url:"/master/contributing/observability_developer_guide/"},{current:!0,name:"Release Process",url:"/master/contributing/release-process/"},{current:!1,name:"Adding Secret Store Support",url:"/master/contributing/adding_external_secret_store_support/"},{current:!1,name:"Crossplane Documentation",url:"/master/contributing/docs/"}],current:!1,name:"Contributing",url:"/master/contributing/"}),menu.push({childCurrent:!1,children:[{current:!1,name:"Related Projects",url:"/master/faqs/related_projects/"}],current:!1,name:"FAQ",url:"/master/faqs/"});function getEntry(e){var t=document.createElement("li");return e.current?(t.innerHTML=e.name,t.classList.add("current")):t.innerHTML='<a href="'+e.url+'">'+e.name+"</a>",t}function flushCss(e){e.offsetHeight}function addArrow(e){var t=document.createElement("a");t.classList.add("arrow"),t.innerHTML="<div />",t.onclick=function(e){return function(){var n=59,s=16,t=n+s+e.lastChild.clientHeight+"px";return e.classList.toggle("open"),e.classList.contains("open")?e.style.height=t:(e.style.height==="auto"&&(e.style.transition="none",e.style.height=t,flushCss(e),e.style.transition=""),e.style.height="59px"),!1}}(e),e.appendChild(t),item.current&&item.children||item.childCurrent?(e.classList.add("open"),e.style.height="auto"):e.style.height="59px"}menuDom=document.getElementById("docs-ul");for(i=0;i<menu.length;i++){if(item=menu[i],itemDom=getEntry(item),item.childCurrent&&itemDom.classList.add("childCurrent"),item.children){addArrow(itemDom),itemDom.classList.add("children"),children=document.createElement("ul");for(j=0;j<item.children.length;j++)children.appendChild(getEntry(item.children[j]));itemDom.appendChild(children)}menuDom.appendChild(itemDom)}</script><script src=/js/anchor.js></script>
+<script>anchors.options={placement:"right",icon:"#"},document.addEventListener("DOMContentLoaded",function(){anchors.add(".docs-content h1, .docs-content h2, .docs-content h3, .docs-content h4, .docs-content h5, .docs-content h6")})</script><div id=footer><div class=footer-main><div class=main><div class=logo><img src=/images/logo.svg alt="Crossplane Logo"></div></div><div class="links sm-hidden"><a href=https://twitter.com/crossplane_io>Twitter</a>
+<a href=/v1.9/>Documentation</a>
+<a href=https://github.com/crossplane/crossplane>GitHub</a>
+<a href=https://slack.crossplane.io/>Slack Channel</a>
+<a href=https://www.youtube.com/channel/UC19FgzMBMqBro361HbE46Fw>YouTube</a>
+<a href=https://groups.google.com/forum/#!forum/crossplane-dev>Forum</a></div></div><div class=lf-copyright><p>&#169; Crossplane Authors 2022. Documentation distributed under
+<a href=https://creativecommons.org/licenses/by/4.0/>CC-BY-4.0</a>.</p><p>&#169; 2022 The Linux Foundation. All rights reserved. The Linux Foundation has
+registered trademarks and uses trademarks. For a list of trademarks of The Linux Foundation, please see our
+<a href=https://www.linuxfoundation.org/trademark-usage/>Trademark Usage</a> page.</p></div><script src=/js/slack-popup.js></script></div><script>(function(e,t,n,s,o,i,a){e.GoogleAnalyticsObject=o,e[o]=e[o]||function(){(e[o].q=e[o].q||[]).push(arguments)},e[o].l=1*new Date,i=t.createElement(n),a=t.getElementsByTagName(n)[0],i.async=1,i.src=s,a.parentNode.insertBefore(i,a)})(window,document,"script","https://www.google-analytics.com/analytics.js","ga"),ga("create","UA-110275540-2","auto"),ga("send","pageview")</script><script async src="https://www.googletagmanager.com/gtag/js?id=G-SFCPQYSLHY"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag("js",new Date),gtag("config","G-SFCPQYSLHY")</script><script type=text/javascript id=hs-script-loader async defer src=https://js.hs-scripts.com/5557732.js></script></body></html>

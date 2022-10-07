@@ -1,0 +1,341 @@
+<!doctype html><html lang=en><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=description content="Crossplane is a framework for building cloud native control planes without needing to write code. It has a highly extensible backend that enables you to build a control plane that can orchestrate applications and infrastructure no matter where they run, and a highly configurable frontend that puts you in control of the schema of the declarative API it offers."><meta http-equiv=x-ua-compatible content="ie=edge"><meta name=robots content="noindex"><title>Vault as an External Secret Store| Crossplane Documentation</title><meta name=twitter:card content="summary"><meta name=twitter:site content="https://crossplane.io"><meta name=twitter:title content="Crossplane"><meta name=twitter:description content="The cloud-native control plane framework"><meta name=twitter:image:src content="https://crossplane.io/images/twitter-card_400x400.jpg"><link rel=apple-touch-icon sizes=180x180 href="/favicons/apple-touch-icon.png?v=1.0"><link rel=icon type=image/png sizes=32x32 href="/favicons/favicon-32x32.png?v=1.0"><link rel=icon type=image/png sizes=16x16 href="/favicons/favicon-16x16.png?v=1.0"><link rel=manifest href="/favicons/site.webmanifest?v=1.0"><link rel=mask-icon href="/favicons/safari-pinned-tab.svg?v=1.0" color=#5bbad5><link rel="shortcut icon" href="/favicons/favicon.ico?v=1.0"><meta name=msapplication-TileColor content="#da532c"><meta name=theme-color content="#ffffff"><link rel=stylesheet href=/css/main.css><link rel=stylesheet href=https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css><link rel=stylesheet href=/css/docs.css><script src=https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js></script>
+<script src=https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js></script></head><body><div id=header><div><div class=logo><a href=/><img src=/images/logo.svg alt="Crossplane Logo"></a></div><div class=hamburger-controls onclick='return document.body.classList.contains("menu-open")?document.body.classList.remove("menu-open"):document.body.classList.add("menu-open"),!1'><span></span>
+<span></span>
+<span></span></div><ul class=links><li><a href=https://github.com/crossplane/crossplane><span class=md-hidden>Get Started on</span> GitHub</a></li><li><a href=/v1.9/>Documentation</a></li><li><a href=/community/>Community</a></li><li><a href=https://slack.crossplane.io/>Slack <span class=md-hidden>Channel</span></a></li><li><a href=https://blog.crossplane.io/>Blog</a></li><li><a href=https://twitter.com/crossplane_io>Twitter</a></li></ul></div></div><div id=docs-header><div><h1>Documentation</h1><div class=versions><div><div><select onchange="window.location.href=this.value"><option selected value=/master/guides/vault-as-secret-store/>Crossplane master</option><option value=/v1.9/guides/vault-as-secret-store/>Crossplane v1.9</option><option value=/v1.8/guides/vault-as-secret-store/>Crossplane v1.8</option><option selected value=/v1.7/guides/vault-as-secret-store/>Crossplane v1.7</option></select></div></div></div></div></div><div class=page><div class=docs-menu><ul id=docs-ul></ul></div><div class=docs-content><div class=docs-actions><a id=edit href=https://github.com/crossplane/crossplane/tree/release-1.7/docs/vault-as-secret-store.md><img src=/images/github-teal.svg>Edit on GitHub</a></div><div class="alert old"><p><b>PLEASE NOTE</b>: This document applies to version 1.7 and not to the latest release 1.9</p><strong>Documentation for other releases can be found by using the version selector in the top right of any doc page.</strong></div><h1>Vault as an External Secret Store</h1><p>\</p><p>This guide walks through the steps required to configure Crossplane and
+its Providers to use <a href=https://www.vaultproject.io/>Vault</a> as an <a href=https://github.com/crossplane/crossplane/blob/master/design/design-doc-external-secret-stores.md>External Secret Store</a>. For the sake of
+completeness, we will also include steps for Vault installation and setup,
+however, you can skip those and use your existing Vault.</p><blockquote><p>External Secret Stores are an alpha feature. They are not yet recommended for
+production use, and are disabled by default.</p></blockquote><p>Crossplane consumes and also produces sensitive information to operate which
+could be categorized as follows:</p><ol><li><strong>Provider credentials:</strong> These are the credentials required for Providers
+to authenticate against external APIs. For example, AWS Access/Secret keys, GCP
+service account json, etc.</li><li><strong>Connection Details:</strong> Once an infrastructure provisioned, we usually
+need some connection data to consume it. Most of the time, this
+information includes sensitive information like usernames, passwords or access
+keys.</li><li><strong>Sensitive Inputs to Managed Resources:</strong> There are some Managed resources
+which expect input parameters that could be sensitive. Initial password of a
+managed database is a good example of this category.</li></ol><p>It is already possible to use Vault for the 1st category (i.e. Provider
+Credentials) as described in <a href=/v1.7/guides/vault-injection/>the previous guide</a>. 3rd use case is a relatively
+rare and being tracked with <a href=https://github.com/crossplane/crossplane/issues/2985>this issue</a>.</p><p>In this guide we will focus on the 2nd category, which is storing Connection
+Details for managed resources in Vault.</p><h2 id=steps>Steps</h2><blockquote><p>Some steps in this guide duplicates <a href=/v1.7/guides/vault-injection/>the previous guide</a> on Vault injection.
+However, for convenience, we put them here as well with minor
+changes/improvements.</p></blockquote><p>At a high level we will run the following steps:</p><ul><li>Install and Unseal Vault.</li><li>Configure Vault with Kubernetes Auth.</li><li>Install and Configure Crossplane by enabling the feature.</li><li>Install and Configure Provider GCP by enabling the feature.</li><li>Deploy a Composition and CompositeResourceDefinition.</li><li>Create a Claim.</li><li>Verify all secrets land in Vault as expected.</li></ul><p>For simplicity, we will deploy Vault into the same cluster as Crossplane,
+however, this is not a requirement as long as Vault has Kubernetes auth enabled
+for the cluster where Crossplane is running.</p><h3 id=prepare-vault>Prepare Vault</h3><ol><li>Install Vault Helm Chart</li></ol><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell><span style=display:flex><span>kubectl create ns vault-system
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>helm repo add hashicorp https://helm.releases.hashicorp.com --force-update
+</span></span><span style=display:flex><span>helm -n vault-system upgrade --install vault hashicorp/vault
+</span></span></code></pre></div><ol start=2><li><a href=https://www.vaultproject.io/docs/concepts/seal>Unseal</a> Vault</li></ol><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell><span style=display:flex><span>kubectl -n vault-system exec vault-0 -- vault operator init -key-shares<span style=color:#f92672>=</span><span style=color:#ae81ff>1</span> -key-threshold<span style=color:#f92672>=</span><span style=color:#ae81ff>1</span> -format<span style=color:#f92672>=</span>json &gt; cluster-keys.json
+</span></span><span style=display:flex><span>VAULT_UNSEAL_KEY<span style=color:#f92672>=</span><span style=color:#66d9ef>$(</span>cat cluster-keys.json | jq -r <span style=color:#e6db74>&#34;.unseal_keys_b64[]&#34;</span><span style=color:#66d9ef>)</span>
+</span></span><span style=display:flex><span>kubectl -n vault-system exec vault-0 -- vault operator unseal $VAULT_UNSEAL_KEY
+</span></span></code></pre></div><ol start=3><li>Configure Vault with Kubernetes Auth.</li></ol><p>In order for Vault to be able to authenticate requests based on Kubernetes
+service accounts, the <a href=https://www.vaultproject.io/docs/auth/kubernetes>Kubernetes auth method</a> must be enabled.
+This requires logging in to Vault and configuring it with a service account
+token, API server address, and certificate. Because we are running Vault in
+Kubernetes, these values are already available via the container filesystem and
+environment variables.</p><p>Get Vault Root Token:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell><span style=display:flex><span>cat cluster-keys.json | jq -r <span style=color:#e6db74>&#34;.root_token&#34;</span>
+</span></span></code></pre></div><p>Login as root and enable/configure Kubernetes Auth:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell><span style=display:flex><span>kubectl -n vault-system exec -it vault-0 -- /bin/sh
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>vault login <span style=color:#75715e># use root token from above</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>vault auth enable kubernetes
+</span></span><span style=display:flex><span>vault write auth/kubernetes/config <span style=color:#ae81ff>\
+</span></span></span><span style=display:flex><span><span style=color:#ae81ff></span>        token_reviewer_jwt<span style=color:#f92672>=</span><span style=color:#e6db74>&#34;</span><span style=color:#66d9ef>$(</span>cat /var/run/secrets/kubernetes.io/serviceaccount/token<span style=color:#66d9ef>)</span><span style=color:#e6db74>&#34;</span> <span style=color:#ae81ff>\
+</span></span></span><span style=display:flex><span><span style=color:#ae81ff></span>        kubernetes_host<span style=color:#f92672>=</span><span style=color:#e6db74>&#34;https://</span>$KUBERNETES_PORT_443_TCP_ADDR<span style=color:#e6db74>:443&#34;</span> <span style=color:#ae81ff>\
+</span></span></span><span style=display:flex><span><span style=color:#ae81ff></span>        kubernetes_ca_cert<span style=color:#f92672>=</span>@/var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+</span></span><span style=display:flex><span>        
+</span></span><span style=display:flex><span>exit <span style=color:#75715e># exit vault container</span>
+</span></span></code></pre></div><ol start=4><li>Enable Vault Key Value Secret Engine</li></ol><p>There are two different versions of <a href=https://www.vaultproject.io/docs/secrets/kv>Vault KV Secrets Engine</a>, <code>v1</code> and <code>v2</code>,
+which you can find more details in the linked documentation page.
+We will use <code>v2</code> in this guide as an example, however, both versions are
+supported as an external secret store.</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell><span style=display:flex><span>kubectl -n vault-system exec -it vault-0 -- vault secrets enable -path<span style=color:#f92672>=</span>secret kv-v2
+</span></span></code></pre></div><ol start=5><li>Create a Vault Policy and Role for Crossplane</li></ol><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell><span style=display:flex><span>kubectl -n vault-system exec -i vault-0 -- vault policy write crossplane - <span style=color:#e6db74>&lt;&lt;EOF
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>path &#34;secret/data/*&#34; {
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>    capabilities = [&#34;create&#34;, &#34;read&#34;, &#34;update&#34;, &#34;delete&#34;]
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>}
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>path &#34;secret/metadata/*&#34; {
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>    capabilities = [&#34;create&#34;, &#34;read&#34;, &#34;update&#34;, &#34;delete&#34;]
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>}
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>EOF</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>kubectl -n vault-system exec -it vault-0 -- vault write auth/kubernetes/role/crossplane <span style=color:#ae81ff>\
+</span></span></span><span style=display:flex><span><span style=color:#ae81ff></span>    bound_service_account_names<span style=color:#f92672>=</span><span style=color:#e6db74>&#34;*&#34;</span> <span style=color:#ae81ff>\
+</span></span></span><span style=display:flex><span><span style=color:#ae81ff></span>    bound_service_account_namespaces<span style=color:#f92672>=</span>crossplane-system <span style=color:#ae81ff>\
+</span></span></span><span style=display:flex><span><span style=color:#ae81ff></span>    policies<span style=color:#f92672>=</span>crossplane <span style=color:#ae81ff>\
+</span></span></span><span style=display:flex><span><span style=color:#ae81ff></span>    ttl<span style=color:#f92672>=</span>24h
+</span></span></code></pre></div><h3 id=install-and-configure-crossplane>Install and Configure Crossplane</h3><ol><li>Install Crossplane by:</li></ol><ul><li>Enabling <code>External Secret Stores</code> feature.</li><li>Annotating for <a href=https://www.vaultproject.io/docs/platform/k8s/injector>Vault Agent Sidecar Injection</a></li></ul><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell><span style=display:flex><span>kubectl create ns crossplane-system
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>helm repo add crossplane-stable https://charts.crossplane.io/stable --force-update
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>helm upgrade --install crossplane crossplane-stable/crossplane --namespace crossplane-system <span style=color:#ae81ff>\
+</span></span></span><span style=display:flex><span><span style=color:#ae81ff></span>  --set <span style=color:#e6db74>&#39;args={--enable-external-secret-stores}&#39;</span> <span style=color:#ae81ff>\
+</span></span></span><span style=display:flex><span><span style=color:#ae81ff></span>  --set-string customAnnotations.<span style=color:#e6db74>&#34;vault\.hashicorp\.com/agent-inject&#34;</span><span style=color:#f92672>=</span>true <span style=color:#ae81ff>\
+</span></span></span><span style=display:flex><span><span style=color:#ae81ff></span>  --set-string customAnnotations.<span style=color:#e6db74>&#34;vault\.hashicorp\.com/agent-inject-token&#34;</span><span style=color:#f92672>=</span>true <span style=color:#ae81ff>\
+</span></span></span><span style=display:flex><span><span style=color:#ae81ff></span>  --set-string customAnnotations.<span style=color:#e6db74>&#34;vault\.hashicorp\.com/role&#34;</span><span style=color:#f92672>=</span>crossplane <span style=color:#ae81ff>\
+</span></span></span><span style=display:flex><span><span style=color:#ae81ff></span>  --set-string customAnnotations.<span style=color:#e6db74>&#34;vault\.hashicorp\.com/agent-run-as-user&#34;</span><span style=color:#f92672>=</span><span style=color:#ae81ff>65532</span>
+</span></span></code></pre></div><ol start=2><li>Create a Secret <code>StoreConfig</code> for Crossplane to be used by
+Composition types, i.e. <code>Composites</code> and <code>Claims</code>:</li></ol><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell><span style=display:flex><span>echo <span style=color:#e6db74>&#34;apiVersion: secrets.crossplane.io/v1alpha1
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>kind: StoreConfig
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>metadata:
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>  name: vault
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>spec:
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>  type: Vault
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>  defaultScope: crossplane-system
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>  vault:
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>    server: http://vault.vault-system:8200
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>    mountPath: secret/
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>    version: v2
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>    auth:
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>      method: Token
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>      token:
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>        source: Filesystem
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>        fs:
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>          path: /vault/secrets/token&#34;</span> | kubectl apply -f -
+</span></span></code></pre></div><h3 id=install-and-configure-provider-gcp>Install and Configure Provider GCP</h3><ol><li>Similar to Crossplane, install Provider GCP by:</li></ol><ul><li>Enabling <code>External Secret Stores</code> feature.</li><li>Annotating for <a href=https://www.vaultproject.io/docs/platform/k8s/injector>Vault Agent Sidecar Injection</a></li></ul><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell><span style=display:flex><span>echo <span style=color:#e6db74>&#34;apiVersion: pkg.crossplane.io/v1alpha1
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>kind: ControllerConfig
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>metadata:
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>  name: vault-config
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>spec:
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>  args:
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>    - --enable-external-secret-stores
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>  metadata:
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>    annotations:
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>      vault.hashicorp.com/agent-inject: \&#34;true\&#34;
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>      vault.hashicorp.com/agent-inject-token: \&#34;true\&#34;
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>      vault.hashicorp.com/role: crossplane
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>      vault.hashicorp.com/agent-run-as-user: \&#34;2000\&#34;
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>---
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>apiVersion: pkg.crossplane.io/v1
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>kind: Provider
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>metadata:
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>  name: provider-gcp
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>spec:
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>  package: crossplane/provider-gcp:v0.21.0
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>  controllerConfigRef:
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>    name: vault-config&#34;</span> | kubectl apply -f -
+</span></span></code></pre></div><ol start=2><li>Create a Secret <code>StoreConfig</code> for Provider GCP to be used by GCP Managed
+Resources:</li></ol><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell><span style=display:flex><span>echo <span style=color:#e6db74>&#34;apiVersion: gcp.crossplane.io/v1alpha1
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>kind: StoreConfig
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>metadata:
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>  name: vault
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>spec:
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>  type: Vault
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>  defaultScope: crossplane-system
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>  vault:
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>    server: http://vault.vault-system:8200
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>    mountPath: secret/
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>    version: v2
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>    auth:
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>      method: Token
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>      token:
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>        source: Filesystem
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>        fs:
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>          path: /vault/secrets/token&#34;</span> | kubectl apply -f -
+</span></span></code></pre></div><h3 id=deploy-and-test>Deploy and Test</h3><blockquote><p>Prerequisite: You should have a working <strong>default</strong> <code>ProviderConfig</code> for
+GCP available.</p></blockquote><ol><li>Create a <code>Composition</code> and a <code>CompositeResourceDefinition</code>:</li></ol><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell><span style=display:flex><span>echo <span style=color:#e6db74>&#34;apiVersion: apiextensions.crossplane.io/v1
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>kind: CompositeResourceDefinition
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>metadata:
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>  name: compositeessinstances.ess.example.org
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>  annotations:
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>    feature: ess
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>spec:
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>  group: ess.example.org
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>  names:
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>    kind: CompositeESSInstance
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>    plural: compositeessinstances
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>  claimNames:
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>    kind: ESSInstance
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>    plural: essinstances
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>  connectionSecretKeys:
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>    - publicKey
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>    - publicKeyType
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>  versions:
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>  - name: v1alpha1
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>    served: true
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>    referenceable: true
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>    schema:
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>      openAPIV3Schema:
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>        type: object
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>        properties:
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>          spec:
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>            type: object
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>            properties:
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>              parameters:
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>                type: object
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>                properties:
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>                  serviceAccount:
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>                    type: string
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>                required:
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>                  - serviceAccount
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>            required:
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>              - parameters&#34;</span> | kubectl apply -f -
+</span></span><span style=display:flex><span>              
+</span></span><span style=display:flex><span>echo <span style=color:#e6db74>&#34;apiVersion: apiextensions.crossplane.io/v1
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>kind: Composition
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>metadata:
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>  name: essinstances.ess.example.org
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>  labels:
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>    feature: ess
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>spec:
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>  publishConnectionDetailsWithStoreConfigRef: 
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>    name: vault
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>  compositeTypeRef:
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>    apiVersion: ess.example.org/v1alpha1
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>    kind: CompositeESSInstance
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>  resources:
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>    - name: serviceaccount
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>      base:
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>        apiVersion: iam.gcp.crossplane.io/v1alpha1
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>        kind: ServiceAccount
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>        metadata:
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>          name: ess-test-sa
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>        spec:
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>          forProvider:
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>            displayName: a service account to test ess
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>    - name: serviceaccountkey
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>      base:
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>        apiVersion: iam.gcp.crossplane.io/v1alpha1
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>        kind: ServiceAccountKey
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>        spec:
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>          forProvider:
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>            serviceAccountSelector:
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>              matchControllerRef: true
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>          publishConnectionDetailsTo:
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>            name: ess-mr-conn
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>            metadata:
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>              labels:
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>                environment: development
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>                team: backend
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>            configRef:
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>              name: vault
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>      connectionDetails:
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>        - fromConnectionSecretKey: publicKey
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>        - fromConnectionSecretKey: publicKeyType&#34;</span> | kubectl apply -f -
+</span></span></code></pre></div><ol start=2><li>Create a <code>Claim</code>:</li></ol><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell><span style=display:flex><span>echo <span style=color:#e6db74>&#34;apiVersion: ess.example.org/v1alpha1
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>kind: ESSInstance
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>metadata:
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>  name: my-ess
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>  namespace: default
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>spec:
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>  parameters:
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>    serviceAccount: ess-test-sa
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>  compositionSelector:
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>    matchLabels:
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>      feature: ess
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>  publishConnectionDetailsTo:
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>    name: ess-claim-conn
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>    metadata:
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>      labels:
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>        environment: development
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>        team: backend
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>    configRef:
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>      name: vault&#34;</span> | kubectl apply -f -
+</span></span></code></pre></div><ol start=3><li>Verify all resources SYNCED and READY:</li></ol><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell><span style=display:flex><span>kubectl get managed
+</span></span><span style=display:flex><span><span style=color:#75715e># Example output:</span>
+</span></span><span style=display:flex><span><span style=color:#75715e># NAME                                                      READY   SYNCED   DISPLAYNAME                     EMAIL                                                            DISABLED</span>
+</span></span><span style=display:flex><span><span style=color:#75715e># serviceaccount.iam.gcp.crossplane.io/my-ess-zvmkz-vhklg   True    True     a service account to test ess   my-ess-zvmkz-vhklg@testingforbugbounty.iam.gserviceaccount.com</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#75715e># NAME                                                         READY   SYNCED   KEY_ID                                     CREATED_AT             EXPIRES_AT</span>
+</span></span><span style=display:flex><span><span style=color:#75715e># serviceaccountkey.iam.gcp.crossplane.io/my-ess-zvmkz-bq8pz   True    True     5cda49b7c32393254b5abb121b4adc07e140502c   2022-03-23T10:54:50Z</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>kubectl -n default get claim
+</span></span><span style=display:flex><span><span style=color:#75715e># Example output:</span>
+</span></span><span style=display:flex><span><span style=color:#75715e># NAME     READY   CONNECTION-SECRET   AGE</span>
+</span></span><span style=display:flex><span><span style=color:#75715e># my-ess   True                        19s</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>kubectl get composite
+</span></span><span style=display:flex><span><span style=color:#75715e># Example output:</span>
+</span></span><span style=display:flex><span><span style=color:#75715e># NAME           READY   COMPOSITION                    AGE</span>
+</span></span><span style=display:flex><span><span style=color:#75715e># my-ess-zvmkz   True    essinstances.ess.example.org   32s</span>
+</span></span></code></pre></div><h3 id=verify-the-connection-secrets-landed-to-vault>Verify the Connection Secrets landed to Vault</h3><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell><span style=display:flex><span><span style=color:#75715e># Check connection secrets in the &#34;default&#34; scope (namespace). </span>
+</span></span><span style=display:flex><span>kubectl -n vault-system exec -i vault-0 -- vault kv list /secret/default
+</span></span><span style=display:flex><span><span style=color:#75715e># Example output:</span>
+</span></span><span style=display:flex><span><span style=color:#75715e># Keys</span>
+</span></span><span style=display:flex><span><span style=color:#75715e># ----</span>
+</span></span><span style=display:flex><span><span style=color:#75715e># ess-claim-conn</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#75715e># Check connection secrets in the &#34;crossplane-system&#34; scope (namespace).</span>
+</span></span><span style=display:flex><span>kubectl -n vault-system exec -i vault-0 -- vault kv list /secret/crossplane-system
+</span></span><span style=display:flex><span><span style=color:#75715e># Example output:</span>
+</span></span><span style=display:flex><span><span style=color:#75715e># Keys</span>
+</span></span><span style=display:flex><span><span style=color:#75715e># ----</span>
+</span></span><span style=display:flex><span><span style=color:#75715e># d2408335-eb88-4146-927b-8025f405da86</span>
+</span></span><span style=display:flex><span><span style=color:#75715e># ess-mr-conn</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#75715e># Check contents of claim connection secret</span>
+</span></span><span style=display:flex><span>kubectl -n vault-system exec -i vault-0 -- vault kv get /secret/default/ess-claim-conn
+</span></span><span style=display:flex><span><span style=color:#75715e># Example output:</span>
+</span></span><span style=display:flex><span><span style=color:#75715e># ======= Metadata =======</span>
+</span></span><span style=display:flex><span><span style=color:#75715e># Key                Value</span>
+</span></span><span style=display:flex><span><span style=color:#75715e># ---                -----</span>
+</span></span><span style=display:flex><span><span style=color:#75715e># created_time       2022-03-18T21:24:07.2085726Z</span>
+</span></span><span style=display:flex><span><span style=color:#75715e># custom_metadata    map[environment:development secret.crossplane.io/owner-uid:881cd9a0-6cc6-418f-8e1d-b36062c1e108 team:backend]</span>
+</span></span><span style=display:flex><span><span style=color:#75715e># deletion_time      n/a</span>
+</span></span><span style=display:flex><span><span style=color:#75715e># destroyed          false</span>
+</span></span><span style=display:flex><span><span style=color:#75715e># version            1</span>
+</span></span><span style=display:flex><span><span style=color:#75715e># </span>
+</span></span><span style=display:flex><span><span style=color:#75715e># ======== Data ========</span>
+</span></span><span style=display:flex><span><span style=color:#75715e># Key              Value</span>
+</span></span><span style=display:flex><span><span style=color:#75715e># ---              -----</span>
+</span></span><span style=display:flex><span><span style=color:#75715e># publicKey        -----BEGIN PUBLIC KEY-----</span>
+</span></span><span style=display:flex><span><span style=color:#75715e># MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAzsEYCokmYEsZJCc9QN/8</span>
+</span></span><span style=display:flex><span><span style=color:#75715e># Fm1M/kTPp7Gat/MXLTP3zFyCTBFVNLN79MbAKdinWi6ePXEb75vzB79IdZcWj8lo</span>
+</span></span><span style=display:flex><span><span style=color:#75715e># 8trnS64QjNB9Vs4Xk5UvDALwleFN/bZeperxivDPwVPvT9Aqy/U9kohoS/LHyE8w</span>
+</span></span><span style=display:flex><span><span style=color:#75715e># uWQb5AuMeVQ1gtCTnCqQZ4d2MSVhQXYVvAWax1spJ9LT7mHub5j95xDdYIcOV3VJ</span>
+</span></span><span style=display:flex><span><span style=color:#75715e># l9CIo4VrWIT8THFN2NnjTrGq9+0TzXY0bV674bjJkfBC6v6yXs5HTetG+Uekq/xf</span>
+</span></span><span style=display:flex><span><span style=color:#75715e># FCjrrDi1+2UR9Mu2WTuvl8qn50be+mbwdJO5wE32jewxdYrVVmj19+PkaEeAwGTc</span>
+</span></span><span style=display:flex><span><span style=color:#75715e># vwIDAQAB</span>
+</span></span><span style=display:flex><span><span style=color:#75715e># -----END PUBLIC KEY-----</span>
+</span></span><span style=display:flex><span><span style=color:#75715e># publicKeyType    TYPE_RAW_PUBLIC_KEY</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#75715e># Check contents of managed resource connection secret</span>
+</span></span><span style=display:flex><span>kubectl -n vault-system exec -i vault-0 -- vault kv get /secret/crossplane-system/ess-mr-conn
+</span></span><span style=display:flex><span><span style=color:#75715e># Example output:</span>
+</span></span><span style=display:flex><span><span style=color:#75715e># ======= Metadata =======</span>
+</span></span><span style=display:flex><span><span style=color:#75715e># Key                Value</span>
+</span></span><span style=display:flex><span><span style=color:#75715e># ---                -----</span>
+</span></span><span style=display:flex><span><span style=color:#75715e># created_time       2022-03-18T21:21:07.9298076Z</span>
+</span></span><span style=display:flex><span><span style=color:#75715e># custom_metadata    map[environment:development secret.crossplane.io/owner-uid:4cd973f8-76fc-45d6-ad45-0b27b5e9252a team:backend]</span>
+</span></span><span style=display:flex><span><span style=color:#75715e># deletion_time      n/a</span>
+</span></span><span style=display:flex><span><span style=color:#75715e># destroyed          false</span>
+</span></span><span style=display:flex><span><span style=color:#75715e># version            2</span>
+</span></span><span style=display:flex><span><span style=color:#75715e># </span>
+</span></span><span style=display:flex><span><span style=color:#75715e># ========= Data =========</span>
+</span></span><span style=display:flex><span><span style=color:#75715e># Key               Value</span>
+</span></span><span style=display:flex><span><span style=color:#75715e># ---               -----</span>
+</span></span><span style=display:flex><span><span style=color:#75715e># privateKey        {</span>
+</span></span><span style=display:flex><span><span style=color:#75715e>#   &#34;type&#34;: &#34;service_account&#34;,</span>
+</span></span><span style=display:flex><span><span style=color:#75715e>#   &#34;project_id&#34;: &#34;REDACTED&#34;,</span>
+</span></span><span style=display:flex><span><span style=color:#75715e>#   &#34;private_key_id&#34;: &#34;REDACTED&#34;,</span>
+</span></span><span style=display:flex><span><span style=color:#75715e>#   &#34;private_key&#34;: &#34;-----BEGIN PRIVATE KEY-----\nREDACTED\n-----END PRIVATE KEY-----\n&#34;,</span>
+</span></span><span style=display:flex><span><span style=color:#75715e>#   &#34;client_email&#34;: &#34;ess-test-sa@REDACTED.iam.gserviceaccount.com&#34;,</span>
+</span></span><span style=display:flex><span><span style=color:#75715e>#   &#34;client_id&#34;: &#34;REDACTED&#34;,</span>
+</span></span><span style=display:flex><span><span style=color:#75715e>#   &#34;auth_uri&#34;: &#34;https://accounts.google.com/o/oauth2/auth&#34;,</span>
+</span></span><span style=display:flex><span><span style=color:#75715e>#   &#34;token_uri&#34;: &#34;https://oauth2.googleapis.com/token&#34;,</span>
+</span></span><span style=display:flex><span><span style=color:#75715e>#   &#34;auth_provider_x509_cert_url&#34;: &#34;https://www.googleapis.com/oauth2/v1/certs&#34;,</span>
+</span></span><span style=display:flex><span><span style=color:#75715e>#   &#34;client_x509_cert_url&#34;: &#34;https://www.googleapis.com/robot/v1/metadata/x509/ess-test-sa%40REDACTED.iam.gserviceaccount.com&#34;</span>
+</span></span><span style=display:flex><span><span style=color:#75715e># }</span>
+</span></span><span style=display:flex><span><span style=color:#75715e># privateKeyType    TYPE_GOOGLE_CREDENTIALS_FILE</span>
+</span></span><span style=display:flex><span><span style=color:#75715e># publicKey         -----BEGIN PUBLIC KEY-----</span>
+</span></span><span style=display:flex><span><span style=color:#75715e># MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAzsEYCokmYEsZJCc9QN/8</span>
+</span></span><span style=display:flex><span><span style=color:#75715e># Fm1M/kTPp7Gat/MXLTP3zFyCTBFVNLN79MbAKdinWi6ePXEb75vzB79IdZcWj8lo</span>
+</span></span><span style=display:flex><span><span style=color:#75715e># 8trnS64QjNB9Vs4Xk5UvDALwleFN/bZeperxivDPwVPvT9Aqy/U9kohoS/LHyE8w</span>
+</span></span><span style=display:flex><span><span style=color:#75715e># uWQb5AuMeVQ1gtCTnCqQZ4d2MSVhQXYVvAWax1spJ9LT7mHub5j95xDdYIcOV3VJ</span>
+</span></span><span style=display:flex><span><span style=color:#75715e># l9CIo4VrWIT8THFN2NnjTrGq9+0TzXY0bV674bjJkfBC6v6yXs5HTetG+Uekq/xf</span>
+</span></span><span style=display:flex><span><span style=color:#75715e># FCjrrDi1+2UR9Mu2WTuvl8qn50be+mbwdJO5wE32jewxdYrVVmj19+PkaEeAwGTc</span>
+</span></span><span style=display:flex><span><span style=color:#75715e># vwIDAQAB</span>
+</span></span><span style=display:flex><span><span style=color:#75715e># -----END PUBLIC KEY-----</span>
+</span></span><span style=display:flex><span><span style=color:#75715e># publicKeyType     TYPE_RAW_PUBLIC_KEY</span>
+</span></span></code></pre></div><p>The commands above verifies using the cli, however, you can also connect to the
+Vault UI and check secrets there.</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell><span style=display:flex><span>kubectl -n vault-system port-forward vault-0 8200:8200
+</span></span></code></pre></div><p>Now, you can open http://127.0.0.1:8200/ui in browser and login with the root token.</p><h3 id=cleanup>Cleanup</h3><p>Delete the claim which should clean up all the resources created.</p><pre tabindex=0><code>kubectl -n default delete claim my-ess
+</code></pre></div></div><script>var i,j,menu=[],menuDom,item,itemDom,children;menu.push({childCurrent:!1,children:[{current:!1,name:"Install \u0026 Configure",url:"/v1.7/getting-started/install-configure/"},{current:!1,name:"Provision Infrastructure",url:"/v1.7/getting-started/provision-infrastructure/"},{current:!1,name:"Create a Configuration",url:"/v1.7/getting-started/create-configuration/"}],current:!1,name:"Getting Started",url:"/v1.7/getting-started/"}),menu.push({childCurrent:!1,children:[{current:!1,name:"Providers",url:"/v1.7/concepts/providers/"},{current:!1,name:"Managed Resources",url:"/v1.7/concepts/managed-resources/"},{current:!1,name:"Composite Resources",url:"/v1.7/concepts/composition/"},{current:!1,name:"Packages",url:"/v1.7/concepts/packages/"},{current:!1,name:"Terminology",url:"/v1.7/concepts/terminology/"}],current:!1,name:"Concepts",url:"/v1.7/concepts/"}),menu.push({childCurrent:!0,children:[{current:!1,name:"Upgrading to v0.14",url:"/v1.7/guides/upgrading-to-v0.14/"},{current:!1,name:"Upgrading to v1.x",url:"/v1.7/guides/upgrading-to-v1.x/"},{current:!0,name:"Vault as an External Secret Store",url:"/v1.7/guides/vault-as-secret-store/"},{current:!1,name:"Vault Credential Injection",url:"/v1.7/guides/vault-injection/"},{current:!1,name:"Multi-Tenant Crossplane",url:"/v1.7/guides/multi-tenant/"},{current:!1,name:"Composition Revisions",url:"/v1.7/guides/composition-revisions/"},{current:!1,name:"Self-Signed CA Certs",url:"/v1.7/guides/self-signed-ca-certs/"}],current:!1,name:"Guides",url:"/v1.7/guides/"}),menu.push({childCurrent:!1,children:[{current:!1,name:"Install Crossplane",url:"/v1.7/reference/install/"},{current:!1,name:"Configure Your Cloud Provider Account",url:"/v1.7/reference/configure/"},{current:!1,name:"Uninstall",url:"/v1.7/reference/uninstall/"},{current:!1,name:"Composition",url:"/v1.7/reference/composition/"},{current:!1,name:"xpkg Specification",url:"/v1.7/reference/xpkg/"},{current:!1,name:"Troubleshoot",url:"/v1.7/reference/troubleshoot/"},{current:!1,name:"Learn More",url:"/v1.7/reference/learn_more/"},{current:!1,name:"Release Cycle",url:"/v1.7/reference/release-cycle/"}],current:!1,name:"Reference",url:"/v1.7/reference/"}),menu.push({childCurrent:!1,children:[{current:!1,name:"crossplane",url:"/v1.7/api-docs/crossplane/"},{current:!1,name:"provider-alibaba",url:"/v1.7/api-docs/provider-alibaba/"},{current:!1,name:"provider-aws",url:"/v1.7/api-docs/provider-aws/"},{current:!1,name:"provider-azure",url:"/v1.7/api-docs/provider-azure/"},{current:!1,name:"provider-gcp",url:"/v1.7/api-docs/provider-gcp/"},{current:!1,name:"provider-rook",url:"/v1.7/api-docs/provider-rook/"},{current:!1,name:"provider-helm",url:"/v1.7/api-docs/provider-helm/"}],current:!1,name:"API Documentation",url:"/v1.7/api-docs/"}),menu.push({childCurrent:!1,children:[{current:!1,name:"Provider Development Guide",url:"/v1.7/contributing/provider_development_guide/"},{current:!1,name:"Observability Developer Guide",url:"/v1.7/contributing/observability_developer_guide/"},{current:!1,name:"Release Process",url:"/v1.7/contributing/release-process/"},{current:!1,name:"Adding Secret Store Support",url:"/v1.7/contributing/adding_external_secret_store_support/"}],current:!1,name:"Contributing",url:"/v1.7/contributing/"}),menu.push({childCurrent:!1,children:[{current:!1,name:"Related Projects",url:"/v1.7/faqs/related_projects/"}],current:!1,name:"FAQ",url:"/v1.7/faqs/"});function getEntry(e){var t=document.createElement("li");return e.current?(t.innerHTML=e.name,t.classList.add("current")):t.innerHTML='<a href="'+e.url+'">'+e.name+"</a>",t}function flushCss(e){e.offsetHeight}function addArrow(e){var t=document.createElement("a");t.classList.add("arrow"),t.innerHTML="<div />",t.onclick=function(e){return function(){var n=59,s=16,t=n+s+e.lastChild.clientHeight+"px";return e.classList.toggle("open"),e.classList.contains("open")?e.style.height=t:(e.style.height==="auto"&&(e.style.transition="none",e.style.height=t,flushCss(e),e.style.transition=""),e.style.height="59px"),!1}}(e),e.appendChild(t),item.current&&item.children||item.childCurrent?(e.classList.add("open"),e.style.height="auto"):e.style.height="59px"}menuDom=document.getElementById("docs-ul");for(i=0;i<menu.length;i++){if(item=menu[i],itemDom=getEntry(item),item.childCurrent&&itemDom.classList.add("childCurrent"),item.children){addArrow(itemDom),itemDom.classList.add("children"),children=document.createElement("ul");for(j=0;j<item.children.length;j++)children.appendChild(getEntry(item.children[j]));itemDom.appendChild(children)}menuDom.appendChild(itemDom)}</script><script src=/js/anchor.js></script>
+<script>anchors.options={placement:"right",icon:"#"},document.addEventListener("DOMContentLoaded",function(){anchors.add(".docs-content h1, .docs-content h2, .docs-content h3, .docs-content h4, .docs-content h5, .docs-content h6")})</script><div id=footer><div class=footer-main><div class=main><div class=logo><img src=/images/logo.svg alt="Crossplane Logo"></div></div><div class="links sm-hidden"><a href=https://twitter.com/crossplane_io>Twitter</a>
+<a href=/v1.9/>Documentation</a>
+<a href=https://github.com/crossplane/crossplane>GitHub</a>
+<a href=https://slack.crossplane.io/>Slack Channel</a>
+<a href=https://www.youtube.com/channel/UC19FgzMBMqBro361HbE46Fw>YouTube</a>
+<a href=https://groups.google.com/forum/#!forum/crossplane-dev>Forum</a></div></div><div class=lf-copyright><p>&#169; Crossplane Authors 2022. Documentation distributed under
+<a href=https://creativecommons.org/licenses/by/4.0/>CC-BY-4.0</a>.</p><p>&#169; 2022 The Linux Foundation. All rights reserved. The Linux Foundation has
+registered trademarks and uses trademarks. For a list of trademarks of The Linux Foundation, please see our
+<a href=https://www.linuxfoundation.org/trademark-usage/>Trademark Usage</a> page.</p></div><script src=/js/slack-popup.js></script></div><script>(function(e,t,n,s,o,i,a){e.GoogleAnalyticsObject=o,e[o]=e[o]||function(){(e[o].q=e[o].q||[]).push(arguments)},e[o].l=1*new Date,i=t.createElement(n),a=t.getElementsByTagName(n)[0],i.async=1,i.src=s,a.parentNode.insertBefore(i,a)})(window,document,"script","https://www.google-analytics.com/analytics.js","ga"),ga("create","UA-110275540-2","auto"),ga("send","pageview")</script><script async src="https://www.googletagmanager.com/gtag/js?id=G-SFCPQYSLHY"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag("js",new Date),gtag("config","G-SFCPQYSLHY")</script><script type=text/javascript id=hs-script-loader async defer src=https://js.hs-scripts.com/5557732.js></script></body></html>

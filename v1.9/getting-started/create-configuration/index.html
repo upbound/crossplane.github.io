@@ -1,0 +1,551 @@
+<!doctype html><html lang=en><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=description content="Crossplane is a framework for building cloud native control planes without needing to write code. It has a highly extensible backend that enables you to build a control plane that can orchestrate applications and infrastructure no matter where they run, and a highly configurable frontend that puts you in control of the schema of the declarative API it offers."><meta http-equiv=x-ua-compatible content="ie=edge"><title>Create a Configuration| Crossplane Documentation</title><meta name=twitter:card content="summary"><meta name=twitter:site content="https://crossplane.io"><meta name=twitter:title content="Crossplane"><meta name=twitter:description content="The cloud-native control plane framework"><meta name=twitter:image:src content="https://crossplane.io/images/twitter-card_400x400.jpg"><link rel=apple-touch-icon sizes=180x180 href="/favicons/apple-touch-icon.png?v=1.0"><link rel=icon type=image/png sizes=32x32 href="/favicons/favicon-32x32.png?v=1.0"><link rel=icon type=image/png sizes=16x16 href="/favicons/favicon-16x16.png?v=1.0"><link rel=manifest href="/favicons/site.webmanifest?v=1.0"><link rel=mask-icon href="/favicons/safari-pinned-tab.svg?v=1.0" color=#5bbad5><link rel="shortcut icon" href="/favicons/favicon.ico?v=1.0"><meta name=msapplication-TileColor content="#da532c"><meta name=theme-color content="#ffffff"><link rel=stylesheet href=/css/main.css><link rel=stylesheet href=https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css><link rel=stylesheet href=/css/docs.css><script src=https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js></script>
+<script src=https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js></script></head><body><div id=header><div><div class=logo><a href=/><img src=/images/logo.svg alt="Crossplane Logo"></a></div><div class=hamburger-controls onclick='return document.body.classList.contains("menu-open")?document.body.classList.remove("menu-open"):document.body.classList.add("menu-open"),!1'><span></span>
+<span></span>
+<span></span></div><ul class=links><li><a href=https://github.com/crossplane/crossplane><span class=md-hidden>Get Started on</span> GitHub</a></li><li><a href=/v1.9/>Documentation</a></li><li><a href=/community/>Community</a></li><li><a href=https://slack.crossplane.io/>Slack <span class=md-hidden>Channel</span></a></li><li><a href=https://blog.crossplane.io/>Blog</a></li><li><a href=https://twitter.com/crossplane_io>Twitter</a></li></ul></div></div><div id=docs-header><div><h1>Documentation</h1><div class="versions latest"><div><div><select onchange="window.location.href=this.value"><option selected value=/master/getting-started/create-configuration/>Crossplane master</option><option selected value=/v1.9/getting-started/create-configuration/>Crossplane v1.9</option><option value=/v1.8/getting-started/create-configuration/>Crossplane v1.8</option><option value=/v1.7/getting-started/create-configuration/>Crossplane v1.7</option></select></div></div></div></div></div><div class=page><div class=docs-menu><ul id=docs-ul></ul></div><div class=docs-content><div class=docs-actions><a id=edit href=https://github.com/crossplane/crossplane/tree/release-1.9/docs/create-configuration.md><img src=/images/github-teal.svg>Edit on GitHub</a></div><h1>Create a Configuration</h1><p>In the <a href=/v1.9/getting-started/provision-infrastructure/>previous section</a> we were able to create a PostgreSQL database because
+we had installed a configuration package that defined the <code>PostgreSQLInstance</code>
+type and a <code>Composition</code> of managed resources that mapped to it. Crossplane
+allows you to define your own composite resources (XRs) and compositions, then
+package them up to be easily distributed as OCI images. This allows you to
+construct a reproducible platform that exposes infrastructure APIs at your
+desired level of abstraction, and can be installed into any Crossplane cluster.</p><h2 id=create-a-configuration-directory>Create a Configuration Directory</h2><p>We are going to build the same configuration package that we previously
+installed. It will consist of three files:</p><ul><li><code>crossplane.yaml</code> - Metadata about the configuration.</li><li><code>definition.yaml</code> - The XRD.</li><li><code>composition.yaml</code> - The Composition.</li></ul><p>Crossplane can create a configuration from any directory with a valid
+<code>crossplane.yaml</code> metadata file at its root, and one or more XRDs or
+Compositions. The directory structure does not matter, as long as the
+<code>crossplane.yaml</code> file is at the root. Note that a configuration need not
+contain one XRD and one composition - it could include only an XRD, only a
+composition, several compositions, or any combination thereof.</p><p>Before we go any further, we must create a directory in which to build our
+configuration:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-console data-lang=console><span style=display:flex><span>mkdir crossplane-config
+</span></span><span style=display:flex><span>cd crossplane-config
+</span></span></code></pre></div><p>We&rsquo;ll create the aforementioned three files in this directory, then build them
+into a package.</p><blockquote><p>Note that <code>definition.yaml</code> and <code>composition.yaml</code> could be created directly
+in the Crossplane cluster without packaging them into a configuration. This
+can be useful for testing compositions before pushing them to a registry.</p></blockquote><h2 id=create-compositeresourcedefinition>Create CompositeResourceDefinition</h2><p>First we&rsquo;ll create a <code>CompositeResourceDefinition</code> (XRD) to define the schema of
+our <code>XPostgreSQLInstance</code> and its <code>PostgreSQLInstance</code> resource claim.</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#f92672>apiVersion</span>: <span style=color:#ae81ff>apiextensions.crossplane.io/v1</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>kind</span>: <span style=color:#ae81ff>CompositeResourceDefinition</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>metadata</span>:
+</span></span><span style=display:flex><span>  <span style=color:#f92672>name</span>: <span style=color:#ae81ff>xpostgresqlinstances.database.example.org</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>spec</span>:
+</span></span><span style=display:flex><span>  <span style=color:#f92672>group</span>: <span style=color:#ae81ff>database.example.org</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>names</span>:
+</span></span><span style=display:flex><span>    <span style=color:#f92672>kind</span>: <span style=color:#ae81ff>XPostgreSQLInstance</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>plural</span>: <span style=color:#ae81ff>xpostgresqlinstances</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>claimNames</span>:
+</span></span><span style=display:flex><span>    <span style=color:#f92672>kind</span>: <span style=color:#ae81ff>PostgreSQLInstance</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>plural</span>: <span style=color:#ae81ff>postgresqlinstances</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>connectionSecretKeys</span>:
+</span></span><span style=display:flex><span>    - <span style=color:#ae81ff>username</span>
+</span></span><span style=display:flex><span>    - <span style=color:#ae81ff>password</span>
+</span></span><span style=display:flex><span>    - <span style=color:#ae81ff>endpoint</span>
+</span></span><span style=display:flex><span>    - <span style=color:#ae81ff>port</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>versions</span>:
+</span></span><span style=display:flex><span>  - <span style=color:#f92672>name</span>: <span style=color:#ae81ff>v1alpha1</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>served</span>: <span style=color:#66d9ef>true</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>referenceable</span>: <span style=color:#66d9ef>true</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>schema</span>:
+</span></span><span style=display:flex><span>      <span style=color:#f92672>openAPIV3Schema</span>:
+</span></span><span style=display:flex><span>        <span style=color:#f92672>type</span>: <span style=color:#ae81ff>object</span>
+</span></span><span style=display:flex><span>        <span style=color:#f92672>properties</span>:
+</span></span><span style=display:flex><span>          <span style=color:#f92672>spec</span>:
+</span></span><span style=display:flex><span>            <span style=color:#f92672>type</span>: <span style=color:#ae81ff>object</span>
+</span></span><span style=display:flex><span>            <span style=color:#f92672>properties</span>:
+</span></span><span style=display:flex><span>              <span style=color:#f92672>parameters</span>:
+</span></span><span style=display:flex><span>                <span style=color:#f92672>type</span>: <span style=color:#ae81ff>object</span>
+</span></span><span style=display:flex><span>                <span style=color:#f92672>properties</span>:
+</span></span><span style=display:flex><span>                  <span style=color:#f92672>storageGB</span>:
+</span></span><span style=display:flex><span>                    <span style=color:#f92672>type</span>: <span style=color:#ae81ff>integer</span>
+</span></span><span style=display:flex><span>                <span style=color:#f92672>required</span>:
+</span></span><span style=display:flex><span>                  - <span style=color:#ae81ff>storageGB</span>
+</span></span><span style=display:flex><span>            <span style=color:#f92672>required</span>:
+</span></span><span style=display:flex><span>              - <span style=color:#ae81ff>parameters</span>
+</span></span></code></pre></div><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-console data-lang=console><span style=display:flex><span>curl -OL https://raw.githubusercontent.com/crossplane/crossplane/release-1.9/docs/snippets/package/definition.yaml
+</span></span></code></pre></div><blockquote><p>You might notice that the XRD we created specifies both &ldquo;names&rdquo; and &ldquo;claim
+names&rdquo;. This is because the composite resource it defines offers a composite
+resource claim (XRC).</p></blockquote><h2 id=create-compositions>Create Compositions</h2><p>Now we&rsquo;ll specify which managed resources our <code>XPostgreSQLInstance</code> XR
+and its claim could be composed of, and how they should be configured. We do
+this by defining a <code>Composition</code> that can satisfy the XR we defined above. In
+this case, our <code>Composition</code> will specify how to provision a public PostgreSQL
+instance on the chosen provider.</p><ul class="nav nav-tabs"><li class=active><a href=#aws-tab-2 data-toggle=tab>AWS (Default VPC)</a></li><li><a href=#aws-new-tab-2 data-toggle=tab>AWS (New VPC)</a></li><li><a href=#gcp-tab-2 data-toggle=tab>GCP</a></li><li><a href=#azure-tab-2 data-toggle=tab>Azure</a></li></ul><br><div class=tab-content><div class="tab-pane fade in active" id=aws-tab-2 markdown=1><blockquote><p>Note that this Composition will create an RDS instance using your default VPC,
+which may or may not allow connections from the internet depending on how it
+is configured. Select the AWS (New VPC) Composition if you wish to create an
+RDS instance that will allow traffic from the internet.</p></blockquote><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#f92672>apiVersion</span>: <span style=color:#ae81ff>apiextensions.crossplane.io/v1</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>kind</span>: <span style=color:#ae81ff>Composition</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>metadata</span>:
+</span></span><span style=display:flex><span>  <span style=color:#f92672>name</span>: <span style=color:#ae81ff>xpostgresqlinstances.aws.database.example.org</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>labels</span>:
+</span></span><span style=display:flex><span>    <span style=color:#f92672>provider</span>: <span style=color:#ae81ff>aws</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>guide</span>: <span style=color:#ae81ff>quickstart</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>vpc</span>: <span style=color:#ae81ff>default</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>spec</span>:
+</span></span><span style=display:flex><span>  <span style=color:#f92672>writeConnectionSecretsToNamespace</span>: <span style=color:#ae81ff>crossplane-system</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>compositeTypeRef</span>:
+</span></span><span style=display:flex><span>    <span style=color:#f92672>apiVersion</span>: <span style=color:#ae81ff>database.example.org/v1alpha1</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>kind</span>: <span style=color:#ae81ff>XPostgreSQLInstance</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>resources</span>:
+</span></span><span style=display:flex><span>    - <span style=color:#f92672>name</span>: <span style=color:#ae81ff>rdsinstance</span>
+</span></span><span style=display:flex><span>      <span style=color:#f92672>base</span>:
+</span></span><span style=display:flex><span>        <span style=color:#f92672>apiVersion</span>: <span style=color:#ae81ff>database.aws.crossplane.io/v1beta1</span>
+</span></span><span style=display:flex><span>        <span style=color:#f92672>kind</span>: <span style=color:#ae81ff>RDSInstance</span>
+</span></span><span style=display:flex><span>        <span style=color:#f92672>spec</span>:
+</span></span><span style=display:flex><span>          <span style=color:#f92672>forProvider</span>:
+</span></span><span style=display:flex><span>            <span style=color:#f92672>region</span>: <span style=color:#ae81ff>us-east-1</span>
+</span></span><span style=display:flex><span>            <span style=color:#f92672>dbInstanceClass</span>: <span style=color:#ae81ff>db.t2.small</span>
+</span></span><span style=display:flex><span>            <span style=color:#f92672>masterUsername</span>: <span style=color:#ae81ff>masteruser</span>
+</span></span><span style=display:flex><span>            <span style=color:#f92672>engine</span>: <span style=color:#ae81ff>postgres</span>
+</span></span><span style=display:flex><span>            <span style=color:#f92672>engineVersion</span>: <span style=color:#e6db74>&#34;12&#34;</span>
+</span></span><span style=display:flex><span>            <span style=color:#f92672>skipFinalSnapshotBeforeDeletion</span>: <span style=color:#66d9ef>true</span>
+</span></span><span style=display:flex><span>            <span style=color:#f92672>publiclyAccessible</span>: <span style=color:#66d9ef>true</span>
+</span></span><span style=display:flex><span>          <span style=color:#f92672>writeConnectionSecretToRef</span>:
+</span></span><span style=display:flex><span>            <span style=color:#f92672>namespace</span>: <span style=color:#ae81ff>crossplane-system</span>
+</span></span><span style=display:flex><span>      <span style=color:#f92672>patches</span>:
+</span></span><span style=display:flex><span>        - <span style=color:#f92672>fromFieldPath</span>: <span style=color:#e6db74>&#34;metadata.uid&#34;</span>
+</span></span><span style=display:flex><span>          <span style=color:#f92672>toFieldPath</span>: <span style=color:#e6db74>&#34;spec.writeConnectionSecretToRef.name&#34;</span>
+</span></span><span style=display:flex><span>          <span style=color:#f92672>transforms</span>:
+</span></span><span style=display:flex><span>            - <span style=color:#f92672>type</span>: <span style=color:#ae81ff>string</span>
+</span></span><span style=display:flex><span>              <span style=color:#f92672>string</span>:
+</span></span><span style=display:flex><span>                <span style=color:#f92672>fmt</span>: <span style=color:#e6db74>&#34;%s-postgresql&#34;</span>
+</span></span><span style=display:flex><span>        - <span style=color:#f92672>fromFieldPath</span>: <span style=color:#e6db74>&#34;spec.parameters.storageGB&#34;</span>
+</span></span><span style=display:flex><span>          <span style=color:#f92672>toFieldPath</span>: <span style=color:#e6db74>&#34;spec.forProvider.allocatedStorage&#34;</span>
+</span></span><span style=display:flex><span>      <span style=color:#f92672>connectionDetails</span>:
+</span></span><span style=display:flex><span>        - <span style=color:#f92672>fromConnectionSecretKey</span>: <span style=color:#ae81ff>username</span>
+</span></span><span style=display:flex><span>        - <span style=color:#f92672>fromConnectionSecretKey</span>: <span style=color:#ae81ff>password</span>
+</span></span><span style=display:flex><span>        - <span style=color:#f92672>fromConnectionSecretKey</span>: <span style=color:#ae81ff>endpoint</span>
+</span></span><span style=display:flex><span>        - <span style=color:#f92672>fromConnectionSecretKey</span>: <span style=color:#ae81ff>port</span>
+</span></span></code></pre></div><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-console data-lang=console><span style=display:flex><span>curl -OL https://raw.githubusercontent.com/crossplane/crossplane/release-1.9/docs/snippets/package/aws/composition.yaml
+</span></span></code></pre></div></div><div class="tab-pane fade" id=aws-new-tab-2 markdown=1><blockquote><p>Note: this <code>Composition</code> for AWS also includes several networking managed
+resources that are required to provision a publicly available PostgreSQL
+instance. Composition enables scenarios such as this, as well as far more
+complex ones. See the <a href=/v1.9/concepts/composition/>composition</a> documentation for more information.</p></blockquote><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#f92672>apiVersion</span>: <span style=color:#ae81ff>apiextensions.crossplane.io/v1</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>kind</span>: <span style=color:#ae81ff>Composition</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>metadata</span>:
+</span></span><span style=display:flex><span>  <span style=color:#f92672>name</span>: <span style=color:#ae81ff>vpcpostgresqlinstances.aws.database.example.org</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>labels</span>:
+</span></span><span style=display:flex><span>    <span style=color:#f92672>provider</span>: <span style=color:#ae81ff>aws</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>guide</span>: <span style=color:#ae81ff>quickstart</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>vpc</span>: <span style=color:#ae81ff>new</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>spec</span>:
+</span></span><span style=display:flex><span>  <span style=color:#f92672>writeConnectionSecretsToNamespace</span>: <span style=color:#ae81ff>crossplane-system</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>compositeTypeRef</span>:
+</span></span><span style=display:flex><span>    <span style=color:#f92672>apiVersion</span>: <span style=color:#ae81ff>database.example.org/v1alpha1</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>kind</span>: <span style=color:#ae81ff>XPostgreSQLInstance</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>resources</span>:
+</span></span><span style=display:flex><span>    - <span style=color:#f92672>name</span>: <span style=color:#ae81ff>vpc</span>
+</span></span><span style=display:flex><span>      <span style=color:#f92672>base</span>:
+</span></span><span style=display:flex><span>        <span style=color:#f92672>apiVersion</span>: <span style=color:#ae81ff>ec2.aws.crossplane.io/v1beta1</span>
+</span></span><span style=display:flex><span>        <span style=color:#f92672>kind</span>: <span style=color:#ae81ff>VPC</span>
+</span></span><span style=display:flex><span>        <span style=color:#f92672>spec</span>:
+</span></span><span style=display:flex><span>          <span style=color:#f92672>forProvider</span>:
+</span></span><span style=display:flex><span>            <span style=color:#f92672>region</span>: <span style=color:#ae81ff>us-east-1</span>
+</span></span><span style=display:flex><span>            <span style=color:#f92672>cidrBlock</span>: <span style=color:#ae81ff>192.168.0.0</span><span style=color:#ae81ff>/16</span>
+</span></span><span style=display:flex><span>            <span style=color:#f92672>enableDnsSupport</span>: <span style=color:#66d9ef>true</span>
+</span></span><span style=display:flex><span>            <span style=color:#f92672>enableDnsHostNames</span>: <span style=color:#66d9ef>true</span>
+</span></span><span style=display:flex><span>    - <span style=color:#f92672>name</span>: <span style=color:#ae81ff>subnet-a</span>
+</span></span><span style=display:flex><span>      <span style=color:#f92672>base</span>:
+</span></span><span style=display:flex><span>        <span style=color:#f92672>apiVersion</span>: <span style=color:#ae81ff>ec2.aws.crossplane.io/v1beta1</span>
+</span></span><span style=display:flex><span>        <span style=color:#f92672>kind</span>: <span style=color:#ae81ff>Subnet</span>
+</span></span><span style=display:flex><span>        <span style=color:#f92672>metadata</span>:
+</span></span><span style=display:flex><span>          <span style=color:#f92672>labels</span>:
+</span></span><span style=display:flex><span>            <span style=color:#f92672>zone</span>: <span style=color:#ae81ff>us-east-1a</span>
+</span></span><span style=display:flex><span>        <span style=color:#f92672>spec</span>:
+</span></span><span style=display:flex><span>          <span style=color:#f92672>forProvider</span>:
+</span></span><span style=display:flex><span>            <span style=color:#f92672>region</span>: <span style=color:#ae81ff>us-east-1</span>
+</span></span><span style=display:flex><span>            <span style=color:#f92672>cidrBlock</span>: <span style=color:#ae81ff>192.168.64.0</span><span style=color:#ae81ff>/18</span>
+</span></span><span style=display:flex><span>            <span style=color:#f92672>vpcIdSelector</span>:
+</span></span><span style=display:flex><span>              <span style=color:#f92672>matchControllerRef</span>: <span style=color:#66d9ef>true</span>
+</span></span><span style=display:flex><span>            <span style=color:#f92672>availabilityZone</span>: <span style=color:#ae81ff>us-east-1a</span>
+</span></span><span style=display:flex><span>    - <span style=color:#f92672>name</span>: <span style=color:#ae81ff>subnet-b</span>
+</span></span><span style=display:flex><span>      <span style=color:#f92672>base</span>:
+</span></span><span style=display:flex><span>        <span style=color:#f92672>apiVersion</span>: <span style=color:#ae81ff>ec2.aws.crossplane.io/v1beta1</span>
+</span></span><span style=display:flex><span>        <span style=color:#f92672>kind</span>: <span style=color:#ae81ff>Subnet</span>
+</span></span><span style=display:flex><span>        <span style=color:#f92672>metadata</span>:
+</span></span><span style=display:flex><span>          <span style=color:#f92672>labels</span>:
+</span></span><span style=display:flex><span>            <span style=color:#f92672>zone</span>: <span style=color:#ae81ff>us-east-1b</span>
+</span></span><span style=display:flex><span>        <span style=color:#f92672>spec</span>:
+</span></span><span style=display:flex><span>          <span style=color:#f92672>forProvider</span>:
+</span></span><span style=display:flex><span>            <span style=color:#f92672>region</span>: <span style=color:#ae81ff>us-east-1</span>
+</span></span><span style=display:flex><span>            <span style=color:#f92672>cidrBlock</span>: <span style=color:#ae81ff>192.168.128.0</span><span style=color:#ae81ff>/18</span>
+</span></span><span style=display:flex><span>            <span style=color:#f92672>vpcIdSelector</span>:
+</span></span><span style=display:flex><span>              <span style=color:#f92672>matchControllerRef</span>: <span style=color:#66d9ef>true</span>
+</span></span><span style=display:flex><span>            <span style=color:#f92672>availabilityZone</span>: <span style=color:#ae81ff>us-east-1b</span>
+</span></span><span style=display:flex><span>    - <span style=color:#f92672>name</span>: <span style=color:#ae81ff>subnet-c</span>
+</span></span><span style=display:flex><span>      <span style=color:#f92672>base</span>:
+</span></span><span style=display:flex><span>        <span style=color:#f92672>apiVersion</span>: <span style=color:#ae81ff>ec2.aws.crossplane.io/v1beta1</span>
+</span></span><span style=display:flex><span>        <span style=color:#f92672>kind</span>: <span style=color:#ae81ff>Subnet</span>
+</span></span><span style=display:flex><span>        <span style=color:#f92672>metadata</span>:
+</span></span><span style=display:flex><span>          <span style=color:#f92672>labels</span>:
+</span></span><span style=display:flex><span>            <span style=color:#f92672>zone</span>: <span style=color:#ae81ff>us-east-1c</span>
+</span></span><span style=display:flex><span>        <span style=color:#f92672>spec</span>:
+</span></span><span style=display:flex><span>          <span style=color:#f92672>forProvider</span>:
+</span></span><span style=display:flex><span>            <span style=color:#f92672>region</span>: <span style=color:#ae81ff>us-east-1</span>
+</span></span><span style=display:flex><span>            <span style=color:#f92672>cidrBlock</span>: <span style=color:#ae81ff>192.168.192.0</span><span style=color:#ae81ff>/18</span>
+</span></span><span style=display:flex><span>            <span style=color:#f92672>vpcIdSelector</span>:
+</span></span><span style=display:flex><span>              <span style=color:#f92672>matchControllerRef</span>: <span style=color:#66d9ef>true</span>
+</span></span><span style=display:flex><span>            <span style=color:#f92672>availabilityZone</span>: <span style=color:#ae81ff>us-east-1c</span>
+</span></span><span style=display:flex><span>    - <span style=color:#f92672>name</span>: <span style=color:#ae81ff>dbsubnetgroup</span>
+</span></span><span style=display:flex><span>      <span style=color:#f92672>base</span>:
+</span></span><span style=display:flex><span>        <span style=color:#f92672>apiVersion</span>: <span style=color:#ae81ff>database.aws.crossplane.io/v1beta1</span>
+</span></span><span style=display:flex><span>        <span style=color:#f92672>kind</span>: <span style=color:#ae81ff>DBSubnetGroup</span>
+</span></span><span style=display:flex><span>        <span style=color:#f92672>spec</span>:
+</span></span><span style=display:flex><span>          <span style=color:#f92672>forProvider</span>:
+</span></span><span style=display:flex><span>            <span style=color:#f92672>region</span>: <span style=color:#ae81ff>us-east-1</span>
+</span></span><span style=display:flex><span>            <span style=color:#f92672>description</span>: <span style=color:#ae81ff>An excellent formation of subnetworks.</span>
+</span></span><span style=display:flex><span>            <span style=color:#f92672>subnetIdSelector</span>:
+</span></span><span style=display:flex><span>              <span style=color:#f92672>matchControllerRef</span>: <span style=color:#66d9ef>true</span>
+</span></span><span style=display:flex><span>    - <span style=color:#f92672>name</span>: <span style=color:#ae81ff>internetgateway</span>
+</span></span><span style=display:flex><span>      <span style=color:#f92672>base</span>:
+</span></span><span style=display:flex><span>        <span style=color:#f92672>apiVersion</span>: <span style=color:#ae81ff>ec2.aws.crossplane.io/v1beta1</span>
+</span></span><span style=display:flex><span>        <span style=color:#f92672>kind</span>: <span style=color:#ae81ff>InternetGateway</span>
+</span></span><span style=display:flex><span>        <span style=color:#f92672>spec</span>:
+</span></span><span style=display:flex><span>          <span style=color:#f92672>forProvider</span>:
+</span></span><span style=display:flex><span>            <span style=color:#f92672>region</span>: <span style=color:#ae81ff>us-east-1</span>
+</span></span><span style=display:flex><span>            <span style=color:#f92672>vpcIdSelector</span>:
+</span></span><span style=display:flex><span>              <span style=color:#f92672>matchControllerRef</span>: <span style=color:#66d9ef>true</span>
+</span></span><span style=display:flex><span>    - <span style=color:#f92672>name</span>: <span style=color:#ae81ff>routetable</span>
+</span></span><span style=display:flex><span>      <span style=color:#f92672>base</span>:
+</span></span><span style=display:flex><span>        <span style=color:#f92672>apiVersion</span>: <span style=color:#ae81ff>ec2.aws.crossplane.io/v1beta1</span>
+</span></span><span style=display:flex><span>        <span style=color:#f92672>kind</span>: <span style=color:#ae81ff>RouteTable</span>
+</span></span><span style=display:flex><span>        <span style=color:#f92672>spec</span>:
+</span></span><span style=display:flex><span>          <span style=color:#f92672>forProvider</span>:
+</span></span><span style=display:flex><span>            <span style=color:#f92672>region</span>: <span style=color:#ae81ff>us-east-1</span>
+</span></span><span style=display:flex><span>            <span style=color:#f92672>vpcIdSelector</span>:
+</span></span><span style=display:flex><span>              <span style=color:#f92672>matchControllerRef</span>: <span style=color:#66d9ef>true</span>
+</span></span><span style=display:flex><span>            <span style=color:#f92672>routes</span>:
+</span></span><span style=display:flex><span>              - <span style=color:#f92672>destinationCidrBlock</span>: <span style=color:#ae81ff>0.0.0.0</span><span style=color:#ae81ff>/0</span>
+</span></span><span style=display:flex><span>                <span style=color:#f92672>gatewayIdSelector</span>:
+</span></span><span style=display:flex><span>                  <span style=color:#f92672>matchControllerRef</span>: <span style=color:#66d9ef>true</span>
+</span></span><span style=display:flex><span>            <span style=color:#f92672>associations</span>:
+</span></span><span style=display:flex><span>              - <span style=color:#f92672>subnetIdSelector</span>:
+</span></span><span style=display:flex><span>                  <span style=color:#f92672>matchLabels</span>:
+</span></span><span style=display:flex><span>                    <span style=color:#f92672>zone</span>: <span style=color:#ae81ff>us-east-1a</span>
+</span></span><span style=display:flex><span>              - <span style=color:#f92672>subnetIdSelector</span>:
+</span></span><span style=display:flex><span>                  <span style=color:#f92672>matchLabels</span>:
+</span></span><span style=display:flex><span>                    <span style=color:#f92672>zone</span>: <span style=color:#ae81ff>us-east-1b</span>
+</span></span><span style=display:flex><span>              - <span style=color:#f92672>subnetIdSelector</span>:
+</span></span><span style=display:flex><span>                  <span style=color:#f92672>matchLabels</span>:
+</span></span><span style=display:flex><span>                    <span style=color:#f92672>zone</span>: <span style=color:#ae81ff>us-east-1c</span>
+</span></span><span style=display:flex><span>    - <span style=color:#f92672>name</span>: <span style=color:#ae81ff>securitygroup</span>
+</span></span><span style=display:flex><span>      <span style=color:#f92672>base</span>:
+</span></span><span style=display:flex><span>        <span style=color:#f92672>apiVersion</span>: <span style=color:#ae81ff>ec2.aws.crossplane.io/v1beta1</span>
+</span></span><span style=display:flex><span>        <span style=color:#f92672>kind</span>: <span style=color:#ae81ff>SecurityGroup</span>
+</span></span><span style=display:flex><span>        <span style=color:#f92672>spec</span>:
+</span></span><span style=display:flex><span>          <span style=color:#f92672>forProvider</span>:
+</span></span><span style=display:flex><span>            <span style=color:#f92672>region</span>: <span style=color:#ae81ff>us-east-1</span>
+</span></span><span style=display:flex><span>            <span style=color:#f92672>vpcIdSelector</span>:
+</span></span><span style=display:flex><span>              <span style=color:#f92672>matchControllerRef</span>: <span style=color:#66d9ef>true</span>
+</span></span><span style=display:flex><span>            <span style=color:#f92672>groupName</span>: <span style=color:#ae81ff>crossplane-getting-started</span>
+</span></span><span style=display:flex><span>            <span style=color:#f92672>description</span>: <span style=color:#ae81ff>Allow access to PostgreSQL</span>
+</span></span><span style=display:flex><span>            <span style=color:#f92672>ingress</span>:
+</span></span><span style=display:flex><span>              - <span style=color:#f92672>fromPort</span>: <span style=color:#ae81ff>5432</span>
+</span></span><span style=display:flex><span>                <span style=color:#f92672>toPort</span>: <span style=color:#ae81ff>5432</span>
+</span></span><span style=display:flex><span>                <span style=color:#f92672>ipProtocol</span>: <span style=color:#ae81ff>tcp</span>
+</span></span><span style=display:flex><span>                <span style=color:#f92672>ipRanges</span>:
+</span></span><span style=display:flex><span>                  - <span style=color:#f92672>cidrIp</span>: <span style=color:#ae81ff>0.0.0.0</span><span style=color:#ae81ff>/0</span>
+</span></span><span style=display:flex><span>                    <span style=color:#f92672>description</span>: <span style=color:#ae81ff>Everywhere</span>
+</span></span><span style=display:flex><span>    - <span style=color:#f92672>name</span>: <span style=color:#ae81ff>rdsinstance</span>
+</span></span><span style=display:flex><span>      <span style=color:#f92672>base</span>:
+</span></span><span style=display:flex><span>        <span style=color:#f92672>apiVersion</span>: <span style=color:#ae81ff>database.aws.crossplane.io/v1beta1</span>
+</span></span><span style=display:flex><span>        <span style=color:#f92672>kind</span>: <span style=color:#ae81ff>RDSInstance</span>
+</span></span><span style=display:flex><span>        <span style=color:#f92672>spec</span>:
+</span></span><span style=display:flex><span>          <span style=color:#f92672>forProvider</span>:
+</span></span><span style=display:flex><span>            <span style=color:#f92672>region</span>: <span style=color:#ae81ff>us-east-1</span>
+</span></span><span style=display:flex><span>            <span style=color:#f92672>dbSubnetGroupNameSelector</span>:
+</span></span><span style=display:flex><span>              <span style=color:#f92672>matchControllerRef</span>: <span style=color:#66d9ef>true</span>
+</span></span><span style=display:flex><span>            <span style=color:#f92672>vpcSecurityGroupIDSelector</span>:
+</span></span><span style=display:flex><span>              <span style=color:#f92672>matchControllerRef</span>: <span style=color:#66d9ef>true</span>
+</span></span><span style=display:flex><span>            <span style=color:#f92672>dbInstanceClass</span>: <span style=color:#ae81ff>db.t2.small</span>
+</span></span><span style=display:flex><span>            <span style=color:#f92672>masterUsername</span>: <span style=color:#ae81ff>masteruser</span>
+</span></span><span style=display:flex><span>            <span style=color:#f92672>engine</span>: <span style=color:#ae81ff>postgres</span>
+</span></span><span style=display:flex><span>            <span style=color:#f92672>engineVersion</span>: <span style=color:#e6db74>&#34;12&#34;</span>
+</span></span><span style=display:flex><span>            <span style=color:#f92672>skipFinalSnapshotBeforeDeletion</span>: <span style=color:#66d9ef>true</span>
+</span></span><span style=display:flex><span>            <span style=color:#f92672>publiclyAccessible</span>: <span style=color:#66d9ef>true</span>
+</span></span><span style=display:flex><span>          <span style=color:#f92672>writeConnectionSecretToRef</span>:
+</span></span><span style=display:flex><span>            <span style=color:#f92672>namespace</span>: <span style=color:#ae81ff>crossplane-system</span>
+</span></span><span style=display:flex><span>      <span style=color:#f92672>patches</span>:
+</span></span><span style=display:flex><span>        - <span style=color:#f92672>fromFieldPath</span>: <span style=color:#e6db74>&#34;metadata.uid&#34;</span>
+</span></span><span style=display:flex><span>          <span style=color:#f92672>toFieldPath</span>: <span style=color:#e6db74>&#34;spec.writeConnectionSecretToRef.name&#34;</span>
+</span></span><span style=display:flex><span>          <span style=color:#f92672>transforms</span>:
+</span></span><span style=display:flex><span>            - <span style=color:#f92672>type</span>: <span style=color:#ae81ff>string</span>
+</span></span><span style=display:flex><span>              <span style=color:#f92672>string</span>:
+</span></span><span style=display:flex><span>                <span style=color:#f92672>fmt</span>: <span style=color:#e6db74>&#34;%s-postgresql&#34;</span>
+</span></span><span style=display:flex><span>        - <span style=color:#f92672>fromFieldPath</span>: <span style=color:#e6db74>&#34;spec.parameters.storageGB&#34;</span>
+</span></span><span style=display:flex><span>          <span style=color:#f92672>toFieldPath</span>: <span style=color:#e6db74>&#34;spec.forProvider.allocatedStorage&#34;</span>
+</span></span><span style=display:flex><span>      <span style=color:#f92672>connectionDetails</span>:
+</span></span><span style=display:flex><span>        - <span style=color:#f92672>fromConnectionSecretKey</span>: <span style=color:#ae81ff>username</span>
+</span></span><span style=display:flex><span>        - <span style=color:#f92672>fromConnectionSecretKey</span>: <span style=color:#ae81ff>password</span>
+</span></span><span style=display:flex><span>        - <span style=color:#f92672>fromConnectionSecretKey</span>: <span style=color:#ae81ff>endpoint</span>
+</span></span><span style=display:flex><span>        - <span style=color:#f92672>fromConnectionSecretKey</span>: <span style=color:#ae81ff>port</span>
+</span></span></code></pre></div><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-console data-lang=console><span style=display:flex><span>curl -OL https://raw.githubusercontent.com/crossplane/crossplane/release-1.9/docs/snippets/package/aws-with-vpc/composition.yaml
+</span></span></code></pre></div></div><div class="tab-pane fade" id=gcp-tab-2 markdown=1><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#f92672>apiVersion</span>: <span style=color:#ae81ff>apiextensions.crossplane.io/v1</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>kind</span>: <span style=color:#ae81ff>Composition</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>metadata</span>:
+</span></span><span style=display:flex><span>  <span style=color:#f92672>name</span>: <span style=color:#ae81ff>xpostgresqlinstances.gcp.database.example.org</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>labels</span>:
+</span></span><span style=display:flex><span>    <span style=color:#f92672>provider</span>: <span style=color:#ae81ff>gcp</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>guide</span>: <span style=color:#ae81ff>quickstart</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>spec</span>:
+</span></span><span style=display:flex><span>  <span style=color:#f92672>writeConnectionSecretsToNamespace</span>: <span style=color:#ae81ff>crossplane-system</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>compositeTypeRef</span>:
+</span></span><span style=display:flex><span>    <span style=color:#f92672>apiVersion</span>: <span style=color:#ae81ff>database.example.org/v1alpha1</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>kind</span>: <span style=color:#ae81ff>XPostgreSQLInstance</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>resources</span>:
+</span></span><span style=display:flex><span>    - <span style=color:#f92672>name</span>: <span style=color:#ae81ff>cloudsqlinstance</span>
+</span></span><span style=display:flex><span>      <span style=color:#f92672>base</span>:
+</span></span><span style=display:flex><span>        <span style=color:#f92672>apiVersion</span>: <span style=color:#ae81ff>database.gcp.crossplane.io/v1beta1</span>
+</span></span><span style=display:flex><span>        <span style=color:#f92672>kind</span>: <span style=color:#ae81ff>CloudSQLInstance</span>
+</span></span><span style=display:flex><span>        <span style=color:#f92672>spec</span>:
+</span></span><span style=display:flex><span>          <span style=color:#f92672>forProvider</span>:
+</span></span><span style=display:flex><span>            <span style=color:#f92672>databaseVersion</span>: <span style=color:#ae81ff>POSTGRES_12</span>
+</span></span><span style=display:flex><span>            <span style=color:#f92672>region</span>: <span style=color:#ae81ff>us-central1</span>
+</span></span><span style=display:flex><span>            <span style=color:#f92672>settings</span>:
+</span></span><span style=display:flex><span>              <span style=color:#f92672>tier</span>: <span style=color:#ae81ff>db-custom-1-3840</span>
+</span></span><span style=display:flex><span>              <span style=color:#f92672>dataDiskType</span>: <span style=color:#ae81ff>PD_SSD</span>
+</span></span><span style=display:flex><span>              <span style=color:#f92672>ipConfiguration</span>:
+</span></span><span style=display:flex><span>                <span style=color:#f92672>ipv4Enabled</span>: <span style=color:#66d9ef>true</span>
+</span></span><span style=display:flex><span>                <span style=color:#f92672>authorizedNetworks</span>:
+</span></span><span style=display:flex><span>                  - <span style=color:#f92672>value</span>: <span style=color:#e6db74>&#34;0.0.0.0/0&#34;</span>
+</span></span><span style=display:flex><span>          <span style=color:#f92672>writeConnectionSecretToRef</span>:
+</span></span><span style=display:flex><span>            <span style=color:#f92672>namespace</span>: <span style=color:#ae81ff>crossplane-system</span>
+</span></span><span style=display:flex><span>      <span style=color:#f92672>patches</span>:
+</span></span><span style=display:flex><span>        - <span style=color:#f92672>fromFieldPath</span>: <span style=color:#e6db74>&#34;metadata.uid&#34;</span>
+</span></span><span style=display:flex><span>          <span style=color:#f92672>toFieldPath</span>: <span style=color:#e6db74>&#34;spec.writeConnectionSecretToRef.name&#34;</span>
+</span></span><span style=display:flex><span>          <span style=color:#f92672>transforms</span>:
+</span></span><span style=display:flex><span>            - <span style=color:#f92672>type</span>: <span style=color:#ae81ff>string</span>
+</span></span><span style=display:flex><span>              <span style=color:#f92672>string</span>:
+</span></span><span style=display:flex><span>                <span style=color:#f92672>fmt</span>: <span style=color:#e6db74>&#34;%s-postgresql&#34;</span>
+</span></span><span style=display:flex><span>        - <span style=color:#f92672>fromFieldPath</span>: <span style=color:#e6db74>&#34;spec.parameters.storageGB&#34;</span>
+</span></span><span style=display:flex><span>          <span style=color:#f92672>toFieldPath</span>: <span style=color:#e6db74>&#34;spec.forProvider.settings.dataDiskSizeGb&#34;</span>
+</span></span><span style=display:flex><span>      <span style=color:#f92672>connectionDetails</span>:
+</span></span><span style=display:flex><span>        - <span style=color:#f92672>fromConnectionSecretKey</span>: <span style=color:#ae81ff>username</span>
+</span></span><span style=display:flex><span>        - <span style=color:#f92672>fromConnectionSecretKey</span>: <span style=color:#ae81ff>password</span>
+</span></span><span style=display:flex><span>        - <span style=color:#f92672>fromConnectionSecretKey</span>: <span style=color:#ae81ff>endpoint</span>
+</span></span><span style=display:flex><span>        - <span style=color:#f92672>type</span>: <span style=color:#ae81ff>FromValue</span>
+</span></span><span style=display:flex><span>          <span style=color:#f92672>name</span>: <span style=color:#ae81ff>port</span>
+</span></span><span style=display:flex><span>          <span style=color:#f92672>value</span>: <span style=color:#e6db74>&#34;5432&#34;</span>
+</span></span></code></pre></div><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-console data-lang=console><span style=display:flex><span>curl -OL https://raw.githubusercontent.com/crossplane/crossplane/release-1.9/docs/snippets/package/gcp/composition.yaml
+</span></span></code></pre></div></div><div class="tab-pane fade" id=azure-tab-2 markdown=1><blockquote><p>Note: the <code>Composition</code> for Azure also includes a <code>ResourceGroup</code> and
+<code>PostgreSQLServerFirewallRule</code> that are required to provision a publicly
+available PostgreSQL instance on Azure. Composition enables scenarios such as
+this, as well as far more complex ones. See the <a href=/v1.9/concepts/composition/>composition</a> documentation
+for more information.</p></blockquote><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#f92672>apiVersion</span>: <span style=color:#ae81ff>apiextensions.crossplane.io/v1</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>kind</span>: <span style=color:#ae81ff>Composition</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>metadata</span>:
+</span></span><span style=display:flex><span>  <span style=color:#f92672>name</span>: <span style=color:#ae81ff>xpostgresqlinstances.azure.database.example.org</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>labels</span>:
+</span></span><span style=display:flex><span>    <span style=color:#f92672>provider</span>: <span style=color:#ae81ff>azure</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>guide</span>: <span style=color:#ae81ff>quickstart</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>spec</span>:
+</span></span><span style=display:flex><span>  <span style=color:#f92672>writeConnectionSecretsToNamespace</span>: <span style=color:#ae81ff>crossplane-system</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>compositeTypeRef</span>:
+</span></span><span style=display:flex><span>    <span style=color:#f92672>apiVersion</span>: <span style=color:#ae81ff>database.example.org/v1alpha1</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>kind</span>: <span style=color:#ae81ff>XPostgreSQLInstance</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>resources</span>:
+</span></span><span style=display:flex><span>    - <span style=color:#f92672>name</span>: <span style=color:#ae81ff>resourcegroup</span>
+</span></span><span style=display:flex><span>      <span style=color:#f92672>base</span>:
+</span></span><span style=display:flex><span>        <span style=color:#f92672>apiVersion</span>: <span style=color:#ae81ff>azure.crossplane.io/v1alpha3</span>
+</span></span><span style=display:flex><span>        <span style=color:#f92672>kind</span>: <span style=color:#ae81ff>ResourceGroup</span>
+</span></span><span style=display:flex><span>        <span style=color:#f92672>spec</span>:
+</span></span><span style=display:flex><span>          <span style=color:#f92672>location</span>: <span style=color:#ae81ff>West US 2</span>
+</span></span><span style=display:flex><span>    - <span style=color:#f92672>name</span>: <span style=color:#ae81ff>postgresqlserver</span>
+</span></span><span style=display:flex><span>      <span style=color:#f92672>base</span>:
+</span></span><span style=display:flex><span>        <span style=color:#f92672>apiVersion</span>: <span style=color:#ae81ff>database.azure.crossplane.io/v1beta1</span>
+</span></span><span style=display:flex><span>        <span style=color:#f92672>kind</span>: <span style=color:#ae81ff>PostgreSQLServer</span>
+</span></span><span style=display:flex><span>        <span style=color:#f92672>spec</span>:
+</span></span><span style=display:flex><span>          <span style=color:#f92672>forProvider</span>:
+</span></span><span style=display:flex><span>            <span style=color:#f92672>administratorLogin</span>: <span style=color:#ae81ff>myadmin</span>
+</span></span><span style=display:flex><span>            <span style=color:#f92672>resourceGroupNameSelector</span>:
+</span></span><span style=display:flex><span>              <span style=color:#f92672>matchControllerRef</span>: <span style=color:#66d9ef>true</span>
+</span></span><span style=display:flex><span>            <span style=color:#f92672>location</span>: <span style=color:#ae81ff>West US 2</span>
+</span></span><span style=display:flex><span>            <span style=color:#f92672>sslEnforcement</span>: <span style=color:#ae81ff>Disabled</span>
+</span></span><span style=display:flex><span>            <span style=color:#f92672>version</span>: <span style=color:#e6db74>&#34;9.6&#34;</span>
+</span></span><span style=display:flex><span>            <span style=color:#f92672>sku</span>:
+</span></span><span style=display:flex><span>              <span style=color:#f92672>tier</span>: <span style=color:#ae81ff>GeneralPurpose</span>
+</span></span><span style=display:flex><span>              <span style=color:#f92672>capacity</span>: <span style=color:#ae81ff>2</span>
+</span></span><span style=display:flex><span>              <span style=color:#f92672>family</span>: <span style=color:#ae81ff>Gen5</span>
+</span></span><span style=display:flex><span>          <span style=color:#f92672>writeConnectionSecretToRef</span>:
+</span></span><span style=display:flex><span>            <span style=color:#f92672>namespace</span>: <span style=color:#ae81ff>crossplane-system</span>
+</span></span><span style=display:flex><span>      <span style=color:#f92672>patches</span>:
+</span></span><span style=display:flex><span>        - <span style=color:#f92672>fromFieldPath</span>: <span style=color:#e6db74>&#34;metadata.uid&#34;</span>
+</span></span><span style=display:flex><span>          <span style=color:#f92672>toFieldPath</span>: <span style=color:#e6db74>&#34;spec.writeConnectionSecretToRef.name&#34;</span>
+</span></span><span style=display:flex><span>          <span style=color:#f92672>transforms</span>:
+</span></span><span style=display:flex><span>            - <span style=color:#f92672>type</span>: <span style=color:#ae81ff>string</span>
+</span></span><span style=display:flex><span>              <span style=color:#f92672>string</span>:
+</span></span><span style=display:flex><span>                <span style=color:#f92672>fmt</span>: <span style=color:#e6db74>&#34;%s-postgresql&#34;</span>
+</span></span><span style=display:flex><span>        - <span style=color:#f92672>fromFieldPath</span>: <span style=color:#e6db74>&#34;spec.parameters.storageGB&#34;</span>
+</span></span><span style=display:flex><span>          <span style=color:#f92672>toFieldPath</span>: <span style=color:#e6db74>&#34;spec.forProvider.storageProfile.storageMB&#34;</span>
+</span></span><span style=display:flex><span>          <span style=color:#f92672>transforms</span>:
+</span></span><span style=display:flex><span>            - <span style=color:#f92672>type</span>: <span style=color:#ae81ff>math</span>
+</span></span><span style=display:flex><span>              <span style=color:#f92672>math</span>:
+</span></span><span style=display:flex><span>                <span style=color:#f92672>multiply</span>: <span style=color:#ae81ff>1024</span>
+</span></span><span style=display:flex><span>      <span style=color:#f92672>connectionDetails</span>:
+</span></span><span style=display:flex><span>        - <span style=color:#f92672>fromConnectionSecretKey</span>: <span style=color:#ae81ff>username</span>
+</span></span><span style=display:flex><span>        - <span style=color:#f92672>fromConnectionSecretKey</span>: <span style=color:#ae81ff>password</span>
+</span></span><span style=display:flex><span>        - <span style=color:#f92672>fromConnectionSecretKey</span>: <span style=color:#ae81ff>endpoint</span>
+</span></span><span style=display:flex><span>        - <span style=color:#f92672>type</span>: <span style=color:#ae81ff>FromValue</span>
+</span></span><span style=display:flex><span>          <span style=color:#f92672>name</span>: <span style=color:#ae81ff>port</span>
+</span></span><span style=display:flex><span>          <span style=color:#f92672>value</span>: <span style=color:#e6db74>&#34;5432&#34;</span>
+</span></span><span style=display:flex><span>    - <span style=color:#f92672>name</span>: <span style=color:#ae81ff>firewallrule</span>
+</span></span><span style=display:flex><span>      <span style=color:#f92672>base</span>:
+</span></span><span style=display:flex><span>        <span style=color:#f92672>apiVersion</span>: <span style=color:#ae81ff>database.azure.crossplane.io/v1alpha3</span>
+</span></span><span style=display:flex><span>        <span style=color:#f92672>kind</span>: <span style=color:#ae81ff>PostgreSQLServerFirewallRule</span>
+</span></span><span style=display:flex><span>        <span style=color:#f92672>spec</span>:
+</span></span><span style=display:flex><span>          <span style=color:#f92672>forProvider</span>:
+</span></span><span style=display:flex><span>            <span style=color:#f92672>serverNameSelector</span>:
+</span></span><span style=display:flex><span>              <span style=color:#f92672>matchControllerRef</span>: <span style=color:#66d9ef>true</span>
+</span></span><span style=display:flex><span>            <span style=color:#f92672>resourceGroupNameSelector</span>:
+</span></span><span style=display:flex><span>              <span style=color:#f92672>matchControllerRef</span>: <span style=color:#66d9ef>true</span>
+</span></span><span style=display:flex><span>            <span style=color:#f92672>properties</span>:
+</span></span><span style=display:flex><span>              <span style=color:#f92672>startIpAddress</span>: <span style=color:#ae81ff>0.0.0.0</span>
+</span></span><span style=display:flex><span>              <span style=color:#f92672>endIpAddress</span>: <span style=color:#ae81ff>255.255.255.254</span>
+</span></span></code></pre></div><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-console data-lang=console><span style=display:flex><span>curl -OL https://raw.githubusercontent.com/crossplane/crossplane/release-1.9/docs/snippets/package/azure/composition.yaml
+</span></span></code></pre></div></div><div class="tab-pane fade" id=alibaba-tab-2 markdown=1><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#f92672>apiVersion</span>: <span style=color:#ae81ff>apiextensions.crossplane.io/v1</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>kind</span>: <span style=color:#ae81ff>Composition</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>metadata</span>:
+</span></span><span style=display:flex><span>  <span style=color:#f92672>name</span>: <span style=color:#ae81ff>xpostgresqlinstances.alibaba.database.example.org</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>labels</span>:
+</span></span><span style=display:flex><span>    <span style=color:#f92672>provider</span>: <span style=color:#ae81ff>alibaba</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>guide</span>: <span style=color:#ae81ff>quickstart</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>spec</span>:
+</span></span><span style=display:flex><span>  <span style=color:#f92672>writeConnectionSecretsToNamespace</span>: <span style=color:#ae81ff>crossplane-system</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>compositeTypeRef</span>:
+</span></span><span style=display:flex><span>    <span style=color:#f92672>apiVersion</span>: <span style=color:#ae81ff>database.example.org/v1alpha1</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>kind</span>: <span style=color:#ae81ff>XPostgreSQLInstance</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>resources</span>:
+</span></span><span style=display:flex><span>    - <span style=color:#f92672>name</span>: <span style=color:#ae81ff>rdsinstance</span>
+</span></span><span style=display:flex><span>      <span style=color:#f92672>base</span>:
+</span></span><span style=display:flex><span>        <span style=color:#f92672>apiVersion</span>: <span style=color:#ae81ff>database.alibaba.crossplane.io/v1alpha1</span>
+</span></span><span style=display:flex><span>        <span style=color:#f92672>kind</span>: <span style=color:#ae81ff>RDSInstance</span>
+</span></span><span style=display:flex><span>        <span style=color:#f92672>spec</span>:
+</span></span><span style=display:flex><span>          <span style=color:#f92672>forProvider</span>:
+</span></span><span style=display:flex><span>            <span style=color:#f92672>engine</span>: <span style=color:#ae81ff>PostgreSQL</span>
+</span></span><span style=display:flex><span>            <span style=color:#f92672>engineVersion</span>: <span style=color:#e6db74>&#34;9.4&#34;</span>
+</span></span><span style=display:flex><span>            <span style=color:#f92672>dbInstanceClass</span>: <span style=color:#ae81ff>rds.pg.s1.small</span>
+</span></span><span style=display:flex><span>            <span style=color:#f92672>securityIPList</span>: <span style=color:#e6db74>&#34;0.0.0.0/0&#34;</span>
+</span></span><span style=display:flex><span>            <span style=color:#f92672>masterUsername</span>: <span style=color:#e6db74>&#34;myuser&#34;</span>
+</span></span><span style=display:flex><span>          <span style=color:#f92672>writeConnectionSecretToRef</span>:
+</span></span><span style=display:flex><span>            <span style=color:#f92672>namespace</span>: <span style=color:#ae81ff>crossplane-system</span>
+</span></span><span style=display:flex><span>      <span style=color:#f92672>patches</span>:
+</span></span><span style=display:flex><span>        - <span style=color:#f92672>fromFieldPath</span>: <span style=color:#e6db74>&#34;metadata.uid&#34;</span>
+</span></span><span style=display:flex><span>          <span style=color:#f92672>toFieldPath</span>: <span style=color:#e6db74>&#34;spec.writeConnectionSecretToRef.name&#34;</span>
+</span></span><span style=display:flex><span>          <span style=color:#f92672>transforms</span>:
+</span></span><span style=display:flex><span>            - <span style=color:#f92672>type</span>: <span style=color:#ae81ff>string</span>
+</span></span><span style=display:flex><span>              <span style=color:#f92672>string</span>:
+</span></span><span style=display:flex><span>                <span style=color:#f92672>fmt</span>: <span style=color:#e6db74>&#34;%s-postgresql&#34;</span>
+</span></span><span style=display:flex><span>        - <span style=color:#f92672>fromFieldPath</span>: <span style=color:#e6db74>&#34;spec.parameters.storageGB&#34;</span>
+</span></span><span style=display:flex><span>          <span style=color:#f92672>toFieldPath</span>: <span style=color:#e6db74>&#34;spec.forProvider.dbInstanceStorageInGB&#34;</span>
+</span></span><span style=display:flex><span>      <span style=color:#f92672>connectionDetails</span>:
+</span></span><span style=display:flex><span>        - <span style=color:#f92672>fromConnectionSecretKey</span>: <span style=color:#ae81ff>username</span>
+</span></span><span style=display:flex><span>        - <span style=color:#f92672>fromConnectionSecretKey</span>: <span style=color:#ae81ff>password</span>
+</span></span><span style=display:flex><span>        - <span style=color:#f92672>fromConnectionSecretKey</span>: <span style=color:#ae81ff>endpoint</span>
+</span></span><span style=display:flex><span>        - <span style=color:#f92672>fromConnectionSecretKey</span>: <span style=color:#ae81ff>port</span>
+</span></span></code></pre></div><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-console data-lang=console><span style=display:flex><span>curl -OL https://raw.githubusercontent.com/crossplane/crossplane/release-1.9/docs/snippets/package/alibaba/composition.yaml
+</span></span></code></pre></div></div></div><h2 id=build-and-push-the-configuration>Build and Push The Configuration</h2><p>Finally, we&rsquo;ll author our metadata file then build and push our configuration
+so that Crossplane users may install it.</p><blockquote><p>Note that Crossplane pushes packages to an OCI registry - currently <a href=https://hub.docker.com/>Docker
+Hub</a> by default. You may need to run <code>docker login</code> before you are able to
+push a package.</p></blockquote><ul class="nav nav-tabs"><li class=active><a href=#aws-tab-3 data-toggle=tab>AWS (Default VPC)</a></li><li><a href=#aws-new-tab-3 data-toggle=tab>AWS (New VPC)</a></li><li><a href=#gcp-tab-3 data-toggle=tab>GCP</a></li><li><a href=#azure-tab-3 data-toggle=tab>Azure</a></li></ul><br><div class=tab-content><div class="tab-pane fade in active" id=aws-tab-3 markdown=1><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#f92672>apiVersion</span>: <span style=color:#ae81ff>meta.pkg.crossplane.io/v1</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>kind</span>: <span style=color:#ae81ff>Configuration</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>metadata</span>:
+</span></span><span style=display:flex><span>  <span style=color:#f92672>name</span>: <span style=color:#ae81ff>getting-started-with-aws</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>annotations</span>:
+</span></span><span style=display:flex><span>    <span style=color:#f92672>guide</span>: <span style=color:#ae81ff>quickstart</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>provider</span>: <span style=color:#ae81ff>aws</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>vpc</span>: <span style=color:#ae81ff>default</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>spec</span>:
+</span></span><span style=display:flex><span>  <span style=color:#f92672>crossplane</span>:
+</span></span><span style=display:flex><span>    <span style=color:#f92672>version</span>: <span style=color:#e6db74>&#34;&gt;=v1.4.0-0&#34;</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>dependsOn</span>:
+</span></span><span style=display:flex><span>    - <span style=color:#f92672>provider</span>: <span style=color:#ae81ff>crossplane/provider-aws</span>
+</span></span><span style=display:flex><span>      <span style=color:#f92672>version</span>: <span style=color:#e6db74>&#34;&gt;=v0.18.2&#34;</span>
+</span></span></code></pre></div><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-console data-lang=console><span style=display:flex><span>curl -OL https://raw.githubusercontent.com/crossplane/crossplane/release-1.9/docs/snippets/package/aws/crossplane.yaml
+</span></span><span style=display:flex><span><span style=color:#960050;background-color:#1e0010>
+</span></span></span><span style=display:flex><span><span style=color:#960050;background-color:#1e0010></span>kubectl crossplane build configuration
+</span></span></code></pre></div><p>You should see a file in your working directory with a <code>.xpkg</code> extension. The
+Crossplane CLI will automatically tag and push it to the registry of your
+choosing in the next step if it is the only <code>.xpkg</code> in the directory. Otherwise
+you may specify a specific package by using the <code>-f</code> flag.</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-console data-lang=console><span style=display:flex><span># Set this to the Docker Hub username or OCI registry you wish to use.
+</span></span><span style=display:flex><span>REG=my-package-repo
+</span></span><span style=display:flex><span>kubectl crossplane push configuration ${REG}/getting-started-with-aws:v1.9.1
+</span></span></code></pre></div><blockquote><p>Note that the Crossplane CLI will not follow symbolic links for files in the
+root package directory.</p></blockquote></div><div class="tab-pane fade" id=aws-new-tab-3 markdown=1><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#f92672>apiVersion</span>: <span style=color:#ae81ff>meta.pkg.crossplane.io/v1</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>kind</span>: <span style=color:#ae81ff>Configuration</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>metadata</span>:
+</span></span><span style=display:flex><span>  <span style=color:#f92672>name</span>: <span style=color:#ae81ff>getting-started-with-aws-with-vpc</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>annotations</span>:
+</span></span><span style=display:flex><span>    <span style=color:#f92672>guide</span>: <span style=color:#ae81ff>quickstart</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>provider</span>: <span style=color:#ae81ff>aws</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>vpc</span>: <span style=color:#ae81ff>new</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>spec</span>:
+</span></span><span style=display:flex><span>  <span style=color:#f92672>crossplane</span>:
+</span></span><span style=display:flex><span>    <span style=color:#f92672>version</span>: <span style=color:#e6db74>&#34;&gt;=v1.4.0-0&#34;</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>dependsOn</span>:
+</span></span><span style=display:flex><span>    - <span style=color:#f92672>provider</span>: <span style=color:#ae81ff>crossplane/provider-aws</span>
+</span></span><span style=display:flex><span>      <span style=color:#f92672>version</span>: <span style=color:#e6db74>&#34;&gt;=v0.18.2&#34;</span>
+</span></span></code></pre></div><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-console data-lang=console><span style=display:flex><span>curl -OL https://raw.githubusercontent.com/crossplane/crossplane/release-1.9/docs/snippets/package/aws-with-vpc/crossplane.yaml
+</span></span><span style=display:flex><span><span style=color:#960050;background-color:#1e0010>
+</span></span></span><span style=display:flex><span><span style=color:#960050;background-color:#1e0010></span>kubectl crossplane build configuration
+</span></span></code></pre></div><p>You should see a file in your working directory with a <code>.xpkg</code> extension. The
+Crossplane CLI will automatically tag and push it to the registry of your
+choosing in the next step if it is the only <code>.xpkg</code> in the directory. Otherwise
+you may specify a specific package by using the <code>-f</code> flag.</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-console data-lang=console><span style=display:flex><span># Set this to the Docker Hub username or OCI registry you wish to use.
+</span></span><span style=display:flex><span>REG=my-package-repo
+</span></span><span style=display:flex><span>kubectl crossplane push configuration ${REG}/getting-started-with-aws-with-vpc:v1.9.1
+</span></span></code></pre></div><blockquote><p>Note that the Crossplane CLI will not follow symbolic links for files in the
+root package directory.</p></blockquote></div><div class="tab-pane fade" id=gcp-tab-3 markdown=1><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#f92672>apiVersion</span>: <span style=color:#ae81ff>meta.pkg.crossplane.io/v1</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>kind</span>: <span style=color:#ae81ff>Configuration</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>metadata</span>:
+</span></span><span style=display:flex><span>  <span style=color:#f92672>name</span>: <span style=color:#ae81ff>getting-started-with-gcp</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>annotations</span>:
+</span></span><span style=display:flex><span>    <span style=color:#f92672>guide</span>: <span style=color:#ae81ff>quickstart</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>provider</span>: <span style=color:#ae81ff>gcp</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>spec</span>:
+</span></span><span style=display:flex><span>  <span style=color:#f92672>crossplane</span>:
+</span></span><span style=display:flex><span>    <span style=color:#f92672>version</span>: <span style=color:#e6db74>&#34;&gt;=v1.4.0-0&#34;</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>dependsOn</span>:
+</span></span><span style=display:flex><span>    - <span style=color:#f92672>provider</span>: <span style=color:#ae81ff>crossplane/provider-gcp</span>
+</span></span><span style=display:flex><span>      <span style=color:#f92672>version</span>: <span style=color:#e6db74>&#34;&gt;=v0.13.0&#34;</span>
+</span></span></code></pre></div><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-console data-lang=console><span style=display:flex><span>curl -OL https://raw.githubusercontent.com/crossplane/crossplane/release-1.9/docs/snippets/package/gcp/crossplane.yaml
+</span></span><span style=display:flex><span><span style=color:#960050;background-color:#1e0010>
+</span></span></span><span style=display:flex><span><span style=color:#960050;background-color:#1e0010></span>kubectl crossplane build configuration
+</span></span></code></pre></div><p>You should see a file in your working directory with a <code>.xpkg</code> extension. The
+Crossplane CLI will automatically tag and push it to the registry of your
+choosing in the next step if it is the only <code>.xpkg</code> in the directory. Otherwise
+you may specify a specific package by using the <code>-f</code> flag.</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-console data-lang=console><span style=display:flex><span># Set this to the Docker Hub username or OCI registry you wish to use.
+</span></span><span style=display:flex><span>REG=my-package-repo
+</span></span><span style=display:flex><span>kubectl crossplane push configuration ${REG}/getting-started-with-gcp:v1.9.1
+</span></span></code></pre></div><blockquote><p>Note that the Crossplane CLI will not follow symbolic links for files in the
+root package directory.</p></blockquote></div><div class="tab-pane fade" id=azure-tab-3 markdown=1><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#f92672>apiVersion</span>: <span style=color:#ae81ff>meta.pkg.crossplane.io/v1</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>kind</span>: <span style=color:#ae81ff>Configuration</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>metadata</span>:
+</span></span><span style=display:flex><span>  <span style=color:#f92672>name</span>: <span style=color:#ae81ff>getting-started-with-azure</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>annotations</span>:
+</span></span><span style=display:flex><span>    <span style=color:#f92672>guide</span>: <span style=color:#ae81ff>quickstart</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>provider</span>: <span style=color:#ae81ff>azure</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>spec</span>:
+</span></span><span style=display:flex><span>  <span style=color:#f92672>crossplane</span>:
+</span></span><span style=display:flex><span>    <span style=color:#f92672>version</span>: <span style=color:#e6db74>&#34;&gt;=v1.4.0-0&#34;</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>dependsOn</span>:
+</span></span><span style=display:flex><span>    - <span style=color:#f92672>provider</span>: <span style=color:#ae81ff>crossplane/provider-azure</span>
+</span></span><span style=display:flex><span>      <span style=color:#f92672>version</span>: <span style=color:#e6db74>&#34;&gt;=v0.13.0&#34;</span>
+</span></span></code></pre></div><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-console data-lang=console><span style=display:flex><span>curl -OL https://raw.githubusercontent.com/crossplane/crossplane/release-1.9/docs/snippets/package/azure/crossplane.yaml
+</span></span><span style=display:flex><span><span style=color:#960050;background-color:#1e0010>
+</span></span></span><span style=display:flex><span><span style=color:#960050;background-color:#1e0010></span>kubectl crossplane build configuration
+</span></span></code></pre></div><p>You should see a file in your working directory with a <code>.xpkg</code> extension. The
+Crossplane CLI will automatically tag and push it to the registry of your
+choosing in the next step if it is the only <code>.xpkg</code> in the directory. Otherwise
+you may specify a specific package by using the <code>-f</code> flag.</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-console data-lang=console><span style=display:flex><span># Set this to the Docker Hub username or OCI registry you wish to use.
+</span></span><span style=display:flex><span>REG=my-package-repo
+</span></span><span style=display:flex><span>kubectl crossplane push configuration ${REG}/getting-started-with-azure:v1.9.1
+</span></span></code></pre></div><blockquote><p>Note that the Crossplane CLI will not follow symbolic links for files in the
+root package directory.</p></blockquote></div></div><p>That&rsquo;s it! You&rsquo;ve now built and pushed your package. Take a look at the
+Crossplane <a href=/v1.9/concepts/packages/>packages</a> documentation for more information about installing and
+working with packages, or read about other Crossplane <a href=/v1.9/concepts/>concepts</a>.</p><h2 id=clean-up>Clean Up</h2><p>To clean up, you can simply delete your package directory:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-console data-lang=console><span style=display:flex><span>cd ..
+</span></span><span style=display:flex><span>rm -rf crossplane-config
+</span></span></code></pre></div></div></div><script>var i,j,menu=[],menuDom,item,itemDom,children;menu.push({childCurrent:!0,children:[{current:!1,name:"Install \u0026 Configure",url:"/v1.9/getting-started/install-configure/"},{current:!1,name:"Provision Infrastructure",url:"/v1.9/getting-started/provision-infrastructure/"},{current:!0,name:"Create a Configuration",url:"/v1.9/getting-started/create-configuration/"}],current:!1,name:"Getting Started",url:"/v1.9/getting-started/"}),menu.push({childCurrent:!1,children:[{current:!1,name:"Providers",url:"/v1.9/concepts/providers/"},{current:!1,name:"Managed Resources",url:"/v1.9/concepts/managed-resources/"},{current:!1,name:"Composite Resources",url:"/v1.9/concepts/composition/"},{current:!1,name:"Crossplane Packages",url:"/v1.9/concepts/packages/"},{current:!1,name:"Terminology",url:"/v1.9/concepts/terminology/"}],current:!1,name:"Concepts",url:"/v1.9/concepts/"}),menu.push({childCurrent:!1,children:[{current:!1,name:"Upgrading to v0.14",url:"/v1.9/guides/upgrading-to-v0.14/"},{current:!1,name:"Upgrading to v1.x",url:"/v1.9/guides/upgrading-to-v1.x/"},{current:!1,name:"Vault as an External Secret Store",url:"/v1.9/guides/vault-as-secret-store/"},{current:!1,name:"Vault Credential Injection",url:"/v1.9/guides/vault-injection/"},{current:!1,name:"Multi-Tenant Crossplane",url:"/v1.9/guides/multi-tenant/"},{current:!1,name:"Composition Revisions",url:"/v1.9/guides/composition-revisions/"},{current:!1,name:"Self-Signed CA Certs",url:"/v1.9/guides/self-signed-ca-certs/"}],current:!1,name:"Guides",url:"/v1.9/guides/"}),menu.push({childCurrent:!1,children:[{current:!1,name:"Install Crossplane",url:"/v1.9/reference/install/"},{current:!1,name:"Configure Your Cloud Provider Account",url:"/v1.9/reference/configure/"},{current:!1,name:"Uninstall",url:"/v1.9/reference/uninstall/"},{current:!1,name:"Composition",url:"/v1.9/reference/composition/"},{current:!1,name:"xpkg Specification",url:"/v1.9/reference/xpkg/"},{current:!1,name:"Troubleshoot",url:"/v1.9/reference/troubleshoot/"},{current:!1,name:"Learn More",url:"/v1.9/reference/learn_more/"},{current:!1,name:"Release Cycle",url:"/v1.9/reference/release-cycle/"}],current:!1,name:"Reference",url:"/v1.9/reference/"}),menu.push({childCurrent:!1,children:[{current:!1,name:"crossplane",url:"/v1.9/api-docs/crossplane/"},{current:!1,name:"provider-alibaba",url:"/v1.9/api-docs/provider-alibaba/"},{current:!1,name:"provider-aws",url:"/v1.9/api-docs/provider-aws/"},{current:!1,name:"provider-azure",url:"/v1.9/api-docs/provider-azure/"},{current:!1,name:"provider-gcp",url:"/v1.9/api-docs/provider-gcp/"},{current:!1,name:"provider-rook",url:"/v1.9/api-docs/provider-rook/"},{current:!1,name:"provider-helm",url:"/v1.9/api-docs/provider-helm/"}],current:!1,name:"API Documentation",url:"/v1.9/api-docs/"}),menu.push({childCurrent:!1,children:[{current:!1,name:"Provider Development Guide",url:"/v1.9/contributing/provider_development_guide/"},{current:!1,name:"Observability Developer Guide",url:"/v1.9/contributing/observability_developer_guide/"},{current:!1,name:"Release Process",url:"/v1.9/contributing/release-process/"},{current:!1,name:"Adding Secret Store Support",url:"/v1.9/contributing/adding_external_secret_store_support/"}],current:!1,name:"Contributing",url:"/v1.9/contributing/"}),menu.push({childCurrent:!1,children:[{current:!1,name:"Related Projects",url:"/v1.9/faqs/related_projects/"}],current:!1,name:"FAQ",url:"/v1.9/faqs/"});function getEntry(e){var t=document.createElement("li");return e.current?(t.innerHTML=e.name,t.classList.add("current")):t.innerHTML='<a href="'+e.url+'">'+e.name+"</a>",t}function flushCss(e){e.offsetHeight}function addArrow(e){var t=document.createElement("a");t.classList.add("arrow"),t.innerHTML="<div />",t.onclick=function(e){return function(){var n=59,s=16,t=n+s+e.lastChild.clientHeight+"px";return e.classList.toggle("open"),e.classList.contains("open")?e.style.height=t:(e.style.height==="auto"&&(e.style.transition="none",e.style.height=t,flushCss(e),e.style.transition=""),e.style.height="59px"),!1}}(e),e.appendChild(t),item.current&&item.children||item.childCurrent?(e.classList.add("open"),e.style.height="auto"):e.style.height="59px"}menuDom=document.getElementById("docs-ul");for(i=0;i<menu.length;i++){if(item=menu[i],itemDom=getEntry(item),item.childCurrent&&itemDom.classList.add("childCurrent"),item.children){addArrow(itemDom),itemDom.classList.add("children"),children=document.createElement("ul");for(j=0;j<item.children.length;j++)children.appendChild(getEntry(item.children[j]));itemDom.appendChild(children)}menuDom.appendChild(itemDom)}</script><script src=/js/anchor.js></script>
+<script>anchors.options={placement:"right",icon:"#"},document.addEventListener("DOMContentLoaded",function(){anchors.add(".docs-content h1, .docs-content h2, .docs-content h3, .docs-content h4, .docs-content h5, .docs-content h6")})</script><div id=footer><div class=footer-main><div class=main><div class=logo><img src=/images/logo.svg alt="Crossplane Logo"></div></div><div class="links sm-hidden"><a href=https://twitter.com/crossplane_io>Twitter</a>
+<a href=/v1.9/>Documentation</a>
+<a href=https://github.com/crossplane/crossplane>GitHub</a>
+<a href=https://slack.crossplane.io/>Slack Channel</a>
+<a href=https://www.youtube.com/channel/UC19FgzMBMqBro361HbE46Fw>YouTube</a>
+<a href=https://groups.google.com/forum/#!forum/crossplane-dev>Forum</a></div></div><div class=lf-copyright><p>&#169; Crossplane Authors 2022. Documentation distributed under
+<a href=https://creativecommons.org/licenses/by/4.0/>CC-BY-4.0</a>.</p><p>&#169; 2022 The Linux Foundation. All rights reserved. The Linux Foundation has
+registered trademarks and uses trademarks. For a list of trademarks of The Linux Foundation, please see our
+<a href=https://www.linuxfoundation.org/trademark-usage/>Trademark Usage</a> page.</p></div><script src=/js/slack-popup.js></script></div><script>(function(e,t,n,s,o,i,a){e.GoogleAnalyticsObject=o,e[o]=e[o]||function(){(e[o].q=e[o].q||[]).push(arguments)},e[o].l=1*new Date,i=t.createElement(n),a=t.getElementsByTagName(n)[0],i.async=1,i.src=s,a.parentNode.insertBefore(i,a)})(window,document,"script","https://www.google-analytics.com/analytics.js","ga"),ga("create","UA-110275540-2","auto"),ga("send","pageview")</script><script async src="https://www.googletagmanager.com/gtag/js?id=G-SFCPQYSLHY"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag("js",new Date),gtag("config","G-SFCPQYSLHY")</script><script type=text/javascript id=hs-script-loader async defer src=https://js.hs-scripts.com/5557732.js></script></body></html>

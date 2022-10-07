@@ -1,0 +1,164 @@
+<!doctype html><html lang=en><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=description content="Crossplane is a framework for building cloud native control planes without needing to write code. It has a highly extensible backend that enables you to build a control plane that can orchestrate applications and infrastructure no matter where they run, and a highly configurable frontend that puts you in control of the schema of the declarative API it offers."><meta http-equiv=x-ua-compatible content="ie=edge"><meta name=robots content="noindex"><title>Provision Infrastructure| Crossplane Documentation</title><meta name=twitter:card content="summary"><meta name=twitter:site content="https://crossplane.io"><meta name=twitter:title content="Crossplane"><meta name=twitter:description content="The cloud-native control plane framework"><meta name=twitter:image:src content="https://crossplane.io/images/twitter-card_400x400.jpg"><link rel=apple-touch-icon sizes=180x180 href="/favicons/apple-touch-icon.png?v=1.0"><link rel=icon type=image/png sizes=32x32 href="/favicons/favicon-32x32.png?v=1.0"><link rel=icon type=image/png sizes=16x16 href="/favicons/favicon-16x16.png?v=1.0"><link rel=manifest href="/favicons/site.webmanifest?v=1.0"><link rel=mask-icon href="/favicons/safari-pinned-tab.svg?v=1.0" color=#5bbad5><link rel="shortcut icon" href="/favicons/favicon.ico?v=1.0"><meta name=msapplication-TileColor content="#da532c"><meta name=theme-color content="#ffffff"><link rel=stylesheet href=/css/main.css><link rel=stylesheet href=https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css><link rel=stylesheet href=/css/docs.css><script src=https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js></script>
+<script src=https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js></script></head><body><div id=header><div><div class=logo><a href=/><img src=/images/logo.svg alt="Crossplane Logo"></a></div><div class=hamburger-controls onclick='return document.body.classList.contains("menu-open")?document.body.classList.remove("menu-open"):document.body.classList.add("menu-open"),!1'><span></span>
+<span></span>
+<span></span></div><ul class=links><li><a href=https://github.com/crossplane/crossplane><span class=md-hidden>Get Started on</span> GitHub</a></li><li><a href=/v1.9/>Documentation</a></li><li><a href=/community/>Community</a></li><li><a href=https://slack.crossplane.io/>Slack <span class=md-hidden>Channel</span></a></li><li><a href=https://blog.crossplane.io/>Blog</a></li><li><a href=https://twitter.com/crossplane_io>Twitter</a></li></ul></div></div><div id=docs-header><div><h1>Documentation</h1><div class=versions><div><div><select onchange="window.location.href=this.value"><option selected value=/master/getting-started/provision-infrastructure/>Crossplane master</option><option value=/v1.9/getting-started/provision-infrastructure/>Crossplane v1.9</option><option value=/v1.8/getting-started/provision-infrastructure/>Crossplane v1.8</option><option value=/v1.7/getting-started/provision-infrastructure/>Crossplane v1.7</option></select></div></div></div></div></div><div class=page><div class=docs-menu><ul id=docs-ul></ul></div><div class=docs-content><div class=docs-actions><a id=edit href=https://github.com/crossplane/crossplane/tree/master/docs/provision-infrastructure.md><img src=/images/github-teal.svg>Edit on GitHub</a></div><div class="alert master"><p><b>PLEASE NOTE</b>: This document applies to an <b>unreleased</b> version of Crossplane. It is strongly recommended that you only use official releases of Crossplane, as unreleased versions are subject to changes and incompatibilities that will not be supported in the official releases.</p><p>If you are using an official release version of Crossplane, you should refer to the documentation for your specific version.</p><strong>Documentation for other releases can be found by using the version selector in the top right of any doc page.</strong></div><h1>Provision Infrastructure</h1><p>Composite resources (XRs) are always cluster scoped - they exist outside of any
+namespace. This allows an XR to represent infrastructure that might be consumed
+from several different namespaces. This is often true for VPC networks - an
+infrastructure operator may wish to define a VPC network XR and an SQL instance
+XR, only the latter of which may be managed by application operators. The
+application operators are restricted to their team&rsquo;s namespace, but their SQL
+instances should all be attached to the VPC network that the infrastructure
+operator manages. Crossplane enables scenarios like this by allowing the
+infrastructure operator to offer their application operators a <em>composite
+resource claim</em> (XRC). An XRC is a namespaced proxy for an XR; the schema of an
+XRC is identical to that of its corresponding XR. When an application operator
+creates an XRC, a corresponding backing XR is created automatically. This model
+has similarities to <a href=https://kubernetes.io/docs/concepts/storage/persistent-volumes/>Persistent Volumes (PV) and Persistent Volume Claims (PVC)</a>
+in Kubernetes.</p><h2 id=claim-your-infrastructure>Claim Your Infrastructure</h2><p>The <code>Configuration</code> package we installed in the last section:</p><ul><li>Defines a <code>XPostgreSQLInstance</code> XR.</li><li>Offers a <code>PostgreSQLInstance</code> claim (XRC) for said XR.</li><li>Creates a <code>Composition</code> that can satisfy our XR.</li></ul><p>This means that we can create a <code>PostgreSQLInstance</code> XRC in the <code>default</code>
+namespace to provision a PostgreSQL instance and all the supporting
+infrastructure (VPCs, firewall rules, resource groups, etc) that it may need!</p><ul class="nav nav-tabs"><li class=active><a href=#aws-tab-2 data-toggle=tab>AWS (Default VPC)</a></li><li><a href=#aws-new-tab-2 data-toggle=tab>AWS (New VPC)</a></li><li><a href=#gcp-tab-2 data-toggle=tab>GCP</a></li><li><a href=#azure-tab-2 data-toggle=tab>Azure</a></li></ul><br><div class=tab-content><div class="tab-pane fade in active" id=aws-tab-2 markdown=1><blockquote><p>Note that this resource will create an RDS instance using your default VPC,
+which may or may not allow connections from the internet depending on how it
+is configured.</p></blockquote><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#f92672>apiVersion</span>: <span style=color:#ae81ff>database.example.org/v1alpha1</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>kind</span>: <span style=color:#ae81ff>PostgreSQLInstance</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>metadata</span>:
+</span></span><span style=display:flex><span>  <span style=color:#f92672>name</span>: <span style=color:#ae81ff>my-db</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>namespace</span>: <span style=color:#ae81ff>default</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>spec</span>:
+</span></span><span style=display:flex><span>  <span style=color:#f92672>parameters</span>:
+</span></span><span style=display:flex><span>    <span style=color:#f92672>storageGB</span>: <span style=color:#ae81ff>20</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>compositionSelector</span>:
+</span></span><span style=display:flex><span>    <span style=color:#f92672>matchLabels</span>:
+</span></span><span style=display:flex><span>      <span style=color:#f92672>provider</span>: <span style=color:#ae81ff>aws</span>
+</span></span><span style=display:flex><span>      <span style=color:#f92672>vpc</span>: <span style=color:#ae81ff>default</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>writeConnectionSecretToRef</span>:
+</span></span><span style=display:flex><span>    <span style=color:#f92672>name</span>: <span style=color:#ae81ff>db-conn</span>
+</span></span></code></pre></div><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-console data-lang=console><span style=display:flex><span>kubectl apply -f https://raw.githubusercontent.com/crossplane/crossplane/master/docs/snippets/compose/claim-aws.yaml
+</span></span></code></pre></div></div><div class="tab-pane fade" id=aws-new-tab-2 markdown=1><blockquote><p>Note that this resource also includes several networking managed resources
+that are required to provision a publicly available PostgreSQL instance.
+Composition enables scenarios such as this, as well as far more complex ones.
+See the <a href=/master/concepts/composition/>composition</a> documentation for more information.</p></blockquote><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#f92672>apiVersion</span>: <span style=color:#ae81ff>database.example.org/v1alpha1</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>kind</span>: <span style=color:#ae81ff>PostgreSQLInstance</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>metadata</span>:
+</span></span><span style=display:flex><span>  <span style=color:#f92672>name</span>: <span style=color:#ae81ff>my-db</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>namespace</span>: <span style=color:#ae81ff>default</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>spec</span>:
+</span></span><span style=display:flex><span>  <span style=color:#f92672>parameters</span>:
+</span></span><span style=display:flex><span>    <span style=color:#f92672>storageGB</span>: <span style=color:#ae81ff>20</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>compositionSelector</span>:
+</span></span><span style=display:flex><span>    <span style=color:#f92672>matchLabels</span>:
+</span></span><span style=display:flex><span>      <span style=color:#f92672>provider</span>: <span style=color:#ae81ff>aws</span>
+</span></span><span style=display:flex><span>      <span style=color:#f92672>vpc</span>: <span style=color:#ae81ff>new</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>writeConnectionSecretToRef</span>:
+</span></span><span style=display:flex><span>    <span style=color:#f92672>name</span>: <span style=color:#ae81ff>db-conn</span>
+</span></span></code></pre></div><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-console data-lang=console><span style=display:flex><span>kubectl apply -f https://raw.githubusercontent.com/crossplane/crossplane/master/docs/snippets/compose/claim-aws-new.yaml
+</span></span></code></pre></div></div><div class="tab-pane fade" id=gcp-tab-2 markdown=1><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#f92672>apiVersion</span>: <span style=color:#ae81ff>database.example.org/v1alpha1</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>kind</span>: <span style=color:#ae81ff>PostgreSQLInstance</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>metadata</span>:
+</span></span><span style=display:flex><span>  <span style=color:#f92672>name</span>: <span style=color:#ae81ff>my-db</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>namespace</span>: <span style=color:#ae81ff>default</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>spec</span>:
+</span></span><span style=display:flex><span>  <span style=color:#f92672>parameters</span>:
+</span></span><span style=display:flex><span>    <span style=color:#f92672>storageGB</span>: <span style=color:#ae81ff>20</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>compositionSelector</span>:
+</span></span><span style=display:flex><span>    <span style=color:#f92672>matchLabels</span>:
+</span></span><span style=display:flex><span>      <span style=color:#f92672>provider</span>: <span style=color:#ae81ff>gcp</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>writeConnectionSecretToRef</span>:
+</span></span><span style=display:flex><span>    <span style=color:#f92672>name</span>: <span style=color:#ae81ff>db-conn</span>
+</span></span></code></pre></div><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-console data-lang=console><span style=display:flex><span>kubectl apply -f https://raw.githubusercontent.com/crossplane/crossplane/master/docs/snippets/compose/claim-gcp.yaml
+</span></span></code></pre></div></div><div class="tab-pane fade" id=azure-tab-2 markdown=1><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#f92672>apiVersion</span>: <span style=color:#ae81ff>database.example.org/v1alpha1</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>kind</span>: <span style=color:#ae81ff>PostgreSQLInstance</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>metadata</span>:
+</span></span><span style=display:flex><span>  <span style=color:#f92672>name</span>: <span style=color:#ae81ff>my-db</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>namespace</span>: <span style=color:#ae81ff>default</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>spec</span>:
+</span></span><span style=display:flex><span>  <span style=color:#f92672>parameters</span>:
+</span></span><span style=display:flex><span>    <span style=color:#f92672>storageGB</span>: <span style=color:#ae81ff>20</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>compositionSelector</span>:
+</span></span><span style=display:flex><span>    <span style=color:#f92672>matchLabels</span>:
+</span></span><span style=display:flex><span>      <span style=color:#f92672>provider</span>: <span style=color:#ae81ff>azure</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>writeConnectionSecretToRef</span>:
+</span></span><span style=display:flex><span>    <span style=color:#f92672>name</span>: <span style=color:#ae81ff>db-conn</span>
+</span></span></code></pre></div><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-console data-lang=console><span style=display:flex><span>kubectl apply -f https://raw.githubusercontent.com/crossplane/crossplane/master/docs/snippets/compose/claim-azure.yaml
+</span></span></code></pre></div></div></div><p>After creating the <code>PostgreSQLInstance</code> Crossplane will begin provisioning a
+database instance on your provider of choice. Once provisioning is complete, you
+should see <code>READY: True</code> in the output when you run:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-console data-lang=console><span style=display:flex><span>kubectl get postgresqlinstance my-db
+</span></span></code></pre></div><blockquote><p>Note: while waiting for the <code>PostgreSQLInstance</code> to become ready, you
+may want to look at other resources in your cluster. The following commands
+will allow you to view groups of Crossplane resources:</p><ul><li><code>kubectl get claim</code>: get all resources of all claim kinds, like <code>PostgreSQLInstance</code>.</li><li><code>kubectl get composite</code>: get all resources that are of composite kind, like <code>XPostgreSQLInstance</code>.</li><li><code>kubectl get managed</code>: get all resources that represent a unit of external
+infrastructure.</li><li><code>kubectl get &lt;name-of-provider></code>: get all resources related to <code>&lt;provider></code>.</li><li><code>kubectl get crossplane</code>: get all resources related to Crossplane.</li></ul></blockquote><p>Try the following command to watch your provisioned resources become ready:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-console data-lang=console><span style=display:flex><span>kubectl get crossplane -l crossplane.io/claim-name=my-db
+</span></span></code></pre></div><p>Once your <code>PostgreSQLInstance</code> is ready, you should see a <code>Secret</code> in the <code>default</code>
+namespace named <code>db-conn</code> that contains keys that we defined in XRD. If they were
+filled by the composition, then they should appear:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-console data-lang=console><span style=display:flex><span>$ kubectl describe secrets db-conn
+</span></span><span style=display:flex><span>Name:         db-conn
+</span></span><span style=display:flex><span>Namespace:    default
+</span></span><span style=display:flex><span>...
+</span></span><span style=display:flex><span><span style=color:#960050;background-color:#1e0010>
+</span></span></span><span style=display:flex><span><span style=color:#960050;background-color:#1e0010></span>Type:  connection.crossplane.io/v1alpha1
+</span></span><span style=display:flex><span><span style=color:#960050;background-color:#1e0010>
+</span></span></span><span style=display:flex><span><span style=color:#960050;background-color:#1e0010></span>Data
+</span></span><span style=display:flex><span>====
+</span></span><span style=display:flex><span>password:  27 bytes
+</span></span><span style=display:flex><span>port:      4 bytes
+</span></span><span style=display:flex><span>username:  25 bytes
+</span></span><span style=display:flex><span>endpoint:  45 bytes
+</span></span></code></pre></div><h2 id=consume-your-infrastructure>Consume Your Infrastructure</h2><p>Because connection secrets are written as a Kubernetes <code>Secret</code> they can easily
+be consumed by Kubernetes primitives. The most basic building block in
+Kubernetes is the <code>Pod</code>. Let&rsquo;s define a <code>Pod</code> that will show that we are able to
+connect to our newly provisioned database.</p><blockquote><p>Note that if you&rsquo;re using a hosted Crossplane you&rsquo;ll need to copy the db-conn
+connection secret over to your own Kubernetes cluster and run this pod there.</p></blockquote><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#f92672>apiVersion</span>: <span style=color:#ae81ff>v1</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>kind</span>: <span style=color:#ae81ff>Pod</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>metadata</span>:
+</span></span><span style=display:flex><span>  <span style=color:#f92672>name</span>: <span style=color:#ae81ff>see-db</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>namespace</span>: <span style=color:#ae81ff>default</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>spec</span>:
+</span></span><span style=display:flex><span>  <span style=color:#f92672>containers</span>:
+</span></span><span style=display:flex><span>  - <span style=color:#f92672>name</span>: <span style=color:#ae81ff>see-db</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>image</span>: <span style=color:#ae81ff>postgres:12</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>command</span>: [<span style=color:#e6db74>&#39;psql&#39;</span>]
+</span></span><span style=display:flex><span>    <span style=color:#f92672>args</span>: [<span style=color:#e6db74>&#39;-c&#39;</span>, <span style=color:#e6db74>&#39;SELECT current_database();&#39;</span>]
+</span></span><span style=display:flex><span>    <span style=color:#f92672>env</span>:
+</span></span><span style=display:flex><span>    - <span style=color:#f92672>name</span>: <span style=color:#ae81ff>PGDATABASE</span>
+</span></span><span style=display:flex><span>      <span style=color:#f92672>value</span>: <span style=color:#ae81ff>postgres</span>
+</span></span><span style=display:flex><span>    - <span style=color:#f92672>name</span>: <span style=color:#ae81ff>PGHOST</span>
+</span></span><span style=display:flex><span>      <span style=color:#f92672>valueFrom</span>:
+</span></span><span style=display:flex><span>        <span style=color:#f92672>secretKeyRef</span>:
+</span></span><span style=display:flex><span>          <span style=color:#f92672>name</span>: <span style=color:#ae81ff>db-conn</span>
+</span></span><span style=display:flex><span>          <span style=color:#f92672>key</span>: <span style=color:#ae81ff>endpoint</span>
+</span></span><span style=display:flex><span>    - <span style=color:#f92672>name</span>: <span style=color:#ae81ff>PGUSER</span>
+</span></span><span style=display:flex><span>      <span style=color:#f92672>valueFrom</span>:
+</span></span><span style=display:flex><span>        <span style=color:#f92672>secretKeyRef</span>:
+</span></span><span style=display:flex><span>          <span style=color:#f92672>name</span>: <span style=color:#ae81ff>db-conn</span>
+</span></span><span style=display:flex><span>          <span style=color:#f92672>key</span>: <span style=color:#ae81ff>username</span>
+</span></span><span style=display:flex><span>    - <span style=color:#f92672>name</span>: <span style=color:#ae81ff>PGPASSWORD</span>
+</span></span><span style=display:flex><span>      <span style=color:#f92672>valueFrom</span>:
+</span></span><span style=display:flex><span>        <span style=color:#f92672>secretKeyRef</span>:
+</span></span><span style=display:flex><span>          <span style=color:#f92672>name</span>: <span style=color:#ae81ff>db-conn</span>
+</span></span><span style=display:flex><span>          <span style=color:#f92672>key</span>: <span style=color:#ae81ff>password</span>
+</span></span><span style=display:flex><span>    - <span style=color:#f92672>name</span>: <span style=color:#ae81ff>PGPORT</span>
+</span></span><span style=display:flex><span>      <span style=color:#f92672>valueFrom</span>:
+</span></span><span style=display:flex><span>        <span style=color:#f92672>secretKeyRef</span>:
+</span></span><span style=display:flex><span>          <span style=color:#f92672>name</span>: <span style=color:#ae81ff>db-conn</span>
+</span></span><span style=display:flex><span>          <span style=color:#f92672>key</span>: <span style=color:#ae81ff>port</span>
+</span></span></code></pre></div><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-console data-lang=console><span style=display:flex><span>kubectl apply -f https://raw.githubusercontent.com/crossplane/crossplane/master/docs/snippets/compose/pod.yaml
+</span></span></code></pre></div><p>This <code>Pod</code> simply connects to a PostgreSQL database and prints its name, so you
+should see the following output (or similar) after creating it if you run
+<code>kubectl logs see-db</code>:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-SQL data-lang=SQL><span style=display:flex><span> current_database
+</span></span><span style=display:flex><span><span style=color:#75715e>------------------
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span> postgres
+</span></span><span style=display:flex><span>(<span style=color:#ae81ff>1</span> <span style=color:#66d9ef>row</span>)
+</span></span></code></pre></div><h2 id=clean-up>Clean Up</h2><p>To clean up the <code>Pod</code>, run:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-console data-lang=console><span style=display:flex><span>kubectl delete pod see-db
+</span></span></code></pre></div><p>To clean up the infrastructure that was provisioned, you can delete the
+<code>PostgreSQLInstance</code> XRC:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-console data-lang=console><span style=display:flex><span>kubectl delete postgresqlinstance my-db
+</span></span></code></pre></div><h2 id=next-steps>Next Steps</h2><p>Now you have seen how to provision and consume complex infrastructure via
+composition. In the <a href=/master/getting-started/create-configuration/>next section</a> you will learn how compose and package your
+own infrastructure APIs.</p></div></div><script>var i,j,menu=[],menuDom,item,itemDom,children;menu.push({childCurrent:!0,children:[{current:!1,name:"Install \u0026 Configure",url:"/master/getting-started/install-configure/"},{current:!0,name:"Provision Infrastructure",url:"/master/getting-started/provision-infrastructure/"},{current:!1,name:"Create a Configuration",url:"/master/getting-started/create-configuration/"}],current:!1,name:"Getting Started",url:"/master/getting-started/"}),menu.push({childCurrent:!1,children:[{current:!1,name:"Providers",url:"/master/concepts/providers/"},{current:!1,name:"Managed Resources",url:"/master/concepts/managed-resources/"},{current:!1,name:"Composite Resources",url:"/master/concepts/composition/"},{current:!1,name:"Crossplane Packages",url:"/master/concepts/packages/"},{current:!1,name:"Terminology",url:"/master/concepts/terminology/"}],current:!1,name:"Concepts",url:"/master/concepts/"}),menu.push({childCurrent:!1,children:[{current:!1,name:"Upgrading to v0.14",url:"/master/guides/upgrading-to-v0.14/"},{current:!1,name:"Upgrading to v1.x",url:"/master/guides/upgrading-to-v1.x/"},{current:!1,name:"Vault as an External Secret Store",url:"/master/guides/vault-as-secret-store/"},{current:!1,name:"Vault Credential Injection",url:"/master/guides/vault-injection/"},{current:!1,name:"Multi-Tenant Crossplane",url:"/master/guides/multi-tenant/"},{current:!1,name:"Configuring Crossplane with Argo CD",url:"/master/guides/argo-cd-crossplane/"},{current:!1,name:"Self-Signed CA Certs",url:"/master/guides/self-signed-ca-certs/"},{current:!1,name:"Composition Revisions",url:"/master/guides/composition-revisions/"}],current:!1,name:"Guides",url:"/master/guides/"}),menu.push({childCurrent:!1,children:[{current:!1,name:"Install Crossplane",url:"/master/reference/install/"},{current:!1,name:"Configure Your Cloud Provider Account",url:"/master/reference/configure/"},{current:!1,name:"Uninstall Crossplane",url:"/master/reference/uninstall/"},{current:!1,name:"Composition",url:"/master/reference/composition/"},{current:!1,name:"xpkg Specification",url:"/master/reference/xpkg/"},{current:!1,name:"Troubleshoot",url:"/master/reference/troubleshoot/"},{current:!1,name:"Learn More",url:"/master/reference/learn_more/"},{current:!1,name:"Release Cycle",url:"/master/reference/release-cycle/"}],current:!1,name:"Reference",url:"/master/reference/"}),menu.push({childCurrent:!1,children:[{current:!1,name:"Crossplane",url:"/master/api-docs/crossplane/"},{current:!1,name:"provider-alibaba",url:"/master/api-docs/provider-alibaba/"},{current:!1,name:"provider-aws",url:"/master/api-docs/provider-aws/"},{current:!1,name:"provider-azure",url:"/master/api-docs/provider-azure/"},{current:!1,name:"provider-gcp",url:"/master/api-docs/provider-gcp/"},{current:!1,name:"provider-helm",url:"/master/api-docs/provider-helm/"},{current:!1,name:"provider-rook",url:"/master/api-docs/provider-rook/"}],current:!1,name:"API Documentation",url:"/master/api-docs/"}),menu.push({childCurrent:!1,children:[{current:!1,name:"Provider Development Guide",url:"/master/contributing/provider_development_guide/"},{current:!1,name:"Observability Developer Guide",url:"/master/contributing/observability_developer_guide/"},{current:!1,name:"Release Process",url:"/master/contributing/release-process/"},{current:!1,name:"Adding Secret Store Support",url:"/master/contributing/adding_external_secret_store_support/"},{current:!1,name:"Crossplane Documentation",url:"/master/contributing/docs/"}],current:!1,name:"Contributing",url:"/master/contributing/"}),menu.push({childCurrent:!1,children:[{current:!1,name:"Related Projects",url:"/master/faqs/related_projects/"}],current:!1,name:"FAQ",url:"/master/faqs/"});function getEntry(e){var t=document.createElement("li");return e.current?(t.innerHTML=e.name,t.classList.add("current")):t.innerHTML='<a href="'+e.url+'">'+e.name+"</a>",t}function flushCss(e){e.offsetHeight}function addArrow(e){var t=document.createElement("a");t.classList.add("arrow"),t.innerHTML="<div />",t.onclick=function(e){return function(){var n=59,s=16,t=n+s+e.lastChild.clientHeight+"px";return e.classList.toggle("open"),e.classList.contains("open")?e.style.height=t:(e.style.height==="auto"&&(e.style.transition="none",e.style.height=t,flushCss(e),e.style.transition=""),e.style.height="59px"),!1}}(e),e.appendChild(t),item.current&&item.children||item.childCurrent?(e.classList.add("open"),e.style.height="auto"):e.style.height="59px"}menuDom=document.getElementById("docs-ul");for(i=0;i<menu.length;i++){if(item=menu[i],itemDom=getEntry(item),item.childCurrent&&itemDom.classList.add("childCurrent"),item.children){addArrow(itemDom),itemDom.classList.add("children"),children=document.createElement("ul");for(j=0;j<item.children.length;j++)children.appendChild(getEntry(item.children[j]));itemDom.appendChild(children)}menuDom.appendChild(itemDom)}</script><script src=/js/anchor.js></script>
+<script>anchors.options={placement:"right",icon:"#"},document.addEventListener("DOMContentLoaded",function(){anchors.add(".docs-content h1, .docs-content h2, .docs-content h3, .docs-content h4, .docs-content h5, .docs-content h6")})</script><div id=footer><div class=footer-main><div class=main><div class=logo><img src=/images/logo.svg alt="Crossplane Logo"></div></div><div class="links sm-hidden"><a href=https://twitter.com/crossplane_io>Twitter</a>
+<a href=/v1.9/>Documentation</a>
+<a href=https://github.com/crossplane/crossplane>GitHub</a>
+<a href=https://slack.crossplane.io/>Slack Channel</a>
+<a href=https://www.youtube.com/channel/UC19FgzMBMqBro361HbE46Fw>YouTube</a>
+<a href=https://groups.google.com/forum/#!forum/crossplane-dev>Forum</a></div></div><div class=lf-copyright><p>&#169; Crossplane Authors 2022. Documentation distributed under
+<a href=https://creativecommons.org/licenses/by/4.0/>CC-BY-4.0</a>.</p><p>&#169; 2022 The Linux Foundation. All rights reserved. The Linux Foundation has
+registered trademarks and uses trademarks. For a list of trademarks of The Linux Foundation, please see our
+<a href=https://www.linuxfoundation.org/trademark-usage/>Trademark Usage</a> page.</p></div><script src=/js/slack-popup.js></script></div><script>(function(e,t,n,s,o,i,a){e.GoogleAnalyticsObject=o,e[o]=e[o]||function(){(e[o].q=e[o].q||[]).push(arguments)},e[o].l=1*new Date,i=t.createElement(n),a=t.getElementsByTagName(n)[0],i.async=1,i.src=s,a.parentNode.insertBefore(i,a)})(window,document,"script","https://www.google-analytics.com/analytics.js","ga"),ga("create","UA-110275540-2","auto"),ga("send","pageview")</script><script async src="https://www.googletagmanager.com/gtag/js?id=G-SFCPQYSLHY"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag("js",new Date),gtag("config","G-SFCPQYSLHY")</script><script type=text/javascript id=hs-script-loader async defer src=https://js.hs-scripts.com/5557732.js></script></body></html>

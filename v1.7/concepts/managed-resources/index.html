@@ -1,0 +1,243 @@
+<!doctype html><html lang=en><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=description content="Crossplane is a framework for building cloud native control planes without needing to write code. It has a highly extensible backend that enables you to build a control plane that can orchestrate applications and infrastructure no matter where they run, and a highly configurable frontend that puts you in control of the schema of the declarative API it offers."><meta http-equiv=x-ua-compatible content="ie=edge"><meta name=robots content="noindex"><title>Managed Resources| Crossplane Documentation</title><meta name=twitter:card content="summary"><meta name=twitter:site content="https://crossplane.io"><meta name=twitter:title content="Crossplane"><meta name=twitter:description content="The cloud-native control plane framework"><meta name=twitter:image:src content="https://crossplane.io/images/twitter-card_400x400.jpg"><link rel=apple-touch-icon sizes=180x180 href="/favicons/apple-touch-icon.png?v=1.0"><link rel=icon type=image/png sizes=32x32 href="/favicons/favicon-32x32.png?v=1.0"><link rel=icon type=image/png sizes=16x16 href="/favicons/favicon-16x16.png?v=1.0"><link rel=manifest href="/favicons/site.webmanifest?v=1.0"><link rel=mask-icon href="/favicons/safari-pinned-tab.svg?v=1.0" color=#5bbad5><link rel="shortcut icon" href="/favicons/favicon.ico?v=1.0"><meta name=msapplication-TileColor content="#da532c"><meta name=theme-color content="#ffffff"><link rel=stylesheet href=/css/main.css><link rel=stylesheet href=https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css><link rel=stylesheet href=/css/docs.css><script src=https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js></script>
+<script src=https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js></script></head><body><div id=header><div><div class=logo><a href=/><img src=/images/logo.svg alt="Crossplane Logo"></a></div><div class=hamburger-controls onclick='return document.body.classList.contains("menu-open")?document.body.classList.remove("menu-open"):document.body.classList.add("menu-open"),!1'><span></span>
+<span></span>
+<span></span></div><ul class=links><li><a href=https://github.com/crossplane/crossplane><span class=md-hidden>Get Started on</span> GitHub</a></li><li><a href=/v1.9/>Documentation</a></li><li><a href=/community/>Community</a></li><li><a href=https://slack.crossplane.io/>Slack <span class=md-hidden>Channel</span></a></li><li><a href=https://blog.crossplane.io/>Blog</a></li><li><a href=https://twitter.com/crossplane_io>Twitter</a></li></ul></div></div><div id=docs-header><div><h1>Documentation</h1><div class=versions><div><div><select onchange="window.location.href=this.value"><option selected value=/master/concepts/managed-resources/>Crossplane master</option><option value=/v1.9/concepts/managed-resources/>Crossplane v1.9</option><option value=/v1.8/concepts/managed-resources/>Crossplane v1.8</option><option selected value=/v1.7/concepts/managed-resources/>Crossplane v1.7</option></select></div></div></div></div></div><div class=page><div class=docs-menu><ul id=docs-ul></ul></div><div class=docs-content><div class=docs-actions><a id=edit href=https://github.com/crossplane/crossplane/tree/release-1.7/docs/managed-resources.md><img src=/images/github-teal.svg>Edit on GitHub</a></div><div class="alert old"><p><b>PLEASE NOTE</b>: This document applies to version 1.7 and not to the latest release 1.9</p><strong>Documentation for other releases can be found by using the version selector in the top right of any doc page.</strong></div><h1>Managed Resources</h1><h2 id=overview>Overview</h2><p>A Managed Resource (MR) is Crossplane&rsquo;s representation of a resource in an external
+system - most commonly a cloud provider. Managed Resources are opinionated,
+Crossplane Resource Model (<a href=/v1.7/concepts/terminology/#crossplane-resource-model>XRM</a>) compliant Kubernetes Custom
+Resources that are installed by a Crossplane <a href=/v1.7/concepts/providers/>provider</a>.</p><p>For example, <code>RDSInstance</code> in the AWS Provider corresponds to an actual RDS
+Instance in AWS. There is a one-to-one relationship and the changes on managed
+resources are reflected directly on the corresponding resource in the provider.
+Similarly, the <code>Database</code> types in the SQL provider represent a PostgreSQL or
+MySQL database. You can browse <a href=/v1.7/api-docs/>API Reference</a> to discover all
+available managed resources.</p><p>Managed Resources are the building blocks of Crossplane. They&rsquo;re designed to be
+<em>composed</em> into higher level, opinionated Custom Resources that Crossplane calls
+Composite Resources or XRs - not used directly. See the
+<a href=/v1.7/concepts/composition/>Composition</a> documentation for more information.</p><h2 id=syntax>Syntax</h2><p>Crossplane API conventions extend the Kubernetes API conventions for the schema
+of Crossplane managed resources. Following is an example of a managed resource:</p><ul class="nav nav-tabs"><li class=active><a href=#aws-tab-1 data-toggle=tab>AWS</a></li><li><a href=#gcp-tab-1 data-toggle=tab>GCP</a></li><li><a href=#azure-tab-1 data-toggle=tab>Azure</a></li></ul><br><div class=tab-content><div class="tab-pane fade in active" id=aws-tab-1 markdown=1><p>The AWS provider supports provisioning an <a href=https://aws.amazon.com/rds/>RDS</a> instance via the <code>RDSInstance</code>
+managed resource it adds to Crossplane.</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#f92672>apiVersion</span>: <span style=color:#ae81ff>database.aws.crossplane.io/v1beta1</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>kind</span>: <span style=color:#ae81ff>RDSInstance</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>metadata</span>:
+</span></span><span style=display:flex><span>  <span style=color:#f92672>name</span>: <span style=color:#ae81ff>rdspostgresql</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>spec</span>:
+</span></span><span style=display:flex><span>  <span style=color:#f92672>forProvider</span>:
+</span></span><span style=display:flex><span>    <span style=color:#f92672>region</span>: <span style=color:#ae81ff>us-east-1</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>dbInstanceClass</span>: <span style=color:#ae81ff>db.t2.small</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>masterUsername</span>: <span style=color:#ae81ff>masteruser</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>allocatedStorage</span>: <span style=color:#ae81ff>20</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>engine</span>: <span style=color:#ae81ff>postgres</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>engineVersion</span>: <span style=color:#e6db74>&#34;12&#34;</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>skipFinalSnapshotBeforeDeletion</span>: <span style=color:#66d9ef>true</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>writeConnectionSecretToRef</span>:
+</span></span><span style=display:flex><span>    <span style=color:#f92672>namespace</span>: <span style=color:#ae81ff>crossplane-system</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>name</span>: <span style=color:#ae81ff>aws-rdspostgresql-conn</span>
+</span></span></code></pre></div><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-console data-lang=console><span style=display:flex><span>kubectl apply -f https://raw.githubusercontent.com/crossplane/crossplane/release-1.7/docs/snippets/provision/aws.yaml
+</span></span></code></pre></div><p>Creating the above instance will cause Crossplane to provision an RDS instance
+on AWS. You can view the progress with the following command:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-console data-lang=console><span style=display:flex><span>kubectl get rdsinstance rdspostgresql
+</span></span></code></pre></div><p>When provisioning is complete, you should see <code>READY: True</code> in the output. You
+can take a look at its connection secret that is referenced under <code>spec.writeConnectionSecretToRef</code>:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-console data-lang=console><span style=display:flex><span>kubectl describe secret aws-rdspostgresql-conn -n crossplane-system
+</span></span></code></pre></div><p>You can then delete the <code>RDSInstance</code>:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-console data-lang=console><span style=display:flex><span>kubectl delete rdsinstance rdspostgresql
+</span></span></code></pre></div></div><div class="tab-pane fade" id=gcp-tab-1 markdown=1><p>The GCP provider supports provisioning a <a href=https://cloud.google.com/sql>CloudSQL</a> instance with the
+<code>CloudSQLInstance</code> managed resource it adds to Crossplane.</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#f92672>apiVersion</span>: <span style=color:#ae81ff>database.gcp.crossplane.io/v1beta1</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>kind</span>: <span style=color:#ae81ff>CloudSQLInstance</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>metadata</span>:
+</span></span><span style=display:flex><span>  <span style=color:#f92672>name</span>: <span style=color:#ae81ff>cloudsqlpostgresql</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>spec</span>:
+</span></span><span style=display:flex><span>  <span style=color:#f92672>forProvider</span>:
+</span></span><span style=display:flex><span>    <span style=color:#f92672>databaseVersion</span>: <span style=color:#ae81ff>POSTGRES_12</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>region</span>: <span style=color:#ae81ff>us-central1</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>settings</span>:
+</span></span><span style=display:flex><span>      <span style=color:#f92672>tier</span>: <span style=color:#ae81ff>db-custom-1-3840</span>
+</span></span><span style=display:flex><span>      <span style=color:#f92672>dataDiskType</span>: <span style=color:#ae81ff>PD_SSD</span>
+</span></span><span style=display:flex><span>      <span style=color:#f92672>dataDiskSizeGb</span>: <span style=color:#ae81ff>10</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>writeConnectionSecretToRef</span>:
+</span></span><span style=display:flex><span>    <span style=color:#f92672>namespace</span>: <span style=color:#ae81ff>crossplane-system</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>name</span>: <span style=color:#ae81ff>cloudsqlpostgresql-conn</span>
+</span></span></code></pre></div><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-console data-lang=console><span style=display:flex><span>kubectl apply -f https://raw.githubusercontent.com/crossplane/crossplane/release-1.7/docs/snippets/provision/gcp.yaml
+</span></span></code></pre></div><p>Creating the above instance will cause Crossplane to provision a CloudSQL
+instance on GCP. You can view the progress with the following command:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-console data-lang=console><span style=display:flex><span>kubectl get cloudsqlinstance cloudsqlpostgresql
+</span></span></code></pre></div><p>When provisioning is complete, you should see <code>READY: True</code> in the output. You
+can take a look at its connection secret that is referenced under <code>spec.writeConnectionSecretToRef</code>:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-console data-lang=console><span style=display:flex><span>kubectl describe secret cloudsqlpostgresql-conn -n crossplane-system
+</span></span></code></pre></div><p>You can then delete the <code>CloudSQLInstance</code>:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-console data-lang=console><span style=display:flex><span>kubectl delete cloudsqlinstance cloudsqlpostgresql
+</span></span></code></pre></div></div><div class="tab-pane fade" id=azure-tab-1 markdown=1><p>The Azure provider supports provisioning an [Azure Database for PostgreSQL]
+instance with the <code>PostgreSQLServer</code> managed resource it adds to Crossplane.</p><blockquote><p>Note: provisioning an Azure Database for PostgreSQL requires the presence of a
+[Resource Group] in your Azure account. We go ahead and provision a new
+<code>ResourceGroup</code> here in case you do not already have a suitable one in your
+account.</p></blockquote><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#f92672>apiVersion</span>: <span style=color:#ae81ff>azure.crossplane.io/v1alpha3</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>kind</span>: <span style=color:#ae81ff>ResourceGroup</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>metadata</span>:
+</span></span><span style=display:flex><span>  <span style=color:#f92672>name</span>: <span style=color:#ae81ff>sqlserverpostgresql-rg</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>spec</span>:
+</span></span><span style=display:flex><span>  <span style=color:#f92672>location</span>: <span style=color:#ae81ff>West US 2</span>
+</span></span><span style=display:flex><span>---
+</span></span><span style=display:flex><span><span style=color:#f92672>apiVersion</span>: <span style=color:#ae81ff>database.azure.crossplane.io/v1beta1</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>kind</span>: <span style=color:#ae81ff>PostgreSQLServer</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>metadata</span>:
+</span></span><span style=display:flex><span>  <span style=color:#f92672>name</span>: <span style=color:#ae81ff>sqlserverpostgresql</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>spec</span>:
+</span></span><span style=display:flex><span>  <span style=color:#f92672>forProvider</span>:
+</span></span><span style=display:flex><span>    <span style=color:#f92672>administratorLogin</span>: <span style=color:#ae81ff>myadmin</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>resourceGroupNameRef</span>:
+</span></span><span style=display:flex><span>      <span style=color:#f92672>name</span>: <span style=color:#ae81ff>sqlserverpostgresql-rg</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>location</span>: <span style=color:#ae81ff>West US 2</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>sslEnforcement</span>: <span style=color:#ae81ff>Disabled</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>version</span>: <span style=color:#e6db74>&#34;9.6&#34;</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>sku</span>:
+</span></span><span style=display:flex><span>      <span style=color:#f92672>tier</span>: <span style=color:#ae81ff>GeneralPurpose</span>
+</span></span><span style=display:flex><span>      <span style=color:#f92672>capacity</span>: <span style=color:#ae81ff>2</span>
+</span></span><span style=display:flex><span>      <span style=color:#f92672>family</span>: <span style=color:#ae81ff>Gen5</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>storageProfile</span>:
+</span></span><span style=display:flex><span>      <span style=color:#f92672>storageMB</span>: <span style=color:#ae81ff>20480</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>writeConnectionSecretToRef</span>:
+</span></span><span style=display:flex><span>    <span style=color:#f92672>namespace</span>: <span style=color:#ae81ff>crossplane-system</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>name</span>: <span style=color:#ae81ff>sqlserverpostgresql-conn</span>
+</span></span></code></pre></div><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-console data-lang=console><span style=display:flex><span>kubectl apply -f https://raw.githubusercontent.com/crossplane/crossplane/release-1.7/docs/snippets/provision/azure.yaml
+</span></span></code></pre></div><p>Creating the above instance will cause Crossplane to provision a PostgreSQL
+database instance on Azure. You can view the progress with the following
+command:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-console data-lang=console><span style=display:flex><span>kubectl get postgresqlserver sqlserverpostgresql
+</span></span></code></pre></div><p>When provisioning is complete, you should see <code>READY: True</code> in the output. You
+can take a look at its connection secret that is referenced under <code>spec.writeConnectionSecretToRef</code>:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-console data-lang=console><span style=display:flex><span>kubectl describe secret sqlserverpostgresql-conn -n crossplane-system
+</span></span></code></pre></div><p>You can then delete the <code>PostgreSQLServer</code>:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-console data-lang=console><span style=display:flex><span>kubectl delete postgresqlserver sqlserverpostgresql
+</span></span><span style=display:flex><span>kubectl delete resourcegroup sqlserverpostgresql-rg
+</span></span></code></pre></div></div></div><p>In Kubernetes, <code>spec</code> top field represents the desired state of the user.
+Crossplane adheres to that and has its own conventions about how the fields
+under <code>spec</code> should look like.</p><ul><li><p><code>writeConnectionSecretToRef</code>: A reference to the secret that you want this
+managed resource to write its connection secret that you&rsquo;d be able to mount to
+your pods in the same namespace. For <code>RDSInstance</code>, this secret would contain
+<code>endpoint</code>, <code>username</code> and <code>password</code>.</p></li><li><p><code>providerConfigRef</code>: Reference to the <code>ProviderConfig</code> resource that will
+provide information regarding authentication of Crossplane to the provider.
+<code>ProviderConfig</code> resources refer to <code>Secret</code> and potentially contain other
+information regarding authentication. The <code>providerConfigRef</code> is defaulted to
+a <code>ProviderConfig</code> named <code>default</code> if omitted.</p></li><li><p><code>deletionPolicy</code>: Enum to specify whether the actual cloud resource should be
+deleted when this managed resource is deleted in Kubernetes API server.
+Possible values are <code>Delete</code> (the default) and <code>Orphan</code>.</p></li><li><p><code>forProvider</code>: While the rest of the fields relate to how Crossplane should
+behave, the fields under <code>forProvider</code> are solely used to configure the actual
+external resource. In most of the cases, the field names correspond to the
+what exists in provider&rsquo;s API Reference.</p><p>The objects under <code>forProvider</code> field can get huge depending on the provider
+API. For example, GCP <code>ServiceAccount</code> has only a few fields while GCP
+<code>CloudSQLInstance</code> has over 100 fields that you can configure.</p></li></ul><h3 id=versioning>Versioning</h3><p>Crossplane closely follows the <a href=https://kubernetes.io/docs/reference/using-api/#api-versioning#api-versioning>Kubernetes API versioning
+conventions</a> for the CRDs that it deploys. In short, for
+<code>vXbeta</code> and <code>vX</code> versions, you can expect that either automatic migration or
+instructions for manual migration will be provided when a new version of that
+CRD schema is released.</p><h3 id=grouping>Grouping</h3><p>In general, managed resources are high fidelity resources meaning they will
+provide parameters and behaviors that are provided by the external resource API.
+This applies to grouping of resources, too. For example, <code>Queue</code> appears under
+<code>sqs</code> API group in AWS,so, its <code>APIVersion</code> and <code>Kind</code> look like the following:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#f92672>apiVersion</span>: <span style=color:#ae81ff>sqs.aws.crossplane.io/v1beta1</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>kind</span>: <span style=color:#ae81ff>Queue</span>
+</span></span></code></pre></div><h2 id=behavior>Behavior</h2><p>As a general rule, managed resource controllers try not to make any decision
+that is not specified by the user in the desired state since managed resources
+are the lowest level primitives that operate directly on the cloud provider
+APIs.</p><h3 id=continuous-reconciliation>Continuous Reconciliation</h3><p>Crossplane providers continuously reconcile the managed resource to achieve the
+desired state. The parameters under <code>spec</code> are considered the one and only
+source of truth for the external resource. This means that if someone changed a
+configuration in the UI of the provider, like AWS Console, Crossplane will
+change it back to what&rsquo;s given under <code>spec</code>.</p><h4 id=connection-details>Connection Details</h4><p>Some Crossplane resources support writing connection details - things like URLs,
+usernames, endpoints, and passwords to a Kubernetes <code>Secret</code>. You can specify
+the secret to write by setting the <code>spec.writeConnectionSecretToRef</code> field. Note
+that while all managed resources have a <code>writeConnectionSecretToRef</code> field, not
+all managed resources actually have connection details to write - many will
+write an empty <code>Secret</code>.</p><blockquote><p>Which managed resources have connection details and what connection details
+they have is currently undocumented. This is tracked in
+<a href=https://github.com/crossplane/crossplane/issues/1143>this issue</a>.</p></blockquote><h4 id=immutable-properties>Immutable Properties</h4><p>There are configuration parameters in external resources that cloud providers do
+not allow to be changed. For example, in AWS, you cannot change the region
+of an <code>RDSInstance</code>.</p><p>Some infrastructure tools such as Terraform delete and recreate the resource to
+accommodate those changes but Crossplane does not take that route. Unless the
+managed resource is deleted and its <code>deletionPolicy</code> is <code>Delete</code>, its controller
+never deletes the external resource in the provider.</p><blockquote><p>Kubernetes does not yet support immutable fields for custom resources. This
+means Crossplane will allow immutable fields to be changed, but will not
+actually make the desired change. This is tracked in <a href=https://github.com/crossplane/crossplane/issues/727>this issue</a>.</p></blockquote><h3 id=external-name>External Name</h3><p>By default the name of the managed resource is used as the name of the external
+cloud resource that will show up in your cloud console. To specify a different
+external name, Crossplane has a special annotation to represent the name of the
+external resource. For example, I would like to have a <code>CloudSQLInstance</code> with
+an external name that is different than its managed resource name:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#f92672>apiVersion</span>: <span style=color:#ae81ff>database.gcp.crossplane.io/v1beta1</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>kind</span>: <span style=color:#ae81ff>CloudSQLInstance</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>metadata</span>:
+</span></span><span style=display:flex><span>  <span style=color:#f92672>name</span>: <span style=color:#ae81ff>foodb</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>annotations</span>:
+</span></span><span style=display:flex><span>    <span style=color:#f92672>crossplane.io/external-name</span>: <span style=color:#ae81ff>my-special-db</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>spec</span>:
+</span></span><span style=display:flex><span>  <span style=color:#ae81ff>...</span>
+</span></span></code></pre></div><p>When you create this managed resource, you will see that the name of
+<code>CloudSQLInstance</code> in GCP console will be <code>my-special-db</code>.</p><p>If the annotation is not given, Crossplane will fill it with the name of the
+managed resource by default. In cases where provider doesn&rsquo;t allow you to name
+the resource, like AWS VPC, the controller creates the resource and sets
+external annotation to be the name that the cloud provider chose. So, you would
+see something like <code>vpc-28dsnh3</code> as the value of <code>crossplane.io/external-name</code>
+annotation of your AWS <code>VPC</code> resource even if you added your own custom external
+name during creation.</p><h3 id=late-initialization>Late Initialization</h3><p>For some of the optional fields, users rely on the default that the cloud
+provider chooses for them. Since Crossplane treats the managed resource as the
+source of the truth, values of those fields need to exist in <code>spec</code> of the
+managed resource. So, in each reconciliation, Crossplane will fill the value of
+a field that is left empty by the user but is assigned a value by the provider.
+For example, there could be two fields like <code>region</code> and <code>availabilityZone</code> and
+you might want to give only <code>region</code> and leave the availability zone to be
+chosen by the cloud provider. In that case, if the provider assigns an
+availability zone, Crossplane gets that value and fills <code>availabilityZone</code>. Note
+that if the field is already filled, the controller won&rsquo;t override its value.</p><h3 id=deletion>Deletion</h3><p>When a deletion request is made for a managed resource, its controller starts
+the deletion process immediately. However, the managed resource is kept in the
+Kubernetes API (via a finalizer) until the controller confirms the external
+resource in the cloud is gone. So you can be sure that if the managed resource
+is deleted, then the external cloud resource is also deleted. Any errors that
+happen during deletion will be added to the <code>status</code> of the managed resource, so
+you can troubleshoot any issues.</p><h2 id=dependencies>Dependencies</h2><p>In many cases, an external resource refers to another one for a specific
+configuration. For example, you could want your Azure Kubernetes cluster in a
+specific Virtual Network. External resources have specific fields for these
+relations, however, they usually require the information to be supplied in
+different formats. In Azure MySQL, you might be required to enter only the name
+of the Virtual Network while in Azure Kubernetes, it could be required to enter
+a string in a specific format that includes other information such as resource
+group name.</p><p>In Crossplane, users have 3 fields to refer to another resource. Here is an
+example from Azure MySQL managed resource referring to an Azure Resource Group:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#f92672>spec</span>:
+</span></span><span style=display:flex><span>  <span style=color:#f92672>forProvider</span>:
+</span></span><span style=display:flex><span>    <span style=color:#f92672>resourceGroupName</span>: <span style=color:#ae81ff>foo-res-group</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>resourceGroupNameRef</span>:
+</span></span><span style=display:flex><span>      <span style=color:#f92672>name</span>: <span style=color:#ae81ff>resourcegroup</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>resourceGroupNameSelector</span>:
+</span></span><span style=display:flex><span>      <span style=color:#f92672>matchLabels</span>:
+</span></span><span style=display:flex><span>        <span style=color:#f92672>app</span>: <span style=color:#ae81ff>prod</span>
+</span></span></code></pre></div><p>In this example, the user provided only a set of labels to select a
+<code>ResourceGroup</code> managed resource that already exists in the cluster via
+<code>resourceGroupNameSelector</code>. Then after a specific <code>ResourceGroup</code> is selected,
+<code>resourceGroupNameRef</code> is filled with the name of that <code>ResourceGroup</code> managed
+resource. Then in the last step, Crossplane fills the actual <code>resourceGroupName</code>
+field with whatever format Azure accepts it. Once a dependency is resolved, the
+controller never changes it.</p><p>Users are able to specify any of these three fields:</p><ul><li>Selector to select via labels</li><li>Reference to point to a determined managed resource</li><li>Actual value that will be submitted to the provider</li></ul><p>It&rsquo;s important to note that in case a reference exists, the managed resource
+does not create the external resource until the referenced object is ready. In
+this example, creation call of Azure MySQL Server will not be made until
+referenced <code>ResourceGroup</code> has its <code>status.condition</code> named <code>Ready</code> to be true.</p><h2 id=importing-existing-resources>Importing Existing Resources</h2><p>If you have some resources that are already provisioned in the cloud provider,
+you can import them as managed resources and let Crossplane manage them. What
+you need to do is to enter the name of the external resource as well as the
+required fields on the managed resource. For example, let&rsquo;s say I have a GCP
+Network provisioned from GCP console and I would like to migrate it to
+Crossplane. Here is the YAML that I need to create:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#f92672>apiVersion</span>: <span style=color:#ae81ff>compute.gcp.crossplane.io/v1beta1</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>kind</span>: <span style=color:#ae81ff>Network</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>metadata</span>:
+</span></span><span style=display:flex><span>  <span style=color:#f92672>name</span>: <span style=color:#ae81ff>foo-network</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>annotations</span>:
+</span></span><span style=display:flex><span>    <span style=color:#f92672>crossplane.io/external-name</span>: <span style=color:#ae81ff>existing-network</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>spec</span>:
+</span></span><span style=display:flex><span>  <span style=color:#f92672>forProvider</span>: {}
+</span></span><span style=display:flex><span>  <span style=color:#f92672>providerConfigRef</span>:
+</span></span><span style=display:flex><span>    <span style=color:#f92672>name</span>: <span style=color:#ae81ff>default</span>
+</span></span></code></pre></div><p>Crossplane will check whether a GCP Network called <code>existing-network</code> exists,
+and if it does, then the optional fields under <code>forProvider</code> will be filled with
+the values that are fetched from the provider.</p><p>Note that if a resource has required fields, you must fill those fields or the
+creation of the managed resource will be rejected. So, in those cases, you will
+need to enter the name of the resource as well as the required fields as
+indicated in the <a href=/v1.7/api-docs/>API Reference</a> documentation.</p><h2 id=backup-and-restore>Backup and Restore</h2><p>Crossplane adheres to Kubernetes conventions as much as possible and one of the
+advantages we gain is backup & restore ability with tools that work with native
+Kubernetes types, like <a href=https://velero.io/>Velero</a>.</p><p>If you&rsquo;d like to backup and restore manually, you can simply export them and
+save YAMLs in your file system. When you reload them, as we&rsquo;ve discovered in
+import section, their <code>crossplane.io/external-name</code> annotation and required
+fields are there and those are enough to import a resource. The tool you&rsquo;re
+using needs to store <code>annotations</code> and <code>spec</code> fields, which most tools do
+including Velero.</p></div></div><script>var i,j,menu=[],menuDom,item,itemDom,children;menu.push({childCurrent:!1,children:[{current:!1,name:"Install \u0026 Configure",url:"/v1.7/getting-started/install-configure/"},{current:!1,name:"Provision Infrastructure",url:"/v1.7/getting-started/provision-infrastructure/"},{current:!1,name:"Create a Configuration",url:"/v1.7/getting-started/create-configuration/"}],current:!1,name:"Getting Started",url:"/v1.7/getting-started/"}),menu.push({childCurrent:!0,children:[{current:!1,name:"Providers",url:"/v1.7/concepts/providers/"},{current:!0,name:"Managed Resources",url:"/v1.7/concepts/managed-resources/"},{current:!1,name:"Composite Resources",url:"/v1.7/concepts/composition/"},{current:!1,name:"Packages",url:"/v1.7/concepts/packages/"},{current:!1,name:"Terminology",url:"/v1.7/concepts/terminology/"}],current:!1,name:"Concepts",url:"/v1.7/concepts/"}),menu.push({childCurrent:!1,children:[{current:!1,name:"Upgrading to v0.14",url:"/v1.7/guides/upgrading-to-v0.14/"},{current:!1,name:"Upgrading to v1.x",url:"/v1.7/guides/upgrading-to-v1.x/"},{current:!1,name:"Vault as an External Secret Store",url:"/v1.7/guides/vault-as-secret-store/"},{current:!1,name:"Vault Credential Injection",url:"/v1.7/guides/vault-injection/"},{current:!1,name:"Multi-Tenant Crossplane",url:"/v1.7/guides/multi-tenant/"},{current:!1,name:"Composition Revisions",url:"/v1.7/guides/composition-revisions/"},{current:!1,name:"Self-Signed CA Certs",url:"/v1.7/guides/self-signed-ca-certs/"}],current:!1,name:"Guides",url:"/v1.7/guides/"}),menu.push({childCurrent:!1,children:[{current:!1,name:"Install Crossplane",url:"/v1.7/reference/install/"},{current:!1,name:"Configure Your Cloud Provider Account",url:"/v1.7/reference/configure/"},{current:!1,name:"Uninstall",url:"/v1.7/reference/uninstall/"},{current:!1,name:"Composition",url:"/v1.7/reference/composition/"},{current:!1,name:"xpkg Specification",url:"/v1.7/reference/xpkg/"},{current:!1,name:"Troubleshoot",url:"/v1.7/reference/troubleshoot/"},{current:!1,name:"Learn More",url:"/v1.7/reference/learn_more/"},{current:!1,name:"Release Cycle",url:"/v1.7/reference/release-cycle/"}],current:!1,name:"Reference",url:"/v1.7/reference/"}),menu.push({childCurrent:!1,children:[{current:!1,name:"crossplane",url:"/v1.7/api-docs/crossplane/"},{current:!1,name:"provider-alibaba",url:"/v1.7/api-docs/provider-alibaba/"},{current:!1,name:"provider-aws",url:"/v1.7/api-docs/provider-aws/"},{current:!1,name:"provider-azure",url:"/v1.7/api-docs/provider-azure/"},{current:!1,name:"provider-gcp",url:"/v1.7/api-docs/provider-gcp/"},{current:!1,name:"provider-rook",url:"/v1.7/api-docs/provider-rook/"},{current:!1,name:"provider-helm",url:"/v1.7/api-docs/provider-helm/"}],current:!1,name:"API Documentation",url:"/v1.7/api-docs/"}),menu.push({childCurrent:!1,children:[{current:!1,name:"Provider Development Guide",url:"/v1.7/contributing/provider_development_guide/"},{current:!1,name:"Observability Developer Guide",url:"/v1.7/contributing/observability_developer_guide/"},{current:!1,name:"Release Process",url:"/v1.7/contributing/release-process/"},{current:!1,name:"Adding Secret Store Support",url:"/v1.7/contributing/adding_external_secret_store_support/"}],current:!1,name:"Contributing",url:"/v1.7/contributing/"}),menu.push({childCurrent:!1,children:[{current:!1,name:"Related Projects",url:"/v1.7/faqs/related_projects/"}],current:!1,name:"FAQ",url:"/v1.7/faqs/"});function getEntry(e){var t=document.createElement("li");return e.current?(t.innerHTML=e.name,t.classList.add("current")):t.innerHTML='<a href="'+e.url+'">'+e.name+"</a>",t}function flushCss(e){e.offsetHeight}function addArrow(e){var t=document.createElement("a");t.classList.add("arrow"),t.innerHTML="<div />",t.onclick=function(e){return function(){var n=59,s=16,t=n+s+e.lastChild.clientHeight+"px";return e.classList.toggle("open"),e.classList.contains("open")?e.style.height=t:(e.style.height==="auto"&&(e.style.transition="none",e.style.height=t,flushCss(e),e.style.transition=""),e.style.height="59px"),!1}}(e),e.appendChild(t),item.current&&item.children||item.childCurrent?(e.classList.add("open"),e.style.height="auto"):e.style.height="59px"}menuDom=document.getElementById("docs-ul");for(i=0;i<menu.length;i++){if(item=menu[i],itemDom=getEntry(item),item.childCurrent&&itemDom.classList.add("childCurrent"),item.children){addArrow(itemDom),itemDom.classList.add("children"),children=document.createElement("ul");for(j=0;j<item.children.length;j++)children.appendChild(getEntry(item.children[j]));itemDom.appendChild(children)}menuDom.appendChild(itemDom)}</script><script src=/js/anchor.js></script>
+<script>anchors.options={placement:"right",icon:"#"},document.addEventListener("DOMContentLoaded",function(){anchors.add(".docs-content h1, .docs-content h2, .docs-content h3, .docs-content h4, .docs-content h5, .docs-content h6")})</script><div id=footer><div class=footer-main><div class=main><div class=logo><img src=/images/logo.svg alt="Crossplane Logo"></div></div><div class="links sm-hidden"><a href=https://twitter.com/crossplane_io>Twitter</a>
+<a href=/v1.9/>Documentation</a>
+<a href=https://github.com/crossplane/crossplane>GitHub</a>
+<a href=https://slack.crossplane.io/>Slack Channel</a>
+<a href=https://www.youtube.com/channel/UC19FgzMBMqBro361HbE46Fw>YouTube</a>
+<a href=https://groups.google.com/forum/#!forum/crossplane-dev>Forum</a></div></div><div class=lf-copyright><p>&#169; Crossplane Authors 2022. Documentation distributed under
+<a href=https://creativecommons.org/licenses/by/4.0/>CC-BY-4.0</a>.</p><p>&#169; 2022 The Linux Foundation. All rights reserved. The Linux Foundation has
+registered trademarks and uses trademarks. For a list of trademarks of The Linux Foundation, please see our
+<a href=https://www.linuxfoundation.org/trademark-usage/>Trademark Usage</a> page.</p></div><script src=/js/slack-popup.js></script></div><script>(function(e,t,n,s,o,i,a){e.GoogleAnalyticsObject=o,e[o]=e[o]||function(){(e[o].q=e[o].q||[]).push(arguments)},e[o].l=1*new Date,i=t.createElement(n),a=t.getElementsByTagName(n)[0],i.async=1,i.src=s,a.parentNode.insertBefore(i,a)})(window,document,"script","https://www.google-analytics.com/analytics.js","ga"),ga("create","UA-110275540-2","auto"),ga("send","pageview")</script><script async src="https://www.googletagmanager.com/gtag/js?id=G-SFCPQYSLHY"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag("js",new Date),gtag("config","G-SFCPQYSLHY")</script><script type=text/javascript id=hs-script-loader async defer src=https://js.hs-scripts.com/5557732.js></script></body></html>

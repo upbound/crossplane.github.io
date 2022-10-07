@@ -1,0 +1,562 @@
+<!doctype html><html lang=en><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=description content="Crossplane is a framework for building cloud native control planes without needing to write code. It has a highly extensible backend that enables you to build a control plane that can orchestrate applications and infrastructure no matter where they run, and a highly configurable frontend that puts you in control of the schema of the declarative API it offers."><meta http-equiv=x-ua-compatible content="ie=edge"><meta name=robots content="noindex"><title>Composition| Crossplane Documentation</title><meta name=twitter:card content="summary"><meta name=twitter:site content="https://crossplane.io"><meta name=twitter:title content="Crossplane"><meta name=twitter:description content="The cloud-native control plane framework"><meta name=twitter:image:src content="https://crossplane.io/images/twitter-card_400x400.jpg"><link rel=apple-touch-icon sizes=180x180 href="/favicons/apple-touch-icon.png?v=1.0"><link rel=icon type=image/png sizes=32x32 href="/favicons/favicon-32x32.png?v=1.0"><link rel=icon type=image/png sizes=16x16 href="/favicons/favicon-16x16.png?v=1.0"><link rel=manifest href="/favicons/site.webmanifest?v=1.0"><link rel=mask-icon href="/favicons/safari-pinned-tab.svg?v=1.0" color=#5bbad5><link rel="shortcut icon" href="/favicons/favicon.ico?v=1.0"><meta name=msapplication-TileColor content="#da532c"><meta name=theme-color content="#ffffff"><link rel=stylesheet href=/css/main.css><link rel=stylesheet href=https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css><link rel=stylesheet href=/css/docs.css><script src=https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js></script>
+<script src=https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js></script></head><body><div id=header><div><div class=logo><a href=/><img src=/images/logo.svg alt="Crossplane Logo"></a></div><div class=hamburger-controls onclick='return document.body.classList.contains("menu-open")?document.body.classList.remove("menu-open"):document.body.classList.add("menu-open"),!1'><span></span>
+<span></span>
+<span></span></div><ul class=links><li><a href=https://github.com/crossplane/crossplane><span class=md-hidden>Get Started on</span> GitHub</a></li><li><a href=/v1.9/>Documentation</a></li><li><a href=/community/>Community</a></li><li><a href=https://slack.crossplane.io/>Slack <span class=md-hidden>Channel</span></a></li><li><a href=https://blog.crossplane.io/>Blog</a></li><li><a href=https://twitter.com/crossplane_io>Twitter</a></li></ul></div></div><div id=docs-header><div><h1>Documentation</h1><div class=versions><div><div><select onchange="window.location.href=this.value"><option selected value=/master/reference/composition/>Crossplane master</option><option value=/v1.9/reference/composition/>Crossplane v1.9</option><option selected value=/v1.8/reference/composition/>Crossplane v1.8</option><option value=/v1.7/reference/composition/>Crossplane v1.7</option></select></div></div></div></div></div><div class=page><div class=docs-menu><ul id=docs-ul></ul></div><div class=docs-content><div class=docs-actions><a id=edit href=https://github.com/crossplane/crossplane/tree/release-1.8/docs/composition.md><img src=/images/github-teal.svg>Edit on GitHub</a></div><div class="alert old"><p><b>PLEASE NOTE</b>: This document applies to version 1.8 and not to the latest release 1.9</p><strong>Documentation for other releases can be found by using the version selector in the top right of any doc page.</strong></div><h1>Composition</h1><p>This reference provides detailed examples of defining, configuring, and using
+Composite Resources in Crossplane. You can also refer to Crossplane&rsquo;s <a href=/v1.8/api-docs/crossplane/>API
+documentation</a> for more details. If you&rsquo;re looking for a more general
+overview of Composite Resources and Composition in Crossplane, try the
+<a href=/v1.8/concepts/composition/>Composite Resources</a> page under Concepts.</p><h2 id=composite-resources-and-claims>Composite Resources and Claims</h2><p>The type and most of the schema of Composite Resources and claims are largely of
+your own choosing, but there is some common &lsquo;machinery&rsquo; injected into them.
+Here&rsquo;s a hypothetical XR that doesn&rsquo;t have any user-defined fields and thus only
+includes the automatically injected Crossplane machinery:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#f92672>apiVersion</span>: <span style=color:#ae81ff>database.example.org/v1alpha1</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>kind</span>: <span style=color:#ae81ff>XPostgreSQLInstance</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>metadata</span>:
+</span></span><span style=display:flex><span>  <span style=color:#75715e># This XR was created automatically by a claim, so its name is derived from</span>
+</span></span><span style=display:flex><span>  <span style=color:#75715e># the claim&#39;s name.</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>name</span>: <span style=color:#ae81ff>my-db-mfd1b</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>annotations</span>:
+</span></span><span style=display:flex><span>    <span style=color:#75715e># The external name annotation has special meaning in Crossplane. When a</span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e># claim creates an XR its external name will automatically be propagated to</span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e># the XR. Whether and how the external name is propagated to the resources</span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e># the XR composes is up to its Composition.</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>crossplane.io/external-name</span>: <span style=color:#ae81ff>production-db-0</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>spec</span>:
+</span></span><span style=display:flex><span>  <span style=color:#75715e># XRs have a reference to the claim that created them (or, if the XR was</span>
+</span></span><span style=display:flex><span>  <span style=color:#75715e># pre-provisioned, to the claim that later claimed them).</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>claimRef</span>:
+</span></span><span style=display:flex><span>    <span style=color:#f92672>apiVersion</span>: <span style=color:#ae81ff>database.example.org/v1alpha1</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>kind</span>: <span style=color:#ae81ff>PostgreSQLInstance</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>name</span>: <span style=color:#ae81ff>my-db</span>
+</span></span><span style=display:flex><span>  <span style=color:#75715e># The compositionRef specifies which Composition this XR will use to compose</span>
+</span></span><span style=display:flex><span>  <span style=color:#75715e># resources when it is created, updated, or deleted. This can be omitted and</span>
+</span></span><span style=display:flex><span>  <span style=color:#75715e># will be set automatically if the XRD has a default or enforced composition</span>
+</span></span><span style=display:flex><span>  <span style=color:#75715e># reference, or if the below composition selector is set.</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>compositionRef</span>:
+</span></span><span style=display:flex><span>    <span style=color:#f92672>name</span>: <span style=color:#ae81ff>production-us-east</span>
+</span></span><span style=display:flex><span>  <span style=color:#75715e># The compositionSelector allows you to match a Composition by labels rather</span>
+</span></span><span style=display:flex><span>  <span style=color:#75715e># than naming one explicitly. It is used to set the compositionRef if none is</span>
+</span></span><span style=display:flex><span>  <span style=color:#75715e># specified explicitly.</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>compositionSelector</span>:
+</span></span><span style=display:flex><span>    <span style=color:#f92672>matchLabels</span>:
+</span></span><span style=display:flex><span>      <span style=color:#f92672>environment</span>: <span style=color:#ae81ff>production</span>
+</span></span><span style=display:flex><span>      <span style=color:#f92672>region</span>: <span style=color:#ae81ff>us-east</span>
+</span></span><span style=display:flex><span>      <span style=color:#f92672>provider</span>: <span style=color:#ae81ff>gcp</span>
+</span></span><span style=display:flex><span>  <span style=color:#75715e># The resourceRefs array contains references to all of the resources of which</span>
+</span></span><span style=display:flex><span>  <span style=color:#75715e># this XR is composed. Despite being in spec this field isn&#39;t intended to be</span>
+</span></span><span style=display:flex><span>  <span style=color:#75715e># configured by humans - Crossplane will take care of keeping it updated.</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>resourceRefs</span>:
+</span></span><span style=display:flex><span>  - <span style=color:#f92672>apiVersion</span>: <span style=color:#ae81ff>database.gcp.crossplane.io/v1beta1</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>kind</span>: <span style=color:#ae81ff>CloudSQLInstance</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>name</span>: <span style=color:#ae81ff>my-db-mfd1b-md9ab</span>
+</span></span><span style=display:flex><span>  <span style=color:#75715e># The writeConnectionSecretToRef field specifies a Kubernetes Secret that this</span>
+</span></span><span style=display:flex><span>  <span style=color:#75715e># XR should write its connection details (if any) to.</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>writeConnectionSecretToRef</span>:
+</span></span><span style=display:flex><span>    <span style=color:#f92672>namespace</span>: <span style=color:#ae81ff>crossplane-system</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>name</span>: <span style=color:#ae81ff>my-db-connection-details</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>status</span>:
+</span></span><span style=display:flex><span>  <span style=color:#75715e># An XR&#39;s &#39;Ready&#39; condition will become True when all of the resources it</span>
+</span></span><span style=display:flex><span>  <span style=color:#75715e># composes are deemed ready. Refer to the Composition &#39;readinessChecks&#39; field</span>
+</span></span><span style=display:flex><span>  <span style=color:#75715e># for more information.</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>conditions</span>:
+</span></span><span style=display:flex><span>  - <span style=color:#f92672>type</span>: <span style=color:#ae81ff>Ready</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>statue</span>: <span style=color:#e6db74>&#34;True&#34;</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>reason</span>: <span style=color:#ae81ff>Available</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>lastTransitionTime</span>: <span style=color:#e6db74>2021-10-02T07:20:50.52Z</span>
+</span></span><span style=display:flex><span>  <span style=color:#75715e># The last time the XR published its connection details to a Secret.</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>connectionDetails</span>:
+</span></span><span style=display:flex><span>    <span style=color:#f92672>lastPublishedTime</span>: <span style=color:#e6db74>2021-10-02T07:20:51.24Z</span>
+</span></span></code></pre></div><p>Similarly, here&rsquo;s an example of the claim that corresponds to the above XR:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#f92672>apiVersion</span>: <span style=color:#ae81ff>database.example.org/v1alpha1</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>kind</span>: <span style=color:#ae81ff>PostgreSQLInstance</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>metadata</span>:
+</span></span><span style=display:flex><span>  <span style=color:#75715e># Claims are namespaced, unlike XRs.</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>namespace</span>: <span style=color:#ae81ff>default</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>name</span>: <span style=color:#ae81ff>my-db</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>annotations</span>:
+</span></span><span style=display:flex><span>    <span style=color:#75715e># The external name annotation has special meaning in Crossplane. When a</span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e># claim creates an XR its external name will automatically be propagated to</span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e># the XR. Whether and how the external name is propagated to the resources</span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e># the XR composes is up to its Composition.</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>crossplane.io/external-name</span>: <span style=color:#ae81ff>production-db-0</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>spec</span>:
+</span></span><span style=display:flex><span>  <span style=color:#75715e># The resourceRef field references the XR this claim corresponds to. You can</span>
+</span></span><span style=display:flex><span>  <span style=color:#75715e># either set it to an existing (compatible) XR that you&#39;d like to claim or</span>
+</span></span><span style=display:flex><span>  <span style=color:#75715e># (the more common approach) leave it blank and let Crossplane automatically</span>
+</span></span><span style=display:flex><span>  <span style=color:#75715e># create and reference an XR for you.</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>resourceRef</span>:
+</span></span><span style=display:flex><span>    <span style=color:#f92672>apiVersion</span>: <span style=color:#ae81ff>database.example.org/v1alpha1</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>kind</span>: <span style=color:#ae81ff>XPostgreSQLInstance</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>name</span>: <span style=color:#ae81ff>my-db-mfd1b</span>
+</span></span><span style=display:flex><span>  <span style=color:#75715e># A claim&#39;s compositionRef and compositionSelector work the same way as an XR.</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>compositionRef</span>:
+</span></span><span style=display:flex><span>    <span style=color:#f92672>name</span>: <span style=color:#ae81ff>production-us-east</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>compositionSelector</span>:
+</span></span><span style=display:flex><span>    <span style=color:#f92672>matchLabels</span>:
+</span></span><span style=display:flex><span>      <span style=color:#f92672>environment</span>: <span style=color:#ae81ff>production</span>
+</span></span><span style=display:flex><span>      <span style=color:#f92672>region</span>: <span style=color:#ae81ff>us-east</span>
+</span></span><span style=display:flex><span>      <span style=color:#f92672>provider</span>: <span style=color:#ae81ff>gcp</span>
+</span></span><span style=display:flex><span>  <span style=color:#75715e># A claim&#39;s writeConnectionSecretToRef mostly works the same way as an XR&#39;s.</span>
+</span></span><span style=display:flex><span>  <span style=color:#75715e># The one difference is that the Secret is always written to the namespace of</span>
+</span></span><span style=display:flex><span>  <span style=color:#75715e># the claim.</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>writeConnectionSecretToRef</span>:
+</span></span><span style=display:flex><span>    <span style=color:#f92672>name</span>: <span style=color:#ae81ff>my-db-connection-details</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>status</span>:
+</span></span><span style=display:flex><span>  <span style=color:#75715e># A claim&#39;s &#39;Ready&#39; condition will become True when its XR&#39;s &#39;Ready&#39; condition</span>
+</span></span><span style=display:flex><span>  <span style=color:#75715e># becomes True.</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>conditions</span>:
+</span></span><span style=display:flex><span>  - <span style=color:#f92672>type</span>: <span style=color:#ae81ff>Ready</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>statue</span>: <span style=color:#e6db74>&#34;True&#34;</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>reason</span>: <span style=color:#ae81ff>Available</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>lastTransitionTime</span>: <span style=color:#e6db74>2021-10-02T07:20:50.52Z</span>
+</span></span><span style=display:flex><span>  <span style=color:#75715e># The last time the claim published its connection details to a Secret.</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>connectionDetails</span>:
+</span></span><span style=display:flex><span>    <span style=color:#f92672>lastPublishedTime</span>: <span style=color:#e6db74>2021-10-02T07:20:51.24Z</span>
+</span></span></code></pre></div><blockquote><p>If your XR or claim isn&rsquo;t working as you&rsquo;d expect you can try running <code>kubectl describe</code> against it for details - pay particular attention to any events and
+status conditions. You may need to follow the references from claim to XR to
+composed resources to find out what&rsquo;s happening.</p></blockquote><h2 id=compositeresourcedefinitions>CompositeResourceDefinitions</h2><p>Below is an example <code>CompositeResourceDefinition</code> that includes all configurable
+fields.</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#f92672>apiVersion</span>: <span style=color:#ae81ff>apiextensions.crossplane.io/v1</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>kind</span>: <span style=color:#ae81ff>CompositeResourceDefinition</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>metadata</span>:
+</span></span><span style=display:flex><span>  <span style=color:#75715e># XRDs must be named &#39;&lt;plural&gt;.&lt;group&gt;&#39;, per the plural and group names below.</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>name</span>: <span style=color:#ae81ff>xpostgresqlinstances.example.org</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>spec</span>:
+</span></span><span style=display:flex><span>  <span style=color:#75715e># This XRD defines an XR in the &#39;example.org&#39; API group.</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>group</span>: <span style=color:#ae81ff>example.org</span>
+</span></span><span style=display:flex><span>  <span style=color:#75715e># The kind of this XR will be &#39;XPostgreSQLInstance`. You may also optionally</span>
+</span></span><span style=display:flex><span>  <span style=color:#75715e># specify a singular name and a listKind.</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>names</span>:
+</span></span><span style=display:flex><span>    <span style=color:#f92672>kind</span>: <span style=color:#ae81ff>XPostgreSQLInstance</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>plural</span>: <span style=color:#ae81ff>xpostgresqlinstances</span>
+</span></span><span style=display:flex><span>  <span style=color:#75715e># This type of XR offers a claim. Omit claimNames if you don&#39;t want to do so.</span>
+</span></span><span style=display:flex><span>  <span style=color:#75715e># The claimNames must be different from the names above - a common convention</span>
+</span></span><span style=display:flex><span>  <span style=color:#75715e># is that names are prefixed with &#39;X&#39; while claim names are not. This lets app</span>
+</span></span><span style=display:flex><span>  <span style=color:#75715e># team members think of creating a claim as (e.g.) &#39;creating a</span>
+</span></span><span style=display:flex><span>  <span style=color:#75715e># PostgreSQLInstance&#39;.</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>claimNames</span>:
+</span></span><span style=display:flex><span>    <span style=color:#f92672>kind</span>: <span style=color:#ae81ff>PostgreSQLInstance</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>plural</span>: <span style=color:#ae81ff>postgresqlinstances</span>
+</span></span><span style=display:flex><span>  <span style=color:#75715e># Each type of XR can declare any keys they write to their connection secret</span>
+</span></span><span style=display:flex><span>  <span style=color:#75715e># which will act as a filter during aggregation of the connection secret from</span>
+</span></span><span style=display:flex><span>  <span style=color:#75715e># composed resources. It&#39;s recommended to provide the set of keys here so that</span>
+</span></span><span style=display:flex><span>  <span style=color:#75715e># consumers of claims and XRs can see what to expect in the connection secret.</span>
+</span></span><span style=display:flex><span>  <span style=color:#75715e># If no key is given, then all keys in the aggregated connection secret will</span>
+</span></span><span style=display:flex><span>  <span style=color:#75715e># be written to the connection secret of the XR.</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>connectionSecretKeys</span>:
+</span></span><span style=display:flex><span>  - <span style=color:#ae81ff>hostname</span>
+</span></span><span style=display:flex><span>  <span style=color:#75715e># Each type of XR may specify a default Composition to be used when none is</span>
+</span></span><span style=display:flex><span>  <span style=color:#75715e># specified (e.g. when the XR has no compositionRef or selector). A similar</span>
+</span></span><span style=display:flex><span>  <span style=color:#75715e># enforceCompositionRef field also exists to allow XRs to enforce a specific</span>
+</span></span><span style=display:flex><span>  <span style=color:#75715e># Composition that should always be used.</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>defaultCompositionRef</span>:
+</span></span><span style=display:flex><span>    <span style=color:#f92672>name</span>: <span style=color:#ae81ff>example</span>
+</span></span><span style=display:flex><span>  <span style=color:#75715e># Each type of XR may be served at different versions - e.g. v1alpha1, v1beta1</span>
+</span></span><span style=display:flex><span>  <span style=color:#75715e># and v1 - simultaneously. Currently Crossplane requires that all versions</span>
+</span></span><span style=display:flex><span>  <span style=color:#75715e># have an identical schema, so this is mostly useful to &#39;promote&#39; a type of XR</span>
+</span></span><span style=display:flex><span>  <span style=color:#75715e># from alpha to beta to production ready.</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>versions</span>:
+</span></span><span style=display:flex><span>  - <span style=color:#f92672>name</span>: <span style=color:#ae81ff>v1alpha1</span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e># Served specifies that XRs should be served at this version. It can be set</span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e># to false to temporarily disable a version, for example to test whether</span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e># doing so breaks anything before a version is removed wholesale.</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>served</span>: <span style=color:#66d9ef>true</span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e># Referenceable denotes the version of a type of XR that Compositions may</span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e># use. Only one version may be referenceable.</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>referenceable</span>: <span style=color:#66d9ef>true</span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e># Schema is an OpenAPI schema just like the one used by Kubernetes CRDs. It</span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e># determines what fields your XR and claim will have. Note that Crossplane</span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e># will automatically extend with some additional Crossplane machinery.</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>schema</span>:
+</span></span><span style=display:flex><span>      <span style=color:#f92672>openAPIV3Schema</span>:
+</span></span><span style=display:flex><span>        <span style=color:#f92672>type</span>: <span style=color:#ae81ff>object</span>
+</span></span><span style=display:flex><span>        <span style=color:#f92672>properties</span>:
+</span></span><span style=display:flex><span>          <span style=color:#f92672>spec</span>:
+</span></span><span style=display:flex><span>            <span style=color:#f92672>type</span>: <span style=color:#ae81ff>object</span>
+</span></span><span style=display:flex><span>            <span style=color:#f92672>properties</span>:
+</span></span><span style=display:flex><span>              <span style=color:#f92672>parameters</span>:
+</span></span><span style=display:flex><span>                <span style=color:#f92672>type</span>: <span style=color:#ae81ff>object</span>
+</span></span><span style=display:flex><span>                <span style=color:#f92672>properties</span>:
+</span></span><span style=display:flex><span>                  <span style=color:#f92672>storageGB</span>:
+</span></span><span style=display:flex><span>                    <span style=color:#f92672>type</span>: <span style=color:#ae81ff>integer</span>
+</span></span><span style=display:flex><span>                <span style=color:#f92672>required</span>:
+</span></span><span style=display:flex><span>                - <span style=color:#ae81ff>storageGB</span>
+</span></span><span style=display:flex><span>            <span style=color:#f92672>required</span>:
+</span></span><span style=display:flex><span>            - <span style=color:#ae81ff>parameters</span>
+</span></span><span style=display:flex><span>          <span style=color:#f92672>status</span>:
+</span></span><span style=display:flex><span>            <span style=color:#f92672>type</span>: <span style=color:#ae81ff>object</span>
+</span></span><span style=display:flex><span>            <span style=color:#f92672>properties</span>:
+</span></span><span style=display:flex><span>              <span style=color:#f92672>address</span>:
+</span></span><span style=display:flex><span>                <span style=color:#f92672>description</span>: <span style=color:#ae81ff>Address of this MySQL server.</span>
+</span></span><span style=display:flex><span>                <span style=color:#f92672>type</span>: <span style=color:#ae81ff>string</span>
+</span></span></code></pre></div><p>Take a look at the Kubernetes <a href=https://kubernetes.io/docs/tasks/extend-kubernetes/custom-resources/custom-resource-definitions/>CRD documentation</a> for a more detailed
+guide to writing OpenAPI schemas. Note that the following fields are reserved
+for Crossplane machinery, and will be ignored if your schema includes them:</p><ul><li><code>spec.resourceRef</code></li><li><code>spec.resourceRefs</code></li><li><code>spec.claimRef</code></li><li><code>spec.writeConnectionSecretToRef</code></li><li><code>status.conditions</code></li><li><code>status.connectionDetails</code></li></ul><blockquote><p>If your <code>CompositeResourceDefinition</code> isn&rsquo;t working as you&rsquo;d expect you can
+try running <code>kubectl describe xrd</code> for details - pay particular attention to
+any events and status conditions.</p></blockquote><h2 id=compositions>Compositions</h2><p>You&rsquo;ll encounter a lot of &lsquo;field paths&rsquo; when reading or writing a <code>Composition</code>.
+Field paths reference a field within a Kubernetes object via a simple string
+&lsquo;path&rsquo;. <a href=https://github.com/kubernetes/community/blob/61f3d0/contributors/devel/sig-architecture/api-conventions.md#selecting-fields>API conventions</a> describe the syntax as:</p><blockquote><p>Standard JavaScript syntax for accessing that field, assuming the JSON object
+was transformed into a JavaScript object, without the leading dot, such as
+<code>metadata.name</code>.</p></blockquote><p>Valid field paths include:</p><ul><li><code>metadata.name</code> - The <code>name</code> field of the <code>metadata</code> object.</li><li><code>spec.containers[0].name</code> - The <code>name</code> field of the 0th <code>containers</code> element.</li><li><code>data[.config.yml]</code> - The <code>.config.yml</code> field of the <code>data</code> object.</li><li><code>apiVersion</code> - The <code>apiVersion</code> field of the root object.</li></ul><p>While the following are invalid:</p><ul><li><code>.metadata.name</code> - Leading period.</li><li><code>metadata..name</code> - Double period.</li><li><code>metadata.name.</code> - Trailing period.</li><li><code>spec.containers[]</code> - Empty brackets.</li><li><code>spec.containers.[0].name</code> - Period before open bracket.</li></ul><p>Below is a detailed example of a <code>Composition</code>. While detailed, this example
+doesn&rsquo;t include every patch, transform, connection detail, and readiness check
+type. Keep reading below to discover those.</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#f92672>apiVersion</span>: <span style=color:#ae81ff>apiextensions.crossplane.io/v1</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>kind</span>: <span style=color:#ae81ff>Composition</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>metadata</span>:
+</span></span><span style=display:flex><span>  <span style=color:#f92672>name</span>: <span style=color:#ae81ff>example</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>labels</span>:
+</span></span><span style=display:flex><span>    <span style=color:#75715e># An optional convention is to include a label of the XRD. This allows</span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e># easy discovery of compatible Compositions.</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>crossplane.io/xrd</span>: <span style=color:#ae81ff>xpostgresqlinstances.database.example.org</span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e># The following label marks this Composition for GCP. This label can </span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e># be used in &#39;compositionSelector&#39; in an XR or Claim.</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>provider</span>: <span style=color:#ae81ff>gcp</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>spec</span>:
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#75715e># Each Composition must declare that it is compatible with a particular type</span>
+</span></span><span style=display:flex><span>  <span style=color:#75715e># of Composite Resource using its &#39;compositeTypeRef&#39; field. The referenced</span>
+</span></span><span style=display:flex><span>  <span style=color:#75715e># version must be marked &#39;referenceable&#39; in the XRD that defines the XR.</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>compositeTypeRef</span>:
+</span></span><span style=display:flex><span>    <span style=color:#f92672>apiVersion</span>: <span style=color:#ae81ff>database.example.org/v1alpha1</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>kind</span>: <span style=color:#ae81ff>XPostgreSQLInstance</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#75715e># When an XR is created in response to a claim Crossplane needs to know where</span>
+</span></span><span style=display:flex><span>  <span style=color:#75715e># it should create the XR&#39;s connection secret. This is configured using the</span>
+</span></span><span style=display:flex><span>  <span style=color:#75715e># &#39;writeConnectionSecretsToNamespace&#39; field.</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>writeConnectionSecretsToNamespace</span>: <span style=color:#ae81ff>crossplane-system</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#75715e># Each Composition must specify at least one composed resource template. In</span>
+</span></span><span style=display:flex><span>  <span style=color:#75715e># this case the Composition tells Crossplane that it should create, update, or</span>
+</span></span><span style=display:flex><span>  <span style=color:#75715e># delete a CloudSQLInstance whenever someone creates, updates, or deletes an</span>
+</span></span><span style=display:flex><span>  <span style=color:#75715e># XPostgresSQLInstance.</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>resources</span>:
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e># It&#39;s good practice to provide a unique name for each entry. Note that</span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e># this identifies the resources entry within the Composition - it&#39;s not</span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e># the name the CloudSQLInstance. The &#39;name&#39; field will be required in a</span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e># future version of this API.</span>
+</span></span><span style=display:flex><span>  - <span style=color:#f92672>name</span>: <span style=color:#ae81ff>cloudsqlinstance</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e># The &#39;base&#39; template for the CloudSQLInstance Crossplane will create.</span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e># You can use the base template to specify fields that never change, or</span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e># default values for fields that may optionally be patched over. Bases must</span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e># be a valid Crossplane resource - a Managed Resource, Composite Resource,</span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e># or a ProviderConfig.</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>base</span>:
+</span></span><span style=display:flex><span>      <span style=color:#f92672>apiVersion</span>: <span style=color:#ae81ff>database.gcp.crossplane.io/v1beta1</span>
+</span></span><span style=display:flex><span>      <span style=color:#f92672>kind</span>: <span style=color:#ae81ff>CloudSQLInstance</span>
+</span></span><span style=display:flex><span>      <span style=color:#f92672>spec</span>:
+</span></span><span style=display:flex><span>        <span style=color:#f92672>forProvider</span>:
+</span></span><span style=display:flex><span>          <span style=color:#f92672>databaseVersion</span>: <span style=color:#ae81ff>POSTGRES_12</span>
+</span></span><span style=display:flex><span>          <span style=color:#f92672>region</span>: <span style=color:#ae81ff>us-central1</span>
+</span></span><span style=display:flex><span>          <span style=color:#f92672>settings</span>:
+</span></span><span style=display:flex><span>            <span style=color:#f92672>dataDiskType</span>: <span style=color:#ae81ff>PD_SSD</span>
+</span></span><span style=display:flex><span>            <span style=color:#f92672>ipConfiguration</span>:
+</span></span><span style=display:flex><span>              <span style=color:#f92672>ipv4Enabled</span>: <span style=color:#66d9ef>true</span>
+</span></span><span style=display:flex><span>              <span style=color:#f92672>authorizedNetworks</span>:
+</span></span><span style=display:flex><span>                - <span style=color:#f92672>value</span>: <span style=color:#e6db74>&#34;0.0.0.0/0&#34;</span>
+</span></span><span style=display:flex><span>      
+</span></span><span style=display:flex><span>    <span style=color:#75715e># Each resource can optionally specify a set of &#39;patches&#39; that copy fields</span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e># from (or to) the XR.</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>patches</span>:
+</span></span><span style=display:flex><span>      <span style=color:#75715e># FromCompositeFieldPath is the default when &#39;type&#39; is omitted, but it&#39;s</span>
+</span></span><span style=display:flex><span>      <span style=color:#75715e># good practice to always include the type for readability.</span>
+</span></span><span style=display:flex><span>    - <span style=color:#f92672>type</span>: <span style=color:#ae81ff>FromCompositeFieldPath</span>
+</span></span><span style=display:flex><span>      <span style=color:#f92672>fromFieldPath</span>: <span style=color:#ae81ff>spec.parameters.size</span>
+</span></span><span style=display:flex><span>      <span style=color:#f92672>toFieldPath</span>: <span style=color:#ae81ff>spec.forProvider.settings.tier</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>      <span style=color:#75715e># Each patch can optionally specify one or more &#39;transforms&#39;, which</span>
+</span></span><span style=display:flex><span>      <span style=color:#75715e># transform the &#39;from&#39; field&#39;s value before applying it to the &#39;to&#39; field.</span>
+</span></span><span style=display:flex><span>      <span style=color:#75715e># Transforms are applied in the order they are specified; each transform&#39;s</span>
+</span></span><span style=display:flex><span>      <span style=color:#75715e># output is passed to the following transform&#39;s input.</span>
+</span></span><span style=display:flex><span>      <span style=color:#f92672>transforms</span>:
+</span></span><span style=display:flex><span>      - <span style=color:#f92672>type</span>: <span style=color:#ae81ff>map</span>
+</span></span><span style=display:flex><span>        <span style=color:#f92672>map</span>:
+</span></span><span style=display:flex><span>          <span style=color:#f92672>medium</span>: <span style=color:#ae81ff>db-custom-1-3840</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>      <span style=color:#f92672>policy</span>:
+</span></span><span style=display:flex><span>        <span style=color:#75715e># By default a patch from a field path that does not exist is simply</span>
+</span></span><span style=display:flex><span>        <span style=color:#75715e># skipped until it does. Use the &#39;Required&#39; policy to instead block and</span>
+</span></span><span style=display:flex><span>        <span style=color:#75715e># return an error when the field path does not exist.</span>
+</span></span><span style=display:flex><span>        <span style=color:#f92672>fromFieldPath</span>: <span style=color:#ae81ff>Required</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>        <span style=color:#75715e># You can patch entire objects or arrays from one resource to another.</span>
+</span></span><span style=display:flex><span>        <span style=color:#75715e># By default the &#39;to&#39; object or array will be overwritten, not merged.</span>
+</span></span><span style=display:flex><span>        <span style=color:#75715e># Use the &#39;mergeOptions&#39; field to override this behaviour. Note that</span>
+</span></span><span style=display:flex><span>        <span style=color:#75715e># these fields accidentally leak Go terminology - &#39;slice&#39; means &#39;array&#39;.</span>
+</span></span><span style=display:flex><span>        <span style=color:#75715e># &#39;map&#39; means &#39;map&#39; in YAML or &#39;object&#39; in JSON.</span>
+</span></span><span style=display:flex><span>        <span style=color:#f92672>mergeOptions</span>:
+</span></span><span style=display:flex><span>          <span style=color:#f92672>appendSlice</span>: <span style=color:#66d9ef>true</span>
+</span></span><span style=display:flex><span>          <span style=color:#f92672>keepMapValues</span>: <span style=color:#66d9ef>true</span>
+</span></span><span style=display:flex><span>    
+</span></span><span style=display:flex><span>    <span style=color:#75715e># You can include connection details to propagate from this CloudSQLInstance</span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e># up to the XPostgreSQLInstance XR (and then on to the PostgreSQLInstance</span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e># claim). Remember that your XRD must declare which connection secret keys</span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e># it supports.</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>connectionDetails</span>:
+</span></span><span style=display:flex><span>    - <span style=color:#f92672>name</span>: <span style=color:#ae81ff>hostname</span>
+</span></span><span style=display:flex><span>      <span style=color:#f92672>fromConnectionSecretKey</span>: <span style=color:#ae81ff>hostname</span>
+</span></span><span style=display:flex><span>    
+</span></span><span style=display:flex><span>    <span style=color:#75715e># By default an XR&#39;s &#39;Ready&#39; status condition will become True when the</span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e># &#39;Ready&#39; status conditions of all of its composed resources become true.</span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e># You can optionally specify custom readiness checks to override this.</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>readinessChecks</span>:
+</span></span><span style=display:flex><span>    - <span style=color:#f92672>type</span>: <span style=color:#ae81ff>None</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    
+</span></span><span style=display:flex><span>  <span style=color:#75715e># If you find yourself repeating patches a lot you can group them as a named</span>
+</span></span><span style=display:flex><span>  <span style=color:#75715e># &#39;patch set&#39; then use a PatchSet type patch to reference them.</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>patchSets</span>:
+</span></span><span style=display:flex><span>  - <span style=color:#f92672>name</span>: <span style=color:#ae81ff>metadata</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>patches</span>:
+</span></span><span style=display:flex><span>    - <span style=color:#f92672>type</span>: <span style=color:#ae81ff>FromCompositeFieldPath</span>
+</span></span><span style=display:flex><span>      <span style=color:#75715e># When both field paths are the same you can omit the &#39;toFieldPath&#39; and it</span>
+</span></span><span style=display:flex><span>      <span style=color:#75715e># will default to the &#39;fromFieldPath&#39;.</span>
+</span></span><span style=display:flex><span>      <span style=color:#f92672>fromFieldPath</span>: <span style=color:#ae81ff>metadata.labels[some-important-label]</span>
+</span></span></code></pre></div><h3 id=patch-types>Patch Types</h3><p>You can use the following types of patch in a <code>Composition</code>:</p><p><code>FromCompositeFieldPath</code>. The default if the <code>type</code> is omitted. This type
+patches from a field within the XR to a field within the composed resource. It&rsquo;s
+commonly used to expose a composed resource spec field as an XR spec field.</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#75715e># Patch from the XR&#39;s spec.parameters.size field to the composed resource&#39;s</span>
+</span></span><span style=display:flex><span><span style=color:#75715e># spec.forProvider.settings.tier field.</span>
+</span></span><span style=display:flex><span>- <span style=color:#f92672>type</span>: <span style=color:#ae81ff>FromCompositeFieldPath</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>fromFieldPath</span>: <span style=color:#ae81ff>spec.parameters.size</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>toFieldPath</span>: <span style=color:#ae81ff>spec.forProvider.settings.tier</span>
+</span></span></code></pre></div><p><code>ToCompositeFieldPath</code>. The inverse of <code>FromCompositeFieldPath</code>. This type
+patches from a field within the composed resource to a field within the XR. It&rsquo;s
+commonly used to derive an XR status field from a composed resource status
+field.</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#75715e># Patch from the composed resource&#39;s status.atProvider.zone field to the XR&#39;s</span>
+</span></span><span style=display:flex><span><span style=color:#75715e># status.zone field.</span>
+</span></span><span style=display:flex><span>- <span style=color:#f92672>type</span>: <span style=color:#ae81ff>ToCompositeFieldPath</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>fromFieldPath</span>: <span style=color:#ae81ff>status.atProvider.zone</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>toFieldPath</span>: <span style=color:#ae81ff>status.zone</span>
+</span></span></code></pre></div><p><code>CombineFromComposite</code>. Combines multiple fields from the XR to produce one
+composed resource field.</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#75715e># Patch from the XR&#39;s spec.parameters.location field and the</span>
+</span></span><span style=display:flex><span><span style=color:#75715e># metadata.annotations[crossplane.io/claim-name] annotation to the composed</span>
+</span></span><span style=display:flex><span><span style=color:#75715e># resource&#39;s spec.forProvider.administratorLogin field.</span>
+</span></span><span style=display:flex><span>- <span style=color:#f92672>type</span>: <span style=color:#ae81ff>CombineFromComposite</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>combine</span>:
+</span></span><span style=display:flex><span>    <span style=color:#75715e># The patch will only be applied when all variables have non-zero values.</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>variables</span>:
+</span></span><span style=display:flex><span>    - <span style=color:#f92672>fromFieldPath</span>: <span style=color:#ae81ff>spec.parameters.location</span>
+</span></span><span style=display:flex><span>    - <span style=color:#f92672>fromFieldPath</span>: <span style=color:#ae81ff>metadata.annotations[crossplane.io/claim-name]</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>strategy</span>: <span style=color:#ae81ff>string</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>string</span>:
+</span></span><span style=display:flex><span>      <span style=color:#f92672>fmt</span>: <span style=color:#e6db74>&#34;%s-%s&#34;</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>toFieldPath</span>: <span style=color:#ae81ff>spec.forProvider.administratorLogin</span>
+</span></span><span style=display:flex><span>  <span style=color:#75715e># By default Crossplane will skip the patch until all of the variables to be</span>
+</span></span><span style=display:flex><span>  <span style=color:#75715e># combined have values. Set the fromFieldPath policy to &#39;Required&#39; to instead</span>
+</span></span><span style=display:flex><span>  <span style=color:#75715e># abort composition and return an error if a variable has no value.</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>policy</span>:
+</span></span><span style=display:flex><span>    <span style=color:#f92672>fromFieldPath</span>: <span style=color:#ae81ff>Required</span>
+</span></span></code></pre></div><p>At the time of writing only the <code>string</code> combine strategy is supported. It uses
+<a href=https://pkg.go.dev/fmt>Go string formatting</a> to combine values, so if the XR&rsquo;s location was
+<code>us-west</code> and its claim name was <code>db</code> the composed resource&rsquo;s administratorLogin
+would be set to <code>us-west-db</code>.</p><p><code>CombineToComposite</code> is the inverse of <code>CombineFromComposite</code>.</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#75715e># Patch from the composed resource&#39;s spec.parameters.administratorLogin and</span>
+</span></span><span style=display:flex><span><span style=color:#75715e># status.atProvider.fullyQualifiedDomainName fields back to the XR&#39;s</span>
+</span></span><span style=display:flex><span><span style=color:#75715e># status.adminDSN field.</span>
+</span></span><span style=display:flex><span>- <span style=color:#f92672>type</span>: <span style=color:#ae81ff>CombineToComposite</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>combine</span>:
+</span></span><span style=display:flex><span>    <span style=color:#f92672>variables</span>:
+</span></span><span style=display:flex><span>      - <span style=color:#f92672>fromFieldPath</span>: <span style=color:#ae81ff>spec.parameters.administratorLogin</span>
+</span></span><span style=display:flex><span>      - <span style=color:#f92672>fromFieldPath</span>: <span style=color:#ae81ff>status.atProvider.fullyQualifiedDomainName</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>strategy</span>: <span style=color:#ae81ff>string</span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e># Here, our administratorLogin parameter and fullyQualifiedDomainName</span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e># status are formatted to a single output string representing a DSN.</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>string</span>:
+</span></span><span style=display:flex><span>      <span style=color:#f92672>fmt</span>: <span style=color:#e6db74>&#34;mysql://%s@%s:3306/my-database-name&#34;</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>toFieldPath</span>: <span style=color:#ae81ff>status.adminDSN</span>
+</span></span></code></pre></div><p><code>PatchSet</code>. References a named set of patches defined in the <code>spec.patchSets</code>
+array of a <code>Composition</code>.</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#75715e># This is equivalent to specifying all of the patches included in the &#39;metadata&#39;</span>
+</span></span><span style=display:flex><span><span style=color:#75715e># PatchSet.</span>
+</span></span><span style=display:flex><span>- <span style=color:#f92672>type</span>: <span style=color:#ae81ff>PatchSet</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>patchSetName</span>: <span style=color:#ae81ff>metadata</span>
+</span></span></code></pre></div><p>The <code>patchSets</code> array may not contain patches of <code>type: PatchSet</code>. The
+<code>transforms</code> and <code>patchPolicy</code> fields are ignored by <code>type: PatchSet</code>.</p><h3 id=transform-types>Transform Types</h3><p>You can use the following types of transform on a value being patched:</p><p><code>map</code>. Transforms values using a map.</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#75715e># If the value of the &#39;from&#39; field is &#39;us-west&#39;, the value of the &#39;to&#39; field</span>
+</span></span><span style=display:flex><span><span style=color:#75715e># will be set to &#39;West US&#39;.</span>
+</span></span><span style=display:flex><span>- <span style=color:#f92672>type</span>: <span style=color:#ae81ff>map</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>map</span>:
+</span></span><span style=display:flex><span>    <span style=color:#f92672>us-west</span>: <span style=color:#ae81ff>West US</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>us-east</span>: <span style=color:#ae81ff>East US</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>au-east</span>: <span style=color:#ae81ff>Australia East</span>
+</span></span></code></pre></div><p><code>math</code>. Transforms values using math. The input value must be an integer.
+Currently only <code>multiply</code> is supported.</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#75715e># If the value of the &#39;from&#39; field is 2, the value of the &#39;to&#39; field will be set</span>
+</span></span><span style=display:flex><span><span style=color:#75715e># to 4.</span>
+</span></span><span style=display:flex><span>- <span style=color:#f92672>type</span>: <span style=color:#ae81ff>math</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>math</span>:
+</span></span><span style=display:flex><span>    <span style=color:#f92672>multiply</span>: <span style=color:#ae81ff>2</span>
+</span></span></code></pre></div><p><code>string</code>. Transforms string values.</p><ul><li>string transform type <code>Format</code>, Currently only Go style fmt is supported. <a href=https://pkg.go.dev/fmt>Go style <code>fmt</code></a> is supported.</li><li>string transform type <code>Convert</code>, accepts one of <code>ToUpper</code>, <code>ToLower</code>, <code>ToBase64</code>, <code>FromBase64</code>.</li><li>string transform type <code>TrimPrefix</code>, accepts a string to be trimmed from the beginning of the input.</li><li>string transform type <code>TrimSuffix</code>, accepts a string to be trimmed from the end of the input.</li></ul><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#75715e># If you omit the field type, by default type is set to `Format` </span>
+</span></span><span style=display:flex><span><span style=color:#75715e># If the value of the &#39;from&#39; field is &#39;hello&#39;, the value of the &#39;to&#39; field will</span>
+</span></span><span style=display:flex><span><span style=color:#75715e># be set to &#39;hello-world&#39;.</span>
+</span></span><span style=display:flex><span>- <span style=color:#f92672>type</span>: <span style=color:#ae81ff>string</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>string</span>:
+</span></span><span style=display:flex><span>    <span style=color:#f92672>fmt</span>: <span style=color:#e6db74>&#34;%s-world&#34;</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#75715e># This is the same as above</span>
+</span></span><span style=display:flex><span><span style=color:#75715e># the value of the &#39;to&#39; field will be set to &#39;hello-world&#39;.</span>
+</span></span><span style=display:flex><span>- <span style=color:#f92672>type</span>: <span style=color:#ae81ff>string</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>string</span>:
+</span></span><span style=display:flex><span>    <span style=color:#f92672>type</span>: <span style=color:#ae81ff>Format</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>fmt</span>: <span style=color:#e6db74>&#34;%s-world&#34;</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#75715e># If the value of the &#39;from&#39; field is &#39;hello&#39;, the value of the &#39;to&#39; field will</span>
+</span></span><span style=display:flex><span><span style=color:#75715e># be set to &#39;HELLO&#39;.</span>
+</span></span><span style=display:flex><span>- <span style=color:#f92672>type</span>: <span style=color:#ae81ff>string</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>string</span>:
+</span></span><span style=display:flex><span>    <span style=color:#f92672>type</span>: <span style=color:#ae81ff>Convert</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>convert</span>: <span style=color:#ae81ff>ToUpper</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#75715e># If the value of the &#39;from&#39; field is &#39;Hello&#39;, the value of the &#39;to&#39; field will</span>
+</span></span><span style=display:flex><span><span style=color:#75715e># be set to &#39;hello&#39;.</span>
+</span></span><span style=display:flex><span>- <span style=color:#f92672>type</span>: <span style=color:#ae81ff>string</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>string</span>:
+</span></span><span style=display:flex><span>    <span style=color:#f92672>type</span>: <span style=color:#ae81ff>Convert</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>convert</span>: <span style=color:#ae81ff>ToLower</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#75715e># If the value of the &#39;from&#39; field is &#39;Hello&#39;, the value of the &#39;to&#39; field will</span>
+</span></span><span style=display:flex><span><span style=color:#75715e># be set to &#39;SGVsbG8=&#39;.</span>
+</span></span><span style=display:flex><span>- <span style=color:#f92672>type</span>: <span style=color:#ae81ff>string</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>string</span>:
+</span></span><span style=display:flex><span>     <span style=color:#f92672>type</span>: <span style=color:#ae81ff>Convert</span>
+</span></span><span style=display:flex><span>     <span style=color:#f92672>convert</span>: <span style=color:#ae81ff>ToBase64</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#75715e># If the value of the &#39;from&#39; field is &#39;SGVsbG8=&#39;, the value of the &#39;to&#39; field will</span>
+</span></span><span style=display:flex><span><span style=color:#75715e># be set to &#39;Hello&#39;.</span>
+</span></span><span style=display:flex><span>- <span style=color:#f92672>type</span>: <span style=color:#ae81ff>string</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>string</span>:
+</span></span><span style=display:flex><span>     <span style=color:#f92672>type</span>: <span style=color:#ae81ff>Convert</span>
+</span></span><span style=display:flex><span>     <span style=color:#f92672>convert</span>: <span style=color:#ae81ff>FromBase64</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#75715e># If the value of the &#39;from&#39; field is https://crossplane.io, the value of the &#39;to&#39; field will</span>
+</span></span><span style=display:flex><span><span style=color:#75715e># be set to crossplane.io</span>
+</span></span><span style=display:flex><span>- <span style=color:#f92672>type</span>: <span style=color:#ae81ff>string</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>string</span>:
+</span></span><span style=display:flex><span>    <span style=color:#f92672>type</span>: <span style=color:#ae81ff>TrimPrefix</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>trim</span>: <span style=color:#e6db74>&#39;https://&#39;</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#75715e># If the value of the &#39;from&#39; field is my-string-test, the value of the &#39;to&#39; field will</span>
+</span></span><span style=display:flex><span><span style=color:#75715e># be set to my-string</span>
+</span></span><span style=display:flex><span>- <span style=color:#f92672>type</span>: <span style=color:#ae81ff>string</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>string</span>:
+</span></span><span style=display:flex><span>     <span style=color:#f92672>type</span>: <span style=color:#ae81ff>TrimSuffix</span>
+</span></span><span style=display:flex><span>     <span style=color:#f92672>trim</span>: <span style=color:#e6db74>&#39;-test&#39;</span>
+</span></span></code></pre></div><p><code>convert</code>. Transforms values of one type to another, for example from a string
+to an integer. The following values are supported by the <code>from</code> and <code>to</code> fields:</p><ul><li><code>string</code></li><li><code>bool</code></li><li><code>int</code></li><li><code>int64</code></li><li><code>float64</code></li></ul><p>The strings 1, t, T, TRUE, true, and True are considered &rsquo;true&rsquo;, while 0, f, F,
+FALSE, false, and False are considered &lsquo;false&rsquo;. The integer 1 and float 1.0 are
+considered true, while all other values are considered false. Similarly, boolean
+true converts to integer 1 and float 1.0, while false converts to 0 and 0.0.</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#75715e># If the value to be converted is &#34;1&#34; (a string), the value of the &#39;toType&#39;</span>
+</span></span><span style=display:flex><span><span style=color:#75715e># field will be set to 1 (an integer).</span>
+</span></span><span style=display:flex><span>- <span style=color:#f92672>type</span>: <span style=color:#ae81ff>convert</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>convert</span>:
+</span></span><span style=display:flex><span>   <span style=color:#f92672>toType</span>: <span style=color:#ae81ff>int</span>
+</span></span></code></pre></div><h3 id=connection-details>Connection Details</h3><p>Connection details secret of XR is an aggregated sum of the connection details
+of the composed resources. It&rsquo;s recommended that the author of XRD specify
+exactly which keys will be allowed in the XR connection secret by listing them
+in <code>spec.connectionSecretKeys</code> so that consumers of claims and XRs can see what
+they can expect in the connection details secret.</p><p>If <code>spec.connectionSecretKeys</code> is empty, then all keys of the aggregated connection
+details secret will be propagated.</p><p>You can derive the following types of connection details from a composed
+resource to be aggregated:</p><p><code>FromConnectionSecretKey</code>. Derives an XR connection detail from a connection
+secret key of a composed resource.</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#75715e># Derive the XR&#39;s &#39;user&#39; connection detail from the &#39;username&#39; key of the</span>
+</span></span><span style=display:flex><span><span style=color:#75715e># composed resource&#39;s connection secret.</span>
+</span></span><span style=display:flex><span>- <span style=color:#f92672>type</span>: <span style=color:#ae81ff>FromConnectionSecretKey</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>name</span>: <span style=color:#ae81ff>user</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>fromConnectionSecretKey</span>: <span style=color:#ae81ff>username</span>
+</span></span></code></pre></div><p><code>FromFieldPath</code>. Derives an XR connection detail from a field path within the
+composed resource.</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#75715e># Derive the XR&#39;s &#39;user&#39; connection detail from the &#39;adminUser&#39; status field of</span>
+</span></span><span style=display:flex><span><span style=color:#75715e># the composed resource.</span>
+</span></span><span style=display:flex><span>- <span style=color:#f92672>type</span>: <span style=color:#ae81ff>FromFieldPath</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>name</span>: <span style=color:#ae81ff>user</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>fromFieldPath</span>: <span style=color:#ae81ff>status.atProvider.adminUser</span>
+</span></span></code></pre></div><p><code>FromValue</code>. Derives an XR connection detail from a fixed value.</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#75715e># Always sets the XR&#39;s &#39;user&#39; connection detail to &#39;admin&#39;.</span>
+</span></span><span style=display:flex><span>- <span style=color:#f92672>type</span>: <span style=color:#ae81ff>FromValue</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>name</span>: <span style=color:#ae81ff>user</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>value</span>: <span style=color:#ae81ff>admin</span>
+</span></span></code></pre></div><h3 id=readiness-checks>Readiness Checks</h3><p>Crossplane can use the following types of readiness check to determine whether a
+composed resource is ready (and therefore whether the XR and claim should be
+considered ready). Specify multiple readiness checks if multiple conditions must
+be met for a composed resource to be considered ready.</p><blockquote><p>Note that if you don&rsquo;t specify any readiness checks Crossplane will consider
+the composed resource to be ready when its &lsquo;Ready&rsquo; status condition becomes
+&lsquo;True&rsquo;.</p></blockquote><p><code>MatchString</code>. Considers the composed resource to be ready when the value of a
+field within that resource matches a specified string.</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#75715e># The composed resource will be considered ready when the &#39;state&#39; status field</span>
+</span></span><span style=display:flex><span><span style=color:#75715e># matches the string &#39;Online&#39;.</span>
+</span></span><span style=display:flex><span>- <span style=color:#f92672>type</span>: <span style=color:#ae81ff>MatchString</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>fieldPath</span>: <span style=color:#ae81ff>status.atProvider.state</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>matchString</span>: <span style=color:#e6db74>&#34;Online&#34;</span>
+</span></span></code></pre></div><p><code>MatchInteger</code>. Considers the composed resource to be ready when the value of a
+field within that resource matches a specified integer.</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#75715e># The composed resource will be considered ready when the &#39;state&#39; status field</span>
+</span></span><span style=display:flex><span><span style=color:#75715e># matches the integer 4.</span>
+</span></span><span style=display:flex><span>- <span style=color:#f92672>type</span>: <span style=color:#ae81ff>MatchString</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>fieldPath</span>: <span style=color:#ae81ff>status.atProvider.state</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>matchInteger</span>: <span style=color:#ae81ff>4</span>
+</span></span></code></pre></div><p><code>NonEmpty</code>. Considers the composed resource to be ready when a field exists in
+the composed resource. The name of this check can be a little confusing in that
+a field that exists with a zero value (e.g. an empty string or zero integer) is
+not considered to be &rsquo;empty&rsquo;, and thus will pass the readiness check.</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#75715e># The composed resource will be considered ready if and when &#39;online&#39; status</span>
+</span></span><span style=display:flex><span><span style=color:#75715e># field  exists.</span>
+</span></span><span style=display:flex><span>- <span style=color:#f92672>type</span>: <span style=color:#ae81ff>NonEmpty</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>fieldPath</span>: <span style=color:#ae81ff>status.atProvider.online</span>
+</span></span></code></pre></div><p><code>None</code>. Considers the composed resource to be ready as soon as it exists.</p><h3 id=missing-functionality>Missing Functionality</h3><p>You might find while reading through this reference that Crossplane is missing
+some functionality you need to compose resources. If that&rsquo;s the case, please
+<a href="https://github.com/crossplane/crossplane/issues/new?assignees=&labels=enhancement&template=feature_request.md">raise an issue</a> with as much detail <strong>about your use case</strong> as possible. Please
+understand that the Crossplane maintainers are growing the feature set of the
+<code>Composition</code> type conservatively. We highly value the input of our users and
+community, but we also feel it&rsquo;s critical to avoid bloat and complexity. We
+therefore wish to carefully consider each new addition. We feel some features
+may be better suited for a real, expressive programming language and intend to
+build an alternative to the <code>Composition</code> type as it is documented here per
+<a href=https://github.com/crossplane/crossplane/issues/2524>this proposal</a>.</p><h2 id=tips-tricks-and-troubleshooting>Tips, Tricks, and Troubleshooting</h2><p>In this section we&rsquo;ll cover some common tips, tricks, and troubleshooting steps
+for working with Composite Resources. If you&rsquo;re trying to track down why your
+Composite Resources aren&rsquo;t working the <a href=/v1.8/reference/troubleshoot/>Troubleshooting</a> page also
+has some useful information.</p><h3 id=troubleshooting-claims-and-xrs>Troubleshooting Claims and XRs</h3><p>Crossplane relies heavily on status conditions and events for troubleshooting.
+You can see both using <code>kubectl describe</code> - for example:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-console data-lang=console><span style=display:flex><span># Describe the PostgreSQLInstance claim named my-db
+</span></span><span style=display:flex><span>kubectl describe postgresqlinstance.database.example.org my-db
+</span></span></code></pre></div><p>Per Kubernetes convention, Crossplane keeps errors close to the place they
+happen. This means that if your claim is not becoming ready due to an issue with
+your <code>Composition</code> or with a composed resource you&rsquo;ll need to &ldquo;follow the
+references&rdquo; to find out why. Your claim will only tell you that the XR is not
+yet ready.</p><p>To follow the references:</p><ol><li>Find your XR by running <code>kubectl describe</code> on your claim and looking for its
+&ldquo;Resource Ref&rdquo; (aka <code>spec.resourceRef</code>).</li><li>Run <code>kubectl describe</code> on your XR. This is where you&rsquo;ll find out about issues
+with the <code>Composition</code> you&rsquo;re using, if any.</li><li>If there are no issues but your XR doesn&rsquo;t seem to be becoming ready, take a
+look for the &ldquo;Resource Refs&rdquo; (or <code>spec.resourceRefs</code>) to find your composed
+resources.</li><li>Run <code>kubectl describe</code> on each referenced composed resource to determine
+whether it is ready and what issues, if any, it is encountering.</li></ol><h3 id=composite-resource-connection-secrets>Composite Resource Connection Secrets</h3><p>Claim and Composite Resource connection secrets are often derived from the
+connection secrets of the managed resources they compose. This is a common
+source of confusion because several things need to align for it to work:</p><ol><li>The XR/claim&rsquo;s connection secret keys must be declared by the XRD.</li><li>The <code>Composition</code> must specify how to derive connection details from each
+composed resource.</li><li>If connection details are derived from a composed resource&rsquo;s connection
+secret that composed resource must specify its <code>writeConnectionSecretToRef</code>.</li><li>The claim and XR must both specify a <code>writeConnectionSecretToRef</code>.</li></ol><p>Finally, you can&rsquo;t currently edit a XRD&rsquo;s supported connection details. The
+XRD&rsquo;s <code>spec.connectionSecretKeys</code> is effectively immutable. This may change in
+future per <a href=https://github.com/crossplane/crossplane/issues/2024>this issue</a></p><h3 id=claiming-an-existing-composite-resource>Claiming an Existing Composite Resource</h3><p>Most people create Composite Resources using a claim, but you can actually claim
+an existing Composite Resource as long as its a type of XR that offers a claim
+and no one else has already claimed it. To do so:</p><ol><li>Set the <code>spec.resourceRef</code> of your claim to reference the existing XR.</li><li>Make sure the rest of your claim&rsquo;s spec fields match the XR&rsquo;s.</li></ol><p>If your claim&rsquo;s spec fields don&rsquo;t match the XR&rsquo;s Crossplane will still claim it
+but will then try to update the XR&rsquo;s spec fields to match the claim&rsquo;s.</p><h3 id=influencing-external-names>Influencing External Names</h3><p>The <code>crossplane.io/external-name</code> annotation has special meaning to Crossplane
+managed resources - it specifies the name (or identifier) of the resource in the
+external system, for example the actual name of a <code>CloudSQLInstance</code> in the GCP
+API. Some managed resources don&rsquo;t let you specify an external name - in those
+cases Crossplane will set it for you to whatever the external system requires.</p><p>If you add the <code>crossplane.io/external-name</code> annotation to a claim Crossplane
+will automatically propagate it when it creates an XR. It&rsquo;s good practice to
+have your <code>Composition</code> further propagate the annotation to one or more composed
+resources, but it&rsquo;s not required.</p><h3 id=mixing-and-matching-providers>Mixing and Matching Providers</h3><p>Crossplane has providers for many things in addition to the big clouds. Take a
+look at <a href=https://github.com/crossplane-contrib>github.com/crossplane-contrib</a> to find many of
+them. Keep in mind that you can mix and match managed resources from different
+providers within a <code>Composition</code> to create Composite Resources. For example you
+might use provider-aws and provider-sql to create an XR that provisions an
+<code>RDSInstance</code> then creates an SQL <code>Database</code> and <code>User</code>, or provider-gcp and
+provider-helm to create a <code>GKECluster</code> and deploy a Helm Chart <code>Release</code> to it.</p><p>Often when mixing and matching providers you&rsquo;ll need to compose a
+<code>ProviderConfig</code> for one provider that loads credentials from the connection
+secret of a managed resource from another provider. Sometimes you may need to
+use an intermediary XR to mutate the connection details to suit your needs.
+<a href=https://github.com/crossplane-contrib/provider-helm/blob/2dcbdd0/examples/in-composition/composition.yaml>This example</a> from provider-helm demonstrates using a GKE cluster
+connection secret as Helm <code>ProviderConfig</code> credentials.</p><h3 id=patching-from-one-composed-resource-to-another>Patching From One Composed Resource to Another</h3><p>It&rsquo;s not possible to patch <em>directly</em> from one composed resource to another -
+i.e. from one entry in the <code>spec.resources</code> array of a <code>Composition</code> to another.
+It is however possible to achieve this by using the XR as an intermediary. To do
+so:</p><ol><li>Use a <code>ToCompositeFieldPath</code> patch to patch from your source composed
+resource to the XR. Typically you&rsquo;ll want to patch to a status field or an
+annotation. Note: If you are using a field other than a label or annotation
+then the field you are patching to needs to be defined in the XR definition.
+For instance, if you are patching to <code>.status.foo</code> then the definition for
+the XR must define <code>.status.foo</code>.</li><li>Use a <code>FromCompositeFieldPath</code> patch to patch from the &lsquo;intermediary&rsquo; field
+you patched to in step 1 to a field on the destination composed resource.</li></ol></div></div><script>var i,j,menu=[],menuDom,item,itemDom,children;menu.push({childCurrent:!1,children:[{current:!1,name:"Install \u0026 Configure",url:"/v1.8/getting-started/install-configure/"},{current:!1,name:"Provision Infrastructure",url:"/v1.8/getting-started/provision-infrastructure/"},{current:!1,name:"Create a Configuration",url:"/v1.8/getting-started/create-configuration/"}],current:!1,name:"Overview",url:"/v1.8/getting-started/"}),menu.push({childCurrent:!1,children:[{current:!1,name:"Providers",url:"/v1.8/concepts/providers/"},{current:!1,name:"Managed Resources",url:"/v1.8/concepts/managed-resources/"},{current:!1,name:"Composite Resources",url:"/v1.8/concepts/composition/"},{current:!1,name:"Crossplane Packages",url:"/v1.8/concepts/packages/"},{current:!1,name:"Terminology",url:"/v1.8/concepts/terminology/"}],current:!1,name:"Concepts",url:"/v1.8/concepts/"}),menu.push({childCurrent:!1,children:[{current:!1,name:"Upgrading to v0.14",url:"/v1.8/guides/upgrading-to-v0.14/"},{current:!1,name:"Upgrading to v1.x",url:"/v1.8/guides/upgrading-to-v1.x/"},{current:!1,name:"Vault as an External Secret Store",url:"/v1.8/guides/vault-as-secret-store/"},{current:!1,name:"Vault Credential Injection",url:"/v1.8/guides/vault-injection/"},{current:!1,name:"Multi-Tenant Crossplane",url:"/v1.8/guides/multi-tenant/"},{current:!1,name:"Composition Revisions",url:"/v1.8/guides/composition-revisions/"},{current:!1,name:"Self-Signed CA Certs",url:"/v1.8/guides/self-signed-ca-certs/"}],current:!1,name:"Guides",url:"/v1.8/guides/"}),menu.push({childCurrent:!1,children:[{current:!1,name:"crossplane",url:"/v1.8/api-docs/crossplane/"},{current:!1,name:"provider-alibaba",url:"/v1.8/api-docs/provider-alibaba/"},{current:!1,name:"provider-aws",url:"/v1.8/api-docs/provider-aws/"},{current:!1,name:"provider-azure",url:"/v1.8/api-docs/provider-azure/"},{current:!1,name:"provider-gcp",url:"/v1.8/api-docs/provider-gcp/"},{current:!1,name:"provider-rook",url:"/v1.8/api-docs/provider-rook/"},{current:!1,name:"provider-helm",url:"/v1.8/api-docs/provider-helm/"}],current:!1,name:"API Documentation",url:"/v1.8/api-docs/"}),menu.push({childCurrent:!1,children:[{current:!1,name:"Provider Development Guide",url:"/v1.8/contributing/provider_development_guide/"},{current:!1,name:"Observability Developer Guide",url:"/v1.8/contributing/observability_developer_guide/"},{current:!1,name:"Release Process",url:"/v1.8/contributing/release-process/"},{current:!1,name:"Adding Secret Store Support",url:"/v1.8/contributing/adding_external_secret_store_support/"}],current:!1,name:"Contributing",url:"/v1.8/contributing/"}),menu.push({childCurrent:!1,children:[{current:!1,name:"Related Projects",url:"/v1.8/faqs/related_projects/"}],current:!1,name:"FAQ",url:"/v1.8/faqs/"});function getEntry(e){var t=document.createElement("li");return e.current?(t.innerHTML=e.name,t.classList.add("current")):t.innerHTML='<a href="'+e.url+'">'+e.name+"</a>",t}function flushCss(e){e.offsetHeight}function addArrow(e){var t=document.createElement("a");t.classList.add("arrow"),t.innerHTML="<div />",t.onclick=function(e){return function(){var n=59,s=16,t=n+s+e.lastChild.clientHeight+"px";return e.classList.toggle("open"),e.classList.contains("open")?e.style.height=t:(e.style.height==="auto"&&(e.style.transition="none",e.style.height=t,flushCss(e),e.style.transition=""),e.style.height="59px"),!1}}(e),e.appendChild(t),item.current&&item.children||item.childCurrent?(e.classList.add("open"),e.style.height="auto"):e.style.height="59px"}menuDom=document.getElementById("docs-ul");for(i=0;i<menu.length;i++){if(item=menu[i],itemDom=getEntry(item),item.childCurrent&&itemDom.classList.add("childCurrent"),item.children){addArrow(itemDom),itemDom.classList.add("children"),children=document.createElement("ul");for(j=0;j<item.children.length;j++)children.appendChild(getEntry(item.children[j]));itemDom.appendChild(children)}menuDom.appendChild(itemDom)}</script><script src=/js/anchor.js></script>
+<script>anchors.options={placement:"right",icon:"#"},document.addEventListener("DOMContentLoaded",function(){anchors.add(".docs-content h1, .docs-content h2, .docs-content h3, .docs-content h4, .docs-content h5, .docs-content h6")})</script><div id=footer><div class=footer-main><div class=main><div class=logo><img src=/images/logo.svg alt="Crossplane Logo"></div></div><div class="links sm-hidden"><a href=https://twitter.com/crossplane_io>Twitter</a>
+<a href=/v1.9/>Documentation</a>
+<a href=https://github.com/crossplane/crossplane>GitHub</a>
+<a href=https://slack.crossplane.io/>Slack Channel</a>
+<a href=https://www.youtube.com/channel/UC19FgzMBMqBro361HbE46Fw>YouTube</a>
+<a href=https://groups.google.com/forum/#!forum/crossplane-dev>Forum</a></div></div><div class=lf-copyright><p>&#169; Crossplane Authors 2022. Documentation distributed under
+<a href=https://creativecommons.org/licenses/by/4.0/>CC-BY-4.0</a>.</p><p>&#169; 2022 The Linux Foundation. All rights reserved. The Linux Foundation has
+registered trademarks and uses trademarks. For a list of trademarks of The Linux Foundation, please see our
+<a href=https://www.linuxfoundation.org/trademark-usage/>Trademark Usage</a> page.</p></div><script src=/js/slack-popup.js></script></div><script>(function(e,t,n,s,o,i,a){e.GoogleAnalyticsObject=o,e[o]=e[o]||function(){(e[o].q=e[o].q||[]).push(arguments)},e[o].l=1*new Date,i=t.createElement(n),a=t.getElementsByTagName(n)[0],i.async=1,i.src=s,a.parentNode.insertBefore(i,a)})(window,document,"script","https://www.google-analytics.com/analytics.js","ga"),ga("create","UA-110275540-2","auto"),ga("send","pageview")</script><script async src="https://www.googletagmanager.com/gtag/js?id=G-SFCPQYSLHY"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag("js",new Date),gtag("config","G-SFCPQYSLHY")</script><script type=text/javascript id=hs-script-loader async defer src=https://js.hs-scripts.com/5557732.js></script></body></html>

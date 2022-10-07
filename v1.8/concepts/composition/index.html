@@ -1,0 +1,173 @@
+<!doctype html><html lang=en><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=description content="Crossplane is a framework for building cloud native control planes without needing to write code. It has a highly extensible backend that enables you to build a control plane that can orchestrate applications and infrastructure no matter where they run, and a highly configurable frontend that puts you in control of the schema of the declarative API it offers."><meta http-equiv=x-ua-compatible content="ie=edge"><meta name=robots content="noindex"><title>Composite Resources| Crossplane Documentation</title><meta name=twitter:card content="summary"><meta name=twitter:site content="https://crossplane.io"><meta name=twitter:title content="Crossplane"><meta name=twitter:description content="The cloud-native control plane framework"><meta name=twitter:image:src content="https://crossplane.io/images/twitter-card_400x400.jpg"><link rel=apple-touch-icon sizes=180x180 href="/favicons/apple-touch-icon.png?v=1.0"><link rel=icon type=image/png sizes=32x32 href="/favicons/favicon-32x32.png?v=1.0"><link rel=icon type=image/png sizes=16x16 href="/favicons/favicon-16x16.png?v=1.0"><link rel=manifest href="/favicons/site.webmanifest?v=1.0"><link rel=mask-icon href="/favicons/safari-pinned-tab.svg?v=1.0" color=#5bbad5><link rel="shortcut icon" href="/favicons/favicon.ico?v=1.0"><meta name=msapplication-TileColor content="#da532c"><meta name=theme-color content="#ffffff"><link rel=stylesheet href=/css/main.css><link rel=stylesheet href=https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css><link rel=stylesheet href=/css/docs.css><script src=https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js></script>
+<script src=https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js></script></head><body><div id=header><div><div class=logo><a href=/><img src=/images/logo.svg alt="Crossplane Logo"></a></div><div class=hamburger-controls onclick='return document.body.classList.contains("menu-open")?document.body.classList.remove("menu-open"):document.body.classList.add("menu-open"),!1'><span></span>
+<span></span>
+<span></span></div><ul class=links><li><a href=https://github.com/crossplane/crossplane><span class=md-hidden>Get Started on</span> GitHub</a></li><li><a href=/v1.9/>Documentation</a></li><li><a href=/community/>Community</a></li><li><a href=https://slack.crossplane.io/>Slack <span class=md-hidden>Channel</span></a></li><li><a href=https://blog.crossplane.io/>Blog</a></li><li><a href=https://twitter.com/crossplane_io>Twitter</a></li></ul></div></div><div id=docs-header><div><h1>Documentation</h1><div class=versions><div><div><select onchange="window.location.href=this.value"><option selected value=/master/concepts/composition/>Crossplane master</option><option value=/v1.9/concepts/composition/>Crossplane v1.9</option><option selected value=/v1.8/concepts/composition/>Crossplane v1.8</option><option value=/v1.7/concepts/composition/>Crossplane v1.7</option></select></div></div></div></div></div><div class=page><div class=docs-menu><ul id=docs-ul></ul></div><div class=docs-content><div class=docs-actions><a id=edit href=https://github.com/crossplane/crossplane/tree/release-1.8/docs/composition.md><img src=/images/github-teal.svg>Edit on GitHub</a></div><div class="alert old"><p><b>PLEASE NOTE</b>: This document applies to version 1.8 and not to the latest release 1.9</p><strong>Documentation for other releases can be found by using the version selector in the top right of any doc page.</strong></div><h1>Composite Resources</h1><p>Crossplane Composite Resources are opinionated Kubernetes Custom Resources that
+are <em>composed</em> of <a href=/v1.8/concepts/managed-resources/>Managed Resources</a>. We often call them XRs
+for short.</p><p><img src=../media/composition-xrs-and-mrs.svg alt="Diagram of claims, XRs, and Managed Resources"></p><p>Composite Resources are designed to let you build your own platform with your
+own opinionated concepts and APIs without needing to write a Kubernetes
+controller from scratch. Instead, you define the schema of your XR and teach
+Crossplane which Managed Resources it should compose (i.e. create) when someone
+creates the XR you defined.</p><p>If you&rsquo;re already familiar with Composite Resources and looking for a detailed
+configuration reference or some tips, tricks, and troubleshooting information,
+try the <a href=/v1.8/reference/composition/>Composition Reference</a>.</p><p>Below is an example of a Composite Resource:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#f92672>apiVersion</span>: <span style=color:#ae81ff>database.example.org/v1alpha1</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>kind</span>: <span style=color:#ae81ff>XPostgreSQLInstance</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>metadata</span>:
+</span></span><span style=display:flex><span>  <span style=color:#f92672>name</span>: <span style=color:#ae81ff>my-db</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>spec</span>:
+</span></span><span style=display:flex><span>  <span style=color:#f92672>parameters</span>:
+</span></span><span style=display:flex><span>    <span style=color:#f92672>storageGB</span>: <span style=color:#ae81ff>20</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>compositionRef</span>:
+</span></span><span style=display:flex><span>    <span style=color:#f92672>name</span>: <span style=color:#ae81ff>production</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>writeConnectionSecretToRef</span>:
+</span></span><span style=display:flex><span>    <span style=color:#f92672>namespace</span>: <span style=color:#ae81ff>crossplane-system</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>name</span>: <span style=color:#ae81ff>my-db-connection-details</span>
+</span></span></code></pre></div><p>You define your own XRs, so they can be of whatever API version and kind you
+like, and contain whatever spec and status fields you need.</p><h2 id=how-it-works>How It Works</h2><p>The first step towards using Composite Resources is configuring Crossplane so
+that it knows what XRs you&rsquo;d like to exist, and what to do when someone creates
+one of those XRs. This is done using a <code>CompositeResourceDefinition</code> (XRD)
+resource and one or more <code>Composition</code> resources.</p><p>Once you&rsquo;ve configured Crossplane with the details of your new XR you can either
+create one directly, or use a <em>claim</em>. Typically only the folks responsible for
+configuring Crossplane (often a platform or SRE team) have permission to create
+XRs directly. Everyone else manages XRs via a lightweight proxy resource called
+a Composite Resource Claim (or claim for short). More on that later.</p><p><img src=../media/composition-how-it-works.svg alt="Diagram combining all Composition concepts"></p><blockquote><p>If you&rsquo;re coming from the Terraform world you can think of an XRD as similar
+to the <code>variable</code> blocks of a Terraform module, while the <code>Composition</code> is
+the rest of the module&rsquo;s HCL code that describes how to use those variables to
+create a bunch of resources. In this analogy the XR or claim is a little like
+a <code>tfvars</code> file providing inputs to the module.</p></blockquote><h3 id=defining-composite-resources>Defining Composite Resources</h3><p>A <code>CompositeResourceDefinition</code> (or XRD) defines the type and schema of your XR.
+It lets Crossplane know that you want a particular kind of XR to exist, and what
+fields that XR should have. An XRD is a little like a <code>CustomResourceDefinition</code>
+(CRD), but slightly more opinionated. Writing an XRD is mostly a matter of
+specifying an OpenAPI <a href=https://kubernetes.io/docs/tasks/extend-kubernetes/custom-resources/custom-resource-definitions/>&ldquo;structural schema&rdquo;</a>.</p><p>The XRD that defines the <code>XPostgreSQLInstance</code> XR above would look like this:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#f92672>apiVersion</span>: <span style=color:#ae81ff>apiextensions.crossplane.io/v1</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>kind</span>: <span style=color:#ae81ff>CompositeResourceDefinition</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>metadata</span>:
+</span></span><span style=display:flex><span>  <span style=color:#f92672>name</span>: <span style=color:#ae81ff>xpostgresqlinstances.database.example.org</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>spec</span>:
+</span></span><span style=display:flex><span>  <span style=color:#f92672>group</span>: <span style=color:#ae81ff>database.example.org</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>names</span>:
+</span></span><span style=display:flex><span>    <span style=color:#f92672>kind</span>: <span style=color:#ae81ff>XPostgreSQLInstance</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>plural</span>: <span style=color:#ae81ff>xpostgresqlinstances</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>claimNames</span>:
+</span></span><span style=display:flex><span>    <span style=color:#f92672>kind</span>: <span style=color:#ae81ff>PostgreSQLInstance</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>plural</span>: <span style=color:#ae81ff>postgresqlinstances</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>versions</span>:
+</span></span><span style=display:flex><span>  - <span style=color:#f92672>name</span>: <span style=color:#ae81ff>v1alpha1</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>served</span>: <span style=color:#66d9ef>true</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>referenceable</span>: <span style=color:#66d9ef>true</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>schema</span>:
+</span></span><span style=display:flex><span>      <span style=color:#f92672>openAPIV3Schema</span>:
+</span></span><span style=display:flex><span>        <span style=color:#f92672>type</span>: <span style=color:#ae81ff>object</span>
+</span></span><span style=display:flex><span>        <span style=color:#f92672>properties</span>:
+</span></span><span style=display:flex><span>          <span style=color:#f92672>spec</span>:
+</span></span><span style=display:flex><span>            <span style=color:#f92672>type</span>: <span style=color:#ae81ff>object</span>
+</span></span><span style=display:flex><span>            <span style=color:#f92672>properties</span>:
+</span></span><span style=display:flex><span>              <span style=color:#f92672>parameters</span>:
+</span></span><span style=display:flex><span>                <span style=color:#f92672>type</span>: <span style=color:#ae81ff>object</span>
+</span></span><span style=display:flex><span>                <span style=color:#f92672>properties</span>:
+</span></span><span style=display:flex><span>                  <span style=color:#f92672>storageGB</span>:
+</span></span><span style=display:flex><span>                    <span style=color:#f92672>type</span>: <span style=color:#ae81ff>integer</span>
+</span></span><span style=display:flex><span>                <span style=color:#f92672>required</span>:
+</span></span><span style=display:flex><span>                - <span style=color:#ae81ff>storageGB</span>
+</span></span><span style=display:flex><span>            <span style=color:#f92672>required</span>:
+</span></span><span style=display:flex><span>            - <span style=color:#ae81ff>parameters</span>
+</span></span></code></pre></div><p>You might notice that the <code>XPostgreSQLInstance</code> example above has some fields
+that don&rsquo;t appear in the XRD, like the <code>writeConnectionSecretToRef</code> and
+<code>compositionRef</code> fields. This is because Crossplane automatically injects some
+standard Crossplane Resource Model (XRM) fields into all XRs.</p><h3 id=configuring-composition>Configuring Composition</h3><p>A <code>Composition</code> lets Crossplane know what to do when someone creates a Composite
+Resource. Each <code>Composition</code> creates a link between an XR and a set of one or
+more Managed Resources - when the XR is created, updated, or deleted the set of
+Managed Resources are created, updated or deleted accordingly.</p><p>You can add multiple Compositions for each XRD, and choose which should be used
+when XRs are created. This allows a Composition to act like a class of service -
+for example you could configure one Composition for each environment you
+support, such as production, staging, and development.</p><p>A basic <code>Composition</code> for the above <code>XPostgreSQLInstance</code> might look like this:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#f92672>apiVersion</span>: <span style=color:#ae81ff>apiextensions.crossplane.io/v1</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>kind</span>: <span style=color:#ae81ff>Composition</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>metadata</span>:
+</span></span><span style=display:flex><span>  <span style=color:#f92672>name</span>: <span style=color:#ae81ff>example</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>labels</span>:
+</span></span><span style=display:flex><span>    <span style=color:#f92672>crossplane.io/xrd</span>: <span style=color:#ae81ff>xpostgresqlinstances.database.example.org</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>provider</span>: <span style=color:#ae81ff>gcp</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>spec</span>:
+</span></span><span style=display:flex><span>  <span style=color:#f92672>writeConnectionSecretsToNamespace</span>: <span style=color:#ae81ff>crossplane-system</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>compositeTypeRef</span>:
+</span></span><span style=display:flex><span>    <span style=color:#f92672>apiVersion</span>: <span style=color:#ae81ff>database.example.org/v1alpha1</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>kind</span>: <span style=color:#ae81ff>XPostgreSQLInstance</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>resources</span>:
+</span></span><span style=display:flex><span>  - <span style=color:#f92672>name</span>: <span style=color:#ae81ff>cloudsqlinstance</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>base</span>:
+</span></span><span style=display:flex><span>      <span style=color:#f92672>apiVersion</span>: <span style=color:#ae81ff>database.gcp.crossplane.io/v1beta1</span>
+</span></span><span style=display:flex><span>      <span style=color:#f92672>kind</span>: <span style=color:#ae81ff>CloudSQLInstance</span>
+</span></span><span style=display:flex><span>      <span style=color:#f92672>spec</span>:
+</span></span><span style=display:flex><span>        <span style=color:#f92672>forProvider</span>:
+</span></span><span style=display:flex><span>          <span style=color:#f92672>databaseVersion</span>: <span style=color:#ae81ff>POSTGRES_12</span>
+</span></span><span style=display:flex><span>          <span style=color:#f92672>region</span>: <span style=color:#ae81ff>us-central1</span>
+</span></span><span style=display:flex><span>          <span style=color:#f92672>settings</span>:
+</span></span><span style=display:flex><span>            <span style=color:#f92672>tier</span>: <span style=color:#ae81ff>db-custom-1-3840</span>
+</span></span><span style=display:flex><span>            <span style=color:#f92672>dataDiskType</span>: <span style=color:#ae81ff>PD_SSD</span>
+</span></span><span style=display:flex><span>            <span style=color:#f92672>ipConfiguration</span>:
+</span></span><span style=display:flex><span>              <span style=color:#f92672>ipv4Enabled</span>: <span style=color:#66d9ef>true</span>
+</span></span><span style=display:flex><span>              <span style=color:#f92672>authorizedNetworks</span>:
+</span></span><span style=display:flex><span>                - <span style=color:#f92672>value</span>: <span style=color:#e6db74>&#34;0.0.0.0/0&#34;</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>patches</span>:
+</span></span><span style=display:flex><span>    - <span style=color:#f92672>type</span>: <span style=color:#ae81ff>FromCompositeFieldPath</span>
+</span></span><span style=display:flex><span>      <span style=color:#f92672>fromFieldPath</span>: <span style=color:#ae81ff>spec.parameters.storageGB</span>
+</span></span><span style=display:flex><span>      <span style=color:#f92672>toFieldPath</span>: <span style=color:#ae81ff>spec.forProvider.settings.dataDiskSizeGb</span>
+</span></span></code></pre></div><p>The above <code>Composition</code> tells Crossplane that when someone creates an
+<code>XPostgreSQLInstance</code> XR Crossplane should create a <code>CloudSQLInstance</code> in
+response. The <code>storageGB</code> field of the <code>XPostgreSQLInstance</code> should be used to
+configure the <code>dataDiskSizeGb</code> field of the <code>CloudSQLInstance</code>. This is only a
+small subset of the functionality a <code>Composition</code> enables - take a look at the
+<a href=/v1.8/reference/composition/>reference page</a> to learn more.</p><blockquote><p>We almost always talk about XRs composing Managed Resources, but actually an
+XR can also compose other XRs to allow nested layers of abstraction. XRs don&rsquo;t
+support composing arbitrary Kubernetes resources (e.g. Deployments, operators,
+etc) directly but you can do so using our <a href=https://github.com/crossplane-contrib/provider-kubernetes>Kubernetes</a>
+and <a href=https://github.com/crossplane-contrib/provider-helm>Helm</a> providers.</p></blockquote><h3 id=claiming-composite-resources>Claiming Composite Resources</h3><p>Crossplane uses Composite Resource Claims (or just claims, for short) to allow
+application operators to provision and manage XRs. When we talk about using XRs
+it&rsquo;s typically implied that the XR is being used via a claim. Claims are almost
+identical to their corresponding XRs. It helps to think of a claim as an
+application team’s interface to an XR. You could also think of claims as the
+public (app team) facing part of the opinionated platform API, while XRs are the
+private (platform team) facing part.</p><p>A claim for the <code>XPostgreSQLInstance</code> XR above would look like this:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#f92672>apiVersion</span>: <span style=color:#ae81ff>database.example.org/v1alpha1</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>kind</span>: <span style=color:#ae81ff>PostgreSQLInstance</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>metadata</span>:
+</span></span><span style=display:flex><span>  <span style=color:#f92672>namespace</span>: <span style=color:#ae81ff>default</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>name</span>: <span style=color:#ae81ff>my-db</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>spec</span>:
+</span></span><span style=display:flex><span>  <span style=color:#f92672>parameters</span>:
+</span></span><span style=display:flex><span>    <span style=color:#f92672>storageGB</span>: <span style=color:#ae81ff>20</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>compositionRef</span>:
+</span></span><span style=display:flex><span>    <span style=color:#f92672>name</span>: <span style=color:#ae81ff>production</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>writeConnectionSecretToRef</span>:
+</span></span><span style=display:flex><span>    <span style=color:#f92672>name</span>: <span style=color:#ae81ff>my-db-connection-details</span>
+</span></span></code></pre></div><p>There are three key differences between an XR and a claim:</p><ol><li>Claims are namespaced, while XRs (and Managed Resources) are cluster scoped.</li><li>Claims are of a different <code>kind</code> than the XR - by convention the XR&rsquo;s <code>kind</code>
+without the proceeding <code>X</code>. For example a <code>PostgreSQLInstance</code> claims an
+<code>XPostgreSQLInstance</code>.</li><li>An active claim contains a reference to its corresponding XR, while an XR
+contains both a reference to the claim an array of references to the managed
+resources it composes.</li></ol><p>Not all XRs offer a claim - doing so is optional. See the XRD section of the
+<a href=/v1.8/reference/composition/>Composition reference</a> to learn how to offer a claim.</p><p><img src=../media/composition-claims-and-xrs.svg alt="Diagram showing the relationship between claims and XRs"></p><p>Claims may seem a little superfluous at first, but they enable some handy
+scenarios, including:</p><ul><li><p><strong>Private XRs.</strong> Sometimes a platform team might not want a type of XR to be
+directly consumed by their application teams. For example because the XR
+represents &lsquo;supporting&rsquo; infrastructure - consider the above VPC <code>XNetwork</code> XR. App
+teams might create <code>PostgreSQLInstance</code> claims that <em>reference</em> (i.e. consume)
+an <code>XNetwork</code>, but they shouldn&rsquo;t be <em>creating their own</em>. Similarly, some
+kinds of XR might be intended only for &rsquo;nested&rsquo; use - intended only to be
+composed by other XRs.</p></li><li><p><strong>Global XRs</strong>. Not all infrastructure is conceptually namespaced. Say your
+organisation uses team scoped namespaces. A <code>PostgreSQLInstance</code> that belongs
+to Team A should probably be part of the <code>team-a</code> namespace - you&rsquo;d represent
+this by creating a <code>PostgreSQLInstance</code> claim in that namespace. On the other
+hand the <code>XNetwork</code> XR we mentioned previously could be referenced (i.e. used)
+by XRs from many different namespaces - it doesn&rsquo;t exist to serve a particular
+team.</p></li><li><p><strong>Pre-provisioned XRs</strong>. Finally, separating claims from XRs allows a platform
+team to pre-provision certain kinds of XR. Typically an XR is created
+on-demand in response to the creation of a claim, but it&rsquo;s also possible for a
+claim to instead request an existing XR. This can allow application teams to
+instantly claim infrastructure like database instances that would otherwise
+take minutes to provision on-demand.</p></li></ul></div></div><script>var i,j,menu=[],menuDom,item,itemDom,children;menu.push({childCurrent:!1,children:[{current:!1,name:"Install \u0026 Configure",url:"/v1.8/getting-started/install-configure/"},{current:!1,name:"Provision Infrastructure",url:"/v1.8/getting-started/provision-infrastructure/"},{current:!1,name:"Create a Configuration",url:"/v1.8/getting-started/create-configuration/"}],current:!1,name:"Overview",url:"/v1.8/getting-started/"}),menu.push({childCurrent:!0,children:[{current:!1,name:"Providers",url:"/v1.8/concepts/providers/"},{current:!1,name:"Managed Resources",url:"/v1.8/concepts/managed-resources/"},{current:!0,name:"Composite Resources",url:"/v1.8/concepts/composition/"},{current:!1,name:"Crossplane Packages",url:"/v1.8/concepts/packages/"},{current:!1,name:"Terminology",url:"/v1.8/concepts/terminology/"}],current:!1,name:"Concepts",url:"/v1.8/concepts/"}),menu.push({childCurrent:!1,children:[{current:!1,name:"Upgrading to v0.14",url:"/v1.8/guides/upgrading-to-v0.14/"},{current:!1,name:"Upgrading to v1.x",url:"/v1.8/guides/upgrading-to-v1.x/"},{current:!1,name:"Vault as an External Secret Store",url:"/v1.8/guides/vault-as-secret-store/"},{current:!1,name:"Vault Credential Injection",url:"/v1.8/guides/vault-injection/"},{current:!1,name:"Multi-Tenant Crossplane",url:"/v1.8/guides/multi-tenant/"},{current:!1,name:"Composition Revisions",url:"/v1.8/guides/composition-revisions/"},{current:!1,name:"Self-Signed CA Certs",url:"/v1.8/guides/self-signed-ca-certs/"}],current:!1,name:"Guides",url:"/v1.8/guides/"}),menu.push({childCurrent:!1,children:[{current:!1,name:"crossplane",url:"/v1.8/api-docs/crossplane/"},{current:!1,name:"provider-alibaba",url:"/v1.8/api-docs/provider-alibaba/"},{current:!1,name:"provider-aws",url:"/v1.8/api-docs/provider-aws/"},{current:!1,name:"provider-azure",url:"/v1.8/api-docs/provider-azure/"},{current:!1,name:"provider-gcp",url:"/v1.8/api-docs/provider-gcp/"},{current:!1,name:"provider-rook",url:"/v1.8/api-docs/provider-rook/"},{current:!1,name:"provider-helm",url:"/v1.8/api-docs/provider-helm/"}],current:!1,name:"API Documentation",url:"/v1.8/api-docs/"}),menu.push({childCurrent:!1,children:[{current:!1,name:"Provider Development Guide",url:"/v1.8/contributing/provider_development_guide/"},{current:!1,name:"Observability Developer Guide",url:"/v1.8/contributing/observability_developer_guide/"},{current:!1,name:"Release Process",url:"/v1.8/contributing/release-process/"},{current:!1,name:"Adding Secret Store Support",url:"/v1.8/contributing/adding_external_secret_store_support/"}],current:!1,name:"Contributing",url:"/v1.8/contributing/"}),menu.push({childCurrent:!1,children:[{current:!1,name:"Related Projects",url:"/v1.8/faqs/related_projects/"}],current:!1,name:"FAQ",url:"/v1.8/faqs/"});function getEntry(e){var t=document.createElement("li");return e.current?(t.innerHTML=e.name,t.classList.add("current")):t.innerHTML='<a href="'+e.url+'">'+e.name+"</a>",t}function flushCss(e){e.offsetHeight}function addArrow(e){var t=document.createElement("a");t.classList.add("arrow"),t.innerHTML="<div />",t.onclick=function(e){return function(){var n=59,s=16,t=n+s+e.lastChild.clientHeight+"px";return e.classList.toggle("open"),e.classList.contains("open")?e.style.height=t:(e.style.height==="auto"&&(e.style.transition="none",e.style.height=t,flushCss(e),e.style.transition=""),e.style.height="59px"),!1}}(e),e.appendChild(t),item.current&&item.children||item.childCurrent?(e.classList.add("open"),e.style.height="auto"):e.style.height="59px"}menuDom=document.getElementById("docs-ul");for(i=0;i<menu.length;i++){if(item=menu[i],itemDom=getEntry(item),item.childCurrent&&itemDom.classList.add("childCurrent"),item.children){addArrow(itemDom),itemDom.classList.add("children"),children=document.createElement("ul");for(j=0;j<item.children.length;j++)children.appendChild(getEntry(item.children[j]));itemDom.appendChild(children)}menuDom.appendChild(itemDom)}</script><script src=/js/anchor.js></script>
+<script>anchors.options={placement:"right",icon:"#"},document.addEventListener("DOMContentLoaded",function(){anchors.add(".docs-content h1, .docs-content h2, .docs-content h3, .docs-content h4, .docs-content h5, .docs-content h6")})</script><div id=footer><div class=footer-main><div class=main><div class=logo><img src=/images/logo.svg alt="Crossplane Logo"></div></div><div class="links sm-hidden"><a href=https://twitter.com/crossplane_io>Twitter</a>
+<a href=/v1.9/>Documentation</a>
+<a href=https://github.com/crossplane/crossplane>GitHub</a>
+<a href=https://slack.crossplane.io/>Slack Channel</a>
+<a href=https://www.youtube.com/channel/UC19FgzMBMqBro361HbE46Fw>YouTube</a>
+<a href=https://groups.google.com/forum/#!forum/crossplane-dev>Forum</a></div></div><div class=lf-copyright><p>&#169; Crossplane Authors 2022. Documentation distributed under
+<a href=https://creativecommons.org/licenses/by/4.0/>CC-BY-4.0</a>.</p><p>&#169; 2022 The Linux Foundation. All rights reserved. The Linux Foundation has
+registered trademarks and uses trademarks. For a list of trademarks of The Linux Foundation, please see our
+<a href=https://www.linuxfoundation.org/trademark-usage/>Trademark Usage</a> page.</p></div><script src=/js/slack-popup.js></script></div><script>(function(e,t,n,s,o,i,a){e.GoogleAnalyticsObject=o,e[o]=e[o]||function(){(e[o].q=e[o].q||[]).push(arguments)},e[o].l=1*new Date,i=t.createElement(n),a=t.getElementsByTagName(n)[0],i.async=1,i.src=s,a.parentNode.insertBefore(i,a)})(window,document,"script","https://www.google-analytics.com/analytics.js","ga"),ga("create","UA-110275540-2","auto"),ga("send","pageview")</script><script async src="https://www.googletagmanager.com/gtag/js?id=G-SFCPQYSLHY"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag("js",new Date),gtag("config","G-SFCPQYSLHY")</script><script type=text/javascript id=hs-script-loader async defer src=https://js.hs-scripts.com/5557732.js></script></body></html>
